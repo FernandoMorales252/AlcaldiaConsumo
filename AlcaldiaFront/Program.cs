@@ -13,6 +13,7 @@ builder.Services.AddHttpClient<ApiService>(client =>
 
 //Servicios
 builder.Services.AddScoped<AlcaldiaFront.Services.TipoDocService>();
+builder.Services.AddScoped<AlcaldiaFront.Services.MunicipioService>();
 
 var app = builder.Build();
 
