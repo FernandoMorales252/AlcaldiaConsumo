@@ -6,7 +6,7 @@ namespace AlcaldiaFront.Services
     public class TipoDocService
     {
         private readonly ApiService _api;
-        private const string Base = "tipodocumento";
+        private const string Base = "TipoDoc";
 
         public TipoDocService(ApiService api) => _api = api;
 

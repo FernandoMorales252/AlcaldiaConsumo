@@ -8,10 +8,15 @@ builder.Services.AddControllersWithViews();
 // Defincion de la url base de la Api
 builder.Services.AddHttpClient<ApiService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7273/api/");
+    client.BaseAddress = new Uri("https://localhost:7053/api/");
 });
 
+//Servicios
+builder.Services.AddScoped<AlcaldiaFront.Services.TipoDocService>();
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
