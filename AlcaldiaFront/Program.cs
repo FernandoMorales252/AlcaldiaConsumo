@@ -1,7 +1,15 @@
+using AlcaldiaFront.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Defincion de la url base de la Api
+builder.Services.AddHttpClient<ApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7273/api/");
+});
 
 var app = builder.Build();
 
