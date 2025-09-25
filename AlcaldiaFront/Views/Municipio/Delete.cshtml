@@ -1,0 +1,34 @@
+﻿@model AlcaldiaFront.DTOs.MunicipioDTOs.MunicipioRespuestaDTO
+
+@{
+    ViewData["Title"] = "Eliminar Municipio";
+}
+
+<h1>Eliminar</h1>
+
+<h3>¿Estás seguro de que deseas eliminar este registro?</h3>
+<div>
+    <h4>Municipio</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id_Municipio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id_Municipio)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre_Municipio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nombre_Municipio)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id_Municipio" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index">Volver a la Lista</a>
+    </form>
+</div>
+

@@ -1,6 +1,6 @@
-﻿using AlcaldiaFront.DTOs.DocumentoDTOs;
+﻿using AlcaldiaFront.DTOs.CargoDTOs;
 
-namespace AlcaldiaFront.DTOs.CargoDTOs
+namespace AlcaldiaFront.Services
 {
     public class CargoService
     {
