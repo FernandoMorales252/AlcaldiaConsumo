@@ -8,13 +8,16 @@ builder.Services.AddControllersWithViews();
 // Defincion de la url base de la Api
 builder.Services.AddHttpClient<ApiService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7053/api/");
+    //client.BaseAddress = new Uri("https://localhost:7053/api/");
+
+    client.BaseAddress = new Uri("https://localhost:7053/api/"); //EE
 });
 
 //Servicios
 builder.Services.AddScoped<AlcaldiaFront.Services.TipoDocService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.MunicipioService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.DocumentoService>();
+builder.Services.AddScoped<AlcaldiaFront.Services.CargoService>();
 
 var app = builder.Build();
 

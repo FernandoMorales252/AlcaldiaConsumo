@@ -1,0 +1,56 @@
+﻿@model IEnumerable<AlcaldiaFront.DTOs.CargoDTOs.CargoRespuestaDTo>
+
+@{
+    ViewData["Title"] = "Cargos";
+}
+
+<h1>Listado de Cargos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nuevo</a>
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id_Cargo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre_cargo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id_Cargo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre_cargo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id_Cargo">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id_Cargo">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id_Cargo">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
