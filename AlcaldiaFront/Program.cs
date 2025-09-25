@@ -8,9 +8,9 @@ builder.Services.AddControllersWithViews();
 // Defincion de la url base de la Api
 builder.Services.AddHttpClient<ApiService>(client =>
 {
-    //client.BaseAddress = new Uri("https://localhost:7053/api/");
+    
 
-    client.BaseAddress = new Uri("https://localhost:7053/api/"); //EE
+    client.BaseAddress = new Uri("https://localhost:7053/api/"); 
 });
 
 //Servicios
