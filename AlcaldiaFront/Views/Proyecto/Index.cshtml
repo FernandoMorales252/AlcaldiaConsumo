@@ -1,0 +1,107 @@
+﻿@model IEnumerable<AlcaldiaFront.DTOs.ProyectoDTOs.ProyectoRespuestaDTo>
+@{
+    ViewData["Title"] = "Proyecto";
+}
+
+<h1>Listado de Proyectos</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nuevo</a>
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id_Proyecto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha_Inicio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha_Fin)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Presupuesto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id_Municipio)
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id_Proyecto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)
+                        {
+                            @(item.Descripcion.Substring(0, 50) + "...")
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.Descripcion)
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha_Inicio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha_Fin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Presupuesto)
+                    </td>
+                    <td>
+                        <span class="badge badge-@(item.Estado == "Completado" ? "success" :
+                                                                              item.Estado == "En Progreso" ? "primary" :
+                                                                              item.Estado == "En Pausa" ? "warning" :
+                                                                              item.Estado == "Cancelado" ? "danger" : "secondary")">
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    </span>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id_Municipio)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                </td>
+            </tr>
+                        }
+        </tbody>
+    </table>
+</div>
+
+@if (Model != null && !Model.Any())
+{
+    <div class="alert alert-info text-center" role="alert">
+        <h4>No hay proyectos registrados</h4>
+        <p>Comienza creando tu primer proyecto.</p>
+        <a asp-action="Create" class="btn btn-primary">Crear Primer Proyecto</a>
+    </div>
+}
