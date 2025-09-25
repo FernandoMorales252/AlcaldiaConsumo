@@ -70,6 +70,7 @@ namespace AlcaldiaFront.Controllers
 
             var dto = new CargoActualizarDTo
             {
+                Id_Cargo = cargo.Id_Cargo,
                 Nombre_cargo = cargo.Nombre_cargo,
                 Descripcion = cargo.Descripcion,
             };
