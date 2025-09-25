@@ -78,6 +78,7 @@ using Microsoft.AspNetCore.Mvc;
             
                 var dto = new TipoDocActualizarDTO
                 {
+                    Id_tipo = tipoDoc.Id_tipo,
                     Nombre = tipoDoc.Nombre
                 };
                 return View(dto);

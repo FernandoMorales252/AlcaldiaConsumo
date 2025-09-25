@@ -1,6 +1,6 @@
 ﻿namespace AlcaldiaFront.DTOs.DocumentoDTOs
 {
-    public class DocumentoCrearDTo
+    public class DocumentoCrearDTO
     {
         public string Numero_documento { get; set; } = "";
         public DateTime Fecha_emision { get; set; }

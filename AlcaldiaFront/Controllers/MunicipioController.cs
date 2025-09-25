@@ -72,6 +72,7 @@ namespace AlcaldiaFront.Controllers
 
             var dto = new MunicipioActualizarDTO
             {
+                Id_Municipio = municipio.Id_Municipio,
                 Nombre_Municipio = municipio.Nombre_Municipio
             };
             return View(dto);

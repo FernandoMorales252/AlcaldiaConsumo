@@ -1,0 +1,58 @@
+﻿@model IEnumerable<AlcaldiaFront.DTOs.DocumentoDTOs.DocumentoRespuestaDTO>
+
+@{
+    ViewData["Title"] = "Listado de Documentos";
+}
+
+<h1>Documentos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Documento</a>
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Ok"]
+    </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Id_documento)</th>
+            <th>@Html.DisplayNameFor(model => model.Numero_documento)</th>
+            <th>@Html.DisplayNameFor(model => model.Fecha_emision)</th>
+            <th>@Html.DisplayNameFor(model => model.Propietario)</th>
+            <th>@Html.DisplayNameFor(model => model.Estado)</th>
+            <th>@Html.DisplayNameFor(model => model.TipoDocumentoId)</th>
+            <th>@Html.DisplayNameFor(model => model.MunicipioId)</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id_documento)</td>
+                <td>@Html.DisplayFor(modelItem => item.Numero_documento)</td>
+                <td>@Html.DisplayFor(modelItem => item.Fecha_emision)</td>
+                <td>@Html.DisplayFor(modelItem => item.Propietario)</td>
+                <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                <td>@Html.DisplayFor(modelItem => item.TipoDocumentoId)</td>
+                <td>@Html.DisplayFor(modelItem => item.MunicipioId)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id_documento" class="btn btn-sm btn-warning">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id_documento" class="btn btn-sm btn-info">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id_documento" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

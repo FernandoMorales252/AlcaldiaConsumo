@@ -1,6 +1,6 @@
 ﻿namespace AlcaldiaFront.DTOs.DocumentoDTOs
 {
-    public class DocumentoRespuestaDTo
+    public class DocumentoRespuestaDTO
     {
         public int Id_documento { get; set; }
         public string Numero_documento { get; set; } = "";
