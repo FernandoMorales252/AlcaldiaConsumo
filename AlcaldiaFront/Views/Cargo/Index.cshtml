@@ -21,15 +21,17 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id_Cargo)
+                ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombre_cargo)
+                Nombre
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
+               Descripción
             </th>
-            <th></th>
+            <th>
+                Acciones
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -46,9 +48,9 @@
                     @Html.DisplayFor(modelItem => item.Descripcion)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id_Cargo">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id_Cargo">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id_Cargo">Eliminar</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id_Cargo" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id_Cargo" class="btn btn-sm btn-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id_Cargo" class="btn btn-sm btn-danger">Eliminar</a>
                 </td>
             </tr>
         }

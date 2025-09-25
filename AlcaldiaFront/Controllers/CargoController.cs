@@ -10,7 +10,6 @@ namespace AlcaldiaFront.Controllers
 
         public CargoController(CargoService cargoService) => _cargoService = cargoService;
 
-        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -26,7 +25,6 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var cargo = await _cargoService.GetByIdAsync(id);
@@ -37,7 +35,6 @@ namespace AlcaldiaFront.Controllers
             return View(cargo);
         }
 
-        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -63,10 +60,9 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int Id_Cargo)
+        public async Task<IActionResult> Edit(int id)
         {
-            var cargo = await _cargoService.GetByIdAsync(Id_Cargo);
+            var cargo = await _cargoService.GetByIdAsync(id);
             if (cargo == null)
             {
                 return NotFound();
@@ -82,14 +78,14 @@ namespace AlcaldiaFront.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int Id_Cargo, CargoActualizarDTo cargo)
+        public async Task<IActionResult> Edit(int id, CargoActualizarDTo cargo)
         {
 
             if (!ModelState.IsValid)
             {
                 return View(cargo);
             }
-            var success = await _cargoService.UpdateAsync(Id_Cargo, cargo, "tu_token_de_acceso");
+            var success = await _cargoService.UpdateAsync(id, cargo, "tu_token_de_acceso");
             if (success)
             {
                 return RedirectToAction(nameof(Index));
@@ -98,10 +94,9 @@ namespace AlcaldiaFront.Controllers
             return View(cargo);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Delete(int Id_Cargo)
+        public async Task<IActionResult> Delete(int id)
         {
-            var cargo = await _cargoService.GetByIdAsync(Id_Cargo);
+            var cargo = await _cargoService.GetByIdAsync(id);
             if (cargo == null)
             {
                 return NotFound();
@@ -111,16 +106,16 @@ namespace AlcaldiaFront.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int Id_Cargo)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var success = await _cargoService.DeleteAsync(Id_Cargo, "tu_token_de_acceso");
+            var success = await _cargoService.DeleteAsync(id, "tu_token_de_acceso");
             if (success)
             {
                 return RedirectToAction(nameof(Index));
             }
 
             ModelState.AddModelError("", "Error al eliminar el cargo.");
-            return View("Delete", await _cargoService.GetByIdAsync(Id_Cargo));
+            return View("Delete", await _cargoService.GetByIdAsync(id));
         }
     }
 }
