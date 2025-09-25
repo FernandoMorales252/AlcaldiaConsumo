@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<AlcaldiaFront.DTOs.MunicipioDTOs.MunicipioRespuestaDTO>
 
 @{
-    ViewData["Title"] = "Tipos de Documento";
+    ViewData["Title"] = "Municipio";
 }
 
-<h1>Listado de Tipos de Documento</h1>
+<h1>Listado de Municipio</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Crear Nuevo</a>
@@ -21,7 +21,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id_tipo)
+                @Html.DisplayNameFor(model => model.Id_Municipio)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
@@ -35,15 +35,15 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id_tipo)
+                    @Html.DisplayFor(modelItem => item.Id_Municipio)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Nombre)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id_tipo">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id_tipo">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id_tipo">Eliminar</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id_Municipio">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id_Municipio">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id_Municipio">Eliminar</a>
                 </td>
             </tr>
         }
