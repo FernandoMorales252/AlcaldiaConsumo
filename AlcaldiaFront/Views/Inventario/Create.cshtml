@@ -3,72 +3,128 @@
     ViewData["Title"] = "Crear Elemento";
 }
 
-<h1>Agregar Elemento</h1>
-<h4>Inventario</h4>
-<hr />
-<div class="row">
-    <div class="col-md-8">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<style>
+    /* Estilos globales (Antracita/Dorado) */
+    :root {
+        --color-primario: #34495e;
+        --color-secundario: #f39c12;
+        --color-texto: #2c3e50;
+    }
 
-            <div class="form-group">
-                <label asp-for="Nombre_item" class="control-label"></label>
-                <input asp-for="Nombre_item" class="form-control" />
-                <span asp-validation-for="Nombre_item" class="text-danger"></span>
-            </div>
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
 
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
+    h1 {
+        color: var(--color-primario);
+        border-left: 5px solid var(--color-secundario);
+        padding-left: 15px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
 
-            <div class="row">
-               <div class="col-md-6">
-                    <div class="form-group">
+    .control-label {
+        font-weight: 600;
+        color: var(--color-texto);
+        margin-bottom: 5px;
+    }
+
+    .form-control:focus {
+        border-color: var(--color-secundario);
+        box-shadow: 0 0 0 0.25rem rgba(243, 156, 18, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        min-width: 120px;
+    }
+
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+    }
+
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="fas fa-plus-square"></i> Agregar Nuevo Elemento al Inventario</h1>
+    <h4>Datos del Elemento</h4>
+    <hr />
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-group">
+                    <label asp-for="Nombre_item" class="control-label"></label>
+                    <input asp-for="Nombre_item" class="form-control" placeholder="Ej: Computadora Portátil HP" />
+                    <span asp-validation-for="Nombre_item" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Especificaciones, ubicación inicial, número de serie..."></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
                         <label asp-for="Cantidad" class="control-label"></label>
-                        <input asp-for="Cantidad" class="form-control" type="number" />
+                        <input asp-for="Cantidad" class="form-control" type="number" min="1" placeholder="Mínimo 1" />
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Fecha_ingreso" class="control-label"></label>
+                        <input asp-for="Fecha_ingreso" class="form-control" type="date" />
+                        <span asp-validation-for="Fecha_ingreso" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Fecha_ingreso" class="control-label"></label>
-                <input asp-for="Fecha_ingreso" class="form-control" type="date"/>
-                <span asp-validation-for="Fecha_ingreso" class="text-danger"></span>
-            </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Estado" class="control-label"></label>
+                        <select asp-for="Estado" class="form-control">
+                            <option value="">-- Seleccionar Estado --</option>
+                            <option value="disponible">Disponible</option>
+                            <option value="agotado">Agotado</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <select asp-for="Estado" class="form-control">
-                    <option value="">Seleccionar Estado</option>
-                    <option value="disponible">disponible</option>
-                    <option value="agotado">agotado</option>
-                    <option value="baja">baja</option>
-                </select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="MunicipioId" class="control-label"></label>
-                <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
-                    <option value="">Seleccionar Municipio</option>
-                </select>
-                <span asp-validation-for="MunicipioId" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="MunicipioId" class="control-label"></label>
+                        <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
+                            <option value="">-- Seleccionar Municipio --</option>
+                        </select>
+                        <span asp-validation-for="MunicipioId" class="text-danger"></span>
+                    </div>
+                </div>
 
 
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Crear</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Volver a la Lista</a>
+<div class="mt-3">
+    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
 
 @section Scripts {

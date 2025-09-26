@@ -2,61 +2,256 @@
 
 @{
     ViewData["Title"] = "Listado de Inventario";
+    // Define cuántos elementos quieres por página
+    int pageSize = 5;
 }
 
-<h1>Inventario</h1>
+<style>
+    /* --------------------------------------------------
+           PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
+           -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Elemento</a>
-</p>
+    /* Contenedor principal */
+    .data-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
 
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @ViewBag.Error
-    </div>
-}
-@if (TempData["Ok"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["Ok"]
-    </div>
-}
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        border-left: 5px solid var(--color-secundario);
+        padding-left: 15px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Nombre_item)</th>
-            <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
-            <th>@Html.DisplayNameFor(model => model.Cantidad)</th>
-            <th>@Html.DisplayNameFor(model => model.Estado)</th>
-            <th>@Html.DisplayNameFor(model => model.Fecha_ingreso)</th>
-            <th>@Html.DisplayNameFor(model => model.MunicipioId)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Nombre_item)</td>
-                <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
-                <td>@Html.DisplayFor(modelItem => item.Cantidad)</td>
-                <td>
-                    <span class="badge badge-@(item.Estado == "disponible" ? "success" :
-                                                         item.Estado == "agotado" ? "primary" :
-                                                         item.Estado == "baja" ? "danger" : "secondary")">
-                     @Html.DisplayFor(modelItem => item.Estado)
-                </span>
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.Fecha_ingreso)</td>
-                <td>@Html.DisplayFor(modelItem => item.MunicipioId)</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-warning">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-info">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-danger">Eliminar</a>
-                </td>
-            </tr>
+    /* Botón Crear Nuevo */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
         }
-    </tbody>
-</table>
+
+    /* Alertas de Mensaje */
+    .alert {
+        margin-bottom: 20px;
+        border-left: 5px solid;
+    }
+
+    /* Estilo de la tabla */
+    .table-hover tbody tr:hover {
+        background-color: var(--color-fondo-claro);
+    }
+
+    .table thead th {
+        background-color: var(--color-primario);
+        color: white;
+        border-bottom: 3px solid var(--color-secundario);
+        font-weight: 600;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        font-size: 0.95rem;
+    }
+
+    /* Estilos para los botones de la paginación */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .page-item .page-link {
+        color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Botones de acción específicos de la tabla */
+    .action-buttons a {
+        margin: 2px;
+    }
+</style>
+
+<div class="data-card">
+
+    <h1><i class="fas fa-warehouse text-secondary"></i> @ViewData["Title"]</h1>
+    <p>
+        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Elemento</a>
+    </p>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Error
+        </div>
+    }
+    @if (TempData["Ok"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["Ok"]
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped" id="inventarioTable">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Descripcion</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Fecha de registro</th>
+                    <th class="text-center">Municipio</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Nombre_item)</td>
+                        <td>
+                            @{
+                                // Mostrar solo los primeros 50 caracteres para la descripción
+                                string desc = item.Descripcion ?? "";
+                                @(desc.Length > 50 ? desc.Substring(0, 50) + "..." : desc)
+                            }
+                        </td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.Cantidad)</td>
+                        <td class="text-center">
+                            @{
+                                string badgeClass = item.Estado?.ToLower() switch
+                                {
+                                    "disponible" => "success",
+                                    "agotado" => "warning",
+                                    "baja" => "danger",
+                                    _ => "secondary"
+                                };
+                            }
+                            <span class="badge bg-@badgeClass">
+                                @Html.DisplayFor(modelItem => item.Estado)
+                            </span>
+                        </td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_ingreso)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.MunicipioId)</td>
+                        <td class="text-center action-buttons">
+                            <a asp-action="Edit" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="pagination-container" aria-label="Navegación de Inventario">
+        <ul class="pagination" id="pagination-ul"></ul>
+    </nav>
+
+    @if (Model != null && !Model.Any())
+    {
+        <div class="alert alert-info text-center mt-4" role="alert">
+            <h4>No hay elementos registrados en el inventario</h4>
+            <p>Comienza creando el primer elemento.</p>
+            <a asp-action="Create" class="btn btn-primary">Crear Primer Elemento</a>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Configuración de Paginación
+            const table = document.getElementById('inventarioTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const pageSize = @pageSize; // Viene de la variable Razor (10)
+            const totalPages = Math.ceil(rows.length / pageSize);
+            const paginationUl = $('#pagination-ul');
+
+            function displayPage(page) {
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                rows.forEach((row, index) => {
+                    row.style.display = (index >= startIndex && index < endIndex) ? '' : 'none';
+                });
+
+                updatePaginationControls(page);
+            }
+
+            function updatePaginationControls(currentPage) {
+                paginationUl.empty(); // Limpiar la paginación existente
+
+                // Botón Anterior
+                const prevDisabled = currentPage === 1 ? 'disabled' : '';
+                paginationUl.append(`
+                    <li class="page-item ${prevDisabled}">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}"><i class="fas fa-angle-left"></i> Anterior</a>
+                    </li>
+                `);
+
+                // Botones de Páginas Numeradas
+                for (let i = 1; i <= totalPages; i++) {
+                    const active = i === currentPage ? 'active' : '';
+                    paginationUl.append(`
+                        <li class="page-item ${active}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `);
+                }
+
+                // Botón Siguiente
+                const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+                paginationUl.append(`
+                    <li class="page-item ${nextDisabled}">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente <i class="fas fa-angle-right"></i></a>
+                    </li>
+                `);
+            }
+
+            // Manejador de clic para los botones de paginación
+            paginationUl.on('click', 'a.page-link', function (e) {
+                e.preventDefault();
+                const newPage = parseInt($(this).data('page'));
+
+                if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
+                    displayPage(newPage);
+                }
+            });
+
+            // Inicializar la tabla y la paginación en la página 1
+            if (rows.length > 0) {
+                displayPage(1);
+            }
+        });
+    </script>
+}

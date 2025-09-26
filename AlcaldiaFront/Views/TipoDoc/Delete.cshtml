@@ -4,30 +4,86 @@
     ViewData["Title"] = "Eliminar Tipo de Documento";
 }
 
-<h1>Eliminar</h1>
+<style>
+    /* Estilos globales (Advertencia/Rojo) */
+    :root {
+        --color-primario: #34495e;
+        --color-peligro: #c0392b;
+        --color-secundario: #f39c12;
+    }
 
-<h3>¿Estás seguro de que deseas eliminar este registro?</h3>
-<div>
-    <h4>Tipo de Documento</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id_tipo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id_tipo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-    </dl>
+    .delete-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-peligro);
+    }
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id_tipo" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-action="Index">Volver a la Lista</a>
-    </form>
+    h1 {
+        color: var(--color-primario);
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    h3 {
+        color: var(--color-peligro);
+        border-bottom: 2px solid #f2dede;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+        font-weight: 400;
+    }
+
+    .dl-detalle dt {
+        color: var(--color-secundario);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        padding-top: 10px;
+    }
+
+    .delete-actions {
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #bdc3c7;
+    }
+    /* Botones de acción específicos */
+    .btn-danger {
+        background-color: var(--color-peligro);
+        border-color: var(--color-peligro);
+        min-width: 120px;
+    }
+
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-primario);
+        min-width: 120px;
+    }
+</style>
+
+<div class="delete-card">
+    <h1><i class="fas fa-trash-alt"></i> Eliminar Tipo de Documento</h1>
+    <h3>🚨 ¿Estás seguro de que deseas eliminar este registro?</h3>
+
+    <div>
+        <h4>Categoría: <strong class="text-primary">@Model.Nombre</strong></h4>
+        <hr />
+        <dl class="row dl-detalle">
+            <dt class="col-sm-4 col-md-3">@Html.DisplayNameFor(model => model.Id_tipo)</dt>
+            <dd class="col-sm-8 col-md-9">@Html.DisplayFor(model => model.Id_tipo)</dd>
+
+            <dt class="col-sm-4 col-md-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+            <dd class="col-sm-8 col-md-9">@Html.DisplayFor(model => model.Nombre)</dd>
+        </dl>
+    </div>
+
+    <div class="delete-actions">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id_tipo" />
+            <button type="submit" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</button>
+            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+        </form>
+    </div>
 </div>

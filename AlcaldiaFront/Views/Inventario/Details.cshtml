@@ -1,53 +1,131 @@
 ﻿@model AlcaldiaFront.DTOs.InventarioDTOs.InventarioRespuestaDTO
 @{
     ViewData["Title"] = "Detalles del Elemento";
+    string GetBadgeClass(string estado) => estado?.ToLower() switch
+    {
+        "disponible" => "success",
+        "agotado" => "warning",
+        "baja" => "danger",
+        _ => "secondary"
+    };
 }
 
-<h1>Detalles</h1>
-<div>
-    <h4>Inventario</h4>
+<style>
+    /* Estilos globales (Antracita/Dorado) */
+    :root {
+        --color-primario: #34495e;
+        --color-secundario: #f39c12;
+    }
+
+    .details-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-secundario);
+    }
+
+    h1 {
+        color: var(--color-primario);
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .dl-detalle dt {
+        color: var(--color-primario);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        padding-top: 10px;
+    }
+
+    .dl-detalle dd {
+        margin-bottom: 5px;
+        border-bottom: 1px dashed #ecf0f1;
+        padding-bottom: 5px;
+    }
+
+    .action-bar {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #ecf0f1;
+    }
+    /* Botones específicos de acciones */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+    }
+
+    .btn-danger {
+        background-color: #c0392b;
+        border-color: #c0392b;
+    }
+
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-primario);
+    }
+</style>
+
+<div class="details-card">
+    <h1><i class="fas fa-clipboard-list text-secondary"></i> Detalles del Elemento</h1>
+    <h4>Ficha de Inventario</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre_item)
+
+    <dl class="row dl-detalle">
+        <dt class="col-sm-4 col-md-3">
+            <i class="fas fa-tag"></i> @Html.DisplayNameFor(model => model.Nombre_item)
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre_item)
+        <dd class="col-sm-8 col-md-9">
+            <h5>@Html.DisplayFor(model => model.Nombre_item)</h5>
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
+
+        <dt class="col-sm-4 col-md-3">
+            <i class="fas fa-file-alt"></i> @Html.DisplayNameFor(model => model.Descripcion)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Fecha_ingreso)
+
+        <dt class="col-sm-4 col-md-3">
+            <i class="far fa-calendar-alt"></i> @Html.DisplayNameFor(model => model.Fecha_ingreso)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.Fecha_ingreso)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Cantidad)
+
+        <dt class="col-sm-4 col-md-3">
+            <i class="fas fa-sort-numeric-up"></i> @Html.DisplayNameFor(model => model.Cantidad)
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Cantidad)
+        <dd class="col-sm-8 col-md-9">
+            <strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong>
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.MunicipioId)
+
+        <dt class="col-sm-4 col-md-3">
+            <i class="fas fa-map-marker-alt"></i> @Html.DisplayNameFor(model => model.MunicipioId)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.MunicipioId)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
+
+        <dt class="col-sm-4 col-md-3">
+            <i class="fas fa-thermometer-half"></i> @Html.DisplayNameFor(model => model.Estado)
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
+        <dd class="col-sm-8 col-md-9">
+            @{
+                string badgeClass = GetBadgeClass(Model?.Estado);
+            }
+            <span class="badge bg-@badgeClass badge-lg">
+                @Html.DisplayFor(model => model.Estado)
+            </span>
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id_inventario" class="btn btn-primary">Editar</a> |
-    <a asp-action="Delete" asp-route-id="@Model?.Id_inventario" class="btn btn-danger">Eliminar</a> |
-    <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+
+<div class="action-bar">
+    <a asp-action="Edit" asp-route-id="@Model?.Id_inventario" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
+    <a asp-action="Delete" asp-route-id="@Model?.Id_inventario" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
+    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
