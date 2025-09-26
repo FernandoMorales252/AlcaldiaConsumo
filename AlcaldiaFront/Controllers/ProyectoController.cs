@@ -1,18 +1,22 @@
-﻿using AlcaldiaFront.DTOs.ProyectoDTOs;
-using AlcaldiaFront.Services;
+﻿using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using AlcaldiaFront.DTOs.ProyectoDTOs;
 
 namespace AlcaldiaFront.Controllers
 {
     public class ProyectoController : Controller
     {
         private readonly ProyectoService _proyectoService;
+        private readonly MunicipioService _municipioService;
 
-        public ProyectoController(ProyectoService proyectoService)
+        public ProyectoController(ProyectoService proyectoService, MunicipioService municipioService)
         {
             _proyectoService = proyectoService;
+            _municipioService = municipioService;
         }
 
+        // GET: Proyecto
         public async Task<IActionResult> Index()
         {
             try
@@ -27,6 +31,7 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        // GET: Proyecto/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);
@@ -37,32 +42,45 @@ namespace AlcaldiaFront.Controllers
             return View(proyecto);
         }
 
-        public IActionResult Create()
+        // GET: Proyecto/Create
+        public async Task<IActionResult> Create()
         {
-            return View();
+            await PopulateDropdowns();
+            return View(new ProyectoCrearDTo());
         }
 
+        // POST: Proyecto/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProyectoCrearDTo proyectoDto)
         {
             if (!ModelState.IsValid)
             {
+                await PopulateDropdowns();
                 return View(proyectoDto);
             }
 
             try
             {
                 var nuevoProyecto = await _proyectoService.CreateAsync(proyectoDto, "tu_token_de_acceso");
+                if (nuevoProyecto == null)
+                {
+                    ModelState.AddModelError("", "No se pudo crear el proyecto.");
+                    await PopulateDropdowns();
+                    return View(proyectoDto);
+                }
+                TempData["Ok"] = "Proyecto creado con éxito."; 
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al crear el proyecto: " + ex.Message);
+                await PopulateDropdowns();
                 return View(proyectoDto);
             }
         }
 
+        // GET: Proyecto/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);
@@ -73,15 +91,16 @@ namespace AlcaldiaFront.Controllers
 
             var dto = new ProyectoActualizarDTo
             {
+                Id_Proyecto = proyecto.Id_Proyecto,
                 Nombre = proyecto.Nombre,
                 Descripcion = proyecto.Descripcion,
                 Fecha_Inicio = proyecto.Fecha_Inicio,
                 Fecha_Fin = proyecto.Fecha_Fin,
                 Presupuesto = proyecto.Presupuesto,
                 Estado = proyecto.Estado,
-                Id_Municipio = proyecto.Id_Municipio
+                MunicipioId = proyecto.MunicipioId
             };
-
+            await PopulateDropdowns();
             return View(dto);
         }
 
@@ -89,32 +108,29 @@ namespace AlcaldiaFront.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProyectoActualizarDTo proyectoDto)
         {
-            // Validación del modelo
+            if (id != proyectoDto.Id_Proyecto)
+            {
+                return NotFound();
+            }
             if (!ModelState.IsValid)
             {
+                await PopulateDropdowns();
                 return View(proyectoDto);
             }
 
-            try
+            var success = await _proyectoService.UpdateAsync(id, proyectoDto, "your_access_token");
+            if (success)
             {
-                // Llamada al servicio con el ID y el DTO
-                var success = await _proyectoService.UpdateAsync(id, proyectoDto, "tu_token_de_acceso");
-                if (success)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                TempData["Ok"] = "Proyecto actualizado con éxito."; 
+                return RedirectToAction(nameof(Index));
+            }
+            ModelState.AddModelError("", "Error al actualizar el proyecto.");
+            await PopulateDropdowns();
+            return View(proyectoDto);
 
-                // Manejo de errores si la actualización falla
-                ModelState.AddModelError("", "Error al actualizar el proyecto.");
-                return View(proyectoDto);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al actualizar el proyecto: " + ex.Message);
-                return View(proyectoDto);
-            }
         }
 
+        
         public async Task<IActionResult> Delete(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);
@@ -125,6 +141,7 @@ namespace AlcaldiaFront.Controllers
             return View(proyecto);
         }
 
+     
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -134,6 +151,7 @@ namespace AlcaldiaFront.Controllers
                 var success = await _proyectoService.DeleteAsync(id, "tu_token_de_acceso");
                 if (success)
                 {
+                    TempData["Ok"] = "Proyecto eliminado con éxito.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -145,6 +163,13 @@ namespace AlcaldiaFront.Controllers
                 ModelState.AddModelError("", "Error al eliminar el proyecto: " + ex.Message);
                 return View("Delete", await _proyectoService.GetByIdAsync(id));
             }
+        }
+
+        // Mapeo del Dropdown 
+        private async Task PopulateDropdowns()
+        {
+            var municipios = await _municipioService.GetAllAsync();
+            ViewBag.MunicipioId = new SelectList(municipios, "Id_Municipio", "Nombre_Municipio");
         }
     }
 }

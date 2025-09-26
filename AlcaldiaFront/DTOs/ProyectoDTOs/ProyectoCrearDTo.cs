@@ -8,6 +8,6 @@
         public DateTime Fecha_Fin { get; set; }
         public decimal Presupuesto { get; set; }
         public string Estado { get; set; } = "";
-        public int Id_Municipio { get; set; }
+        public int MunicipioId { get; set; }
     }
 }

@@ -41,7 +41,7 @@
                     @Html.DisplayNameFor(model => model.Estado)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Id_Municipio)
+                    Municipio
                 </th>
                 <th>Acciones</th>
             </tr>
@@ -84,7 +84,7 @@
                     </span>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id_Municipio)
+                    @Html.DisplayFor(modelItem => item.MunicipioId)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-primary">Editar</a>

@@ -126,12 +126,12 @@ namespace AlcaldiaFront.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var inventariosd = await _inventarioService.GetByIdAsync(id);
-            if (inventariosd == null)
+            var inventario = await _inventarioService.GetByIdAsync(id);
+            if (inventario == null)
             {
                 return NotFound();
             }
-            return View(inventariosd);
+            return View(inventario);
         }
 
         [HttpPost, ActionName("Delete")]
