@@ -132,7 +132,6 @@ namespace AlcaldiaFront.Controllers
                 await PopulateDropdowns();
                 return View(empleadoDto);
             }
-
             try
             {
                 var success = await _empleadoService.UpdateAsync(id, empleadoDto, "your_access_token");
@@ -150,6 +149,7 @@ namespace AlcaldiaFront.Controllers
                 ModelState.AddModelError("", "Error al actualizar el empleado: " + ex.Message);
                 await PopulateDropdowns();
                 return View(empleadoDto);
+
             }
         }
 
