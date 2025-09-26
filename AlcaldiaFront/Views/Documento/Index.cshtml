@@ -9,9 +9,9 @@
     // Mapeo simple de estado a clase de Bootstrap para los badges
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
-        "activo" => "success",
-        "inactivo" => "danger",
-        "pendiente" => "warning",
+        "vigente" => "success",
+        "anulado" => "danger",
+       
         _ => "secondary"
     };
 }
