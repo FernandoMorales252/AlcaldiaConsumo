@@ -22,6 +22,9 @@ namespace AlcaldiaFront.Controllers
             try
             {
                 var proyectos = await _proyectoService.GetAllAsync();
+                var municipios = await _municipioService.GetAllAsync();
+                var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+                ViewBag.MunicipioNombres = municipioNombres;
                 return View(proyectos);
             }
             catch (Exception ex)

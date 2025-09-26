@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<AlcaldiaFront.DTOs.ProyectoDTOs.ProyectoRespuestaDTo>
+@using System.Collections.Generic
 @{
     ViewData["Title"] = "Proyecto";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
 }
 
 <h1>Listado de Proyectos</h1>
@@ -84,7 +86,14 @@
                     </span>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MunicipioId)
+                    @{
+                            string nombreMunicipio = "no encontrado";
+                            if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
+                            {
+                                nombreMunicipio = municipioNombres[item.MunicipioId];
+                            }
+                    }
+                        @nombreMunicipio
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-primary">Editar</a>

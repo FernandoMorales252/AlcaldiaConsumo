@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<AlcaldiaFront.DTOs.DocumentoDTOs.DocumentoRespuestaDTO>
+@using System.Collections.Generic
 
 @{
     ViewData["Title"] = "Listado de Documentos";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
 }
 
 <h1>Documentos</h1>
@@ -32,7 +34,7 @@
             <th>@Html.DisplayNameFor(model => model.Propietario)</th>
             <th>@Html.DisplayNameFor(model => model.Estado)</th>
             <th>@Html.DisplayNameFor(model => model.TipoDocumentoId)</th>
-            <th>@Html.DisplayNameFor(model => model.MunicipioId)</th>
+            <th>Municipio </th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -46,7 +48,16 @@
                 <td>@Html.DisplayFor(modelItem => item.Propietario)</td>
                 <td>@Html.DisplayFor(modelItem => item.Estado)</td>
                 <td>@Html.DisplayFor(modelItem => item.TipoDocumentoId)</td>
-                <td>@Html.DisplayFor(modelItem => item.MunicipioId)</td>
+                <td>
+                    @{
+                        string nombreMunicipio = "no encontrado"; 
+                        if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
+                        {
+                            nombreMunicipio = municipioNombres[item.MunicipioId];
+                        }
+                    }
+                    @nombreMunicipio
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id_documento" class="btn btn-sm btn-warning">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.Id_documento" class="btn btn-sm btn-info">Detalles</a> |
