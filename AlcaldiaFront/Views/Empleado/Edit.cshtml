@@ -4,66 +4,167 @@
     ViewData["Title"] = "Editar Empleado";
 }
 
-<h1>Editar Empleado</h1>
-<h4>Empleado</h4>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<style>
+    /* --------------------------------------------------
+           PATRÓN DE COLORES FORMAL ADAPTADO (Edición)
+           -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-texto: #2c3e50;
+    }
 
-            <input type="hidden" asp-for="Id_empleado" />
+    /* Contenedor principal del formulario (Tarjeta de Edición) */
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-left: 5px solid var(--color-secundario); /* Borde de acento lateral */
+    }
 
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
 
-            <div class="form-group">
-                <label asp-for="Apellido" class="control-label"></label>
-                <input asp-for="Apellido" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger"></span>
-            </div>
+    h4 {
+        color: #7f8c8d;
+    }
 
-            <div class="form-group">
-                <label asp-for="Fecha_contratacion" class="control-label"></label>
-                <input asp-for="Fecha_contratacion" type="date" class="form-control" />
-                <span asp-validation-for="Fecha_contratacion" class="text-danger"></span>
-            </div>
+    /* Estilo de los campos de formulario */
+    .form-control {
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
 
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
+        .form-control:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.25rem rgba(243, 156, 18, 0.25); /* Sombra de acento */
+        }
 
-            <div class="form-group">
-                <label asp-for="CargoId" class="control-label">Cargo</label>
-                <select asp-for="CargoId" class="form-control" asp-items="ViewBag.CargoId">
-                    <option value="">-- Seleccionar Cargo --</option>
-                </select>
-                <span asp-validation-for="CargoId" class="text-danger"></span>
-            </div>
+    /* Estilo para las etiquetas (labels) */
+    .control-label {
+        font-weight: 600;
+        color: var(--color-texto);
+        margin-bottom: 5px;
+    }
 
-            <div class="form-group">
-                <label asp-for="MunicipioId" class="control-label">Municipio</label>
-                <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
-                    <option value="">-- Seleccionar Municipio --</option>
-                </select>
-                <span asp-validation-for="MunicipioId" class="text-danger"></span>
-            </div>
+    /* Botón Guardar (Primario) */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
 
-            <div class="form-group mt-3">
-                <input type="submit" value="Guardar Cambios" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    /* Botón Cancelar (Secundario) */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+        }
+
+    /* Contenedor de botones (para espaciado) */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    /* Mensajes de validación */
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="fas fa-user-edit"></i> Editar Empleado</h1>
+    <h4>Actualización de Datos</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <input type="hidden" asp-for="Id_empleado" />
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Nombre" class="control-label"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Apellido" class="control-label"></label>
+                        <input asp-for="Apellido" class="form-control" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Fecha_contratacion" class="control-label"></label>
+                        <input asp-for="Fecha_contratacion" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_contratacion" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Estado" class="control-label"></label>
+                        <select asp-for="Estado" class="form-control">
+                            <option value="Activo">Activo</option>
+                            <option value="De Licencia">De Licencia</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="CargoId" class="control-label">Cargo</label>
+                        <select asp-for="CargoId" class="form-control" asp-items="ViewBag.CargoId">
+                            <option value="">-- Seleccionar Cargo --</option>
+                        </select>
+                        <span asp-validation-for="CargoId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="MunicipioId" class="control-label">Municipio</label>
+                        <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
+                            <option value="">-- Seleccionar Municipio --</option>
+                        </select>
+                        <span asp-validation-for="MunicipioId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Volver a la Lista</a>
+<div class="mt-3">
+    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
 
 @section Scripts {
