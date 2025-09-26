@@ -4,36 +4,133 @@
     ViewData["Title"] = "Eliminar Cargo";
 }
 
-<h1>Eliminar</h1>
+<style>
+    /* --------------------------------------------------
+       PATRÓN DE COLORES FORMAL ADAPTADO (Eliminar)
+       -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
 
-<h3>¿Estás seguro de que deseas eliminar este registro?</h3>
-<div>
-    <h4>Cargo</h4>
+    /* Contenedor principal del formulario (Tarjeta de Eliminación) */
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-secundario); /* Borde de acento superior */
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        margin-bottom: 5px;
+        font-weight: 600;
+        padding-left: 0;
+    }
+
+    h3 {
+        color: #e74c3c; /* Rojo para la advertencia de eliminación */
+        font-weight: 600;
+    }
+
+    h4 {
+        color: #7f8c8d;
+    }
+
+    /* Estilo para las listas de definición (dl) */
+    dl dt {
+        font-weight: 600;
+        color: var(--color-texto);
+    }
+
+    dl dd {
+        color: #555;
+    }
+
+    /* Botón Eliminar (Peligro) */
+    .btn-danger {
+        background-color: #e74c3c;
+        border-color: #e74c3c;
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-danger:hover {
+            background-color: #c0392b; /* Tono más oscuro del rojo */
+            border-color: #c0392b;
+        }
+
+    /* Botón Volver (Secundario) */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: var(--color-texto);
+        }
+
+    /* Contenedor de botones (para espaciado) */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+        display: flex;
+        gap: 10px;
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="fas fa-trash-alt text-danger"></i> Eliminar Cargo</h1>
+    <h3>¿Estás seguro de que deseas eliminar este registro?</h3>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id_Cargo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id_Cargo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre_cargo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre_cargo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-    </dl>
+    
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+            <h4>Información del Cargo</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Id_Cargo)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Id_Cargo)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Nombre_cargo)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Nombre_cargo)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Descripcion)
+                </dd>
+            </dl>
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id_Cargo" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-action="Index">Volver a la Lista</a>
-    </form>
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id_Cargo" />
+                <div class="form-actions">
+                    <button type="submit" value="Eliminar" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>

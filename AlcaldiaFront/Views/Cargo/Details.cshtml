@@ -4,33 +4,119 @@
     ViewData["Title"] = "Detalles del Cargo";
 }
 
-<h1>Detalles</h1>
+<style>
+    /* --------------------------------------------------
+           PATRÓN DE COLORES FORMAL ADAPTADO (Detalles)
+           -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-texto: #2c3e50;
+    }
 
-<div>
-    <h4>Cargo</h4>
+    /* Contenedor principal (simulando una tarjeta) */
+    .details-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-secundario); /* Borde de acento superior */
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        margin-bottom: 5px;
+        font-weight: 600;
+        padding-left: 0;
+    }
+
+    h4 {
+        color: #7f8c8d; /* Gris tenue para subtítulos */
+    }
+
+    /* Estilo de la lista de definición */
+    dl dt {
+        font-weight: 600;
+        color: var(--color-texto);
+        margin-top: 10px;
+    }
+
+    dl dd {
+        color: #555;
+    }
+
+    /* Contenedor de botones (para espaciado) */
+    .button-container {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Botones de acción */
+    .btn-edit {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        color: white;
+        transition: background-color 0.3s;
+    }
+
+        .btn-edit:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    .btn-back {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        transition: background-color 0.3s;
+    }
+
+        .btn-back:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: var(--color-texto);
+        }
+</style>
+
+<div class="details-container">
+    <h1><i class="fas fa-info-circle"></i> Detalles del Cargo</h1>
+    <h4>Información del Puesto de Trabajo</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id_Cargo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id_Cargo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre_cargo)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre_cargo)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id_Cargo">Editar</a> |
-    <a asp-action="Index">Volver a la Lista</a>
+
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Id_Cargo)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Id_Cargo)
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Nombre_cargo)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Nombre_cargo)
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Descripcion)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <a asp-action="Edit" asp-route-id="@Model?.Id_Cargo" class="btn btn-edit"><i class="fas fa-edit"></i> Editar</a>
+        <a asp-action="Index" class="btn btn-back"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+    </div>
 </div>

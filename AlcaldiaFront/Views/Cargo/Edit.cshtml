@@ -4,32 +4,137 @@
     ViewData["Title"] = "Editar Cargo";
 }
 
-<h1>Editar Cargo</h1>
+<style>
+    /* --------------------------------------------------
+           PATRÓN DE COLORES FORMAL ADAPTADO A FORMULARIOS
+           -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
 
-<h4>Cargo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id_Cargo" />
-            <div class="form-group">
-                <label asp-for="Nombre_cargo" class="control-label"></label>
-                <input asp-for="Nombre_cargo" class="form-control" />
-                <span asp-validation-for="Nombre_cargo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <input type="submit" value="Guardar" class="btn btn-primary" />
-        </form>
+    /* Contenedor principal del formulario (simulando una tarjeta) */
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-secundario); /* Borde de acento superior */
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        padding-left: 0;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    h4 {
+        color: #7f8c8d; /* Gris tenue para subtítulos */
+    }
+
+    /* Estilo de los campos de formulario */
+    .form-control {
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.25rem rgba(243, 156, 18, 0.25); /* Sombra de acento */
+        }
+
+    /* Estilo para las etiquetas (labels) */
+    .control-label {
+        font-weight: 600;
+        color: var(--color-texto);
+        margin-bottom: 5px;
+    }
+
+    /* Botón Guardar */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    /* Botón Cancelar/Volver */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: var(--color-texto);
+        }
+
+    /* Contenedor de botones (para espaciado) */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Mensajes de validación */
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="fas fa-edit"></i> Editar Cargo</h1>
+    <h4>Actualizar Datos del Puesto</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-lg-8 col-md-10">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <input type="hidden" asp-for="Id_Cargo" />
+
+                <div class="form-group">
+                    <label asp-for="Nombre_cargo" class="control-label"></label>
+                    <input asp-for="Nombre_cargo" class="form-control" />
+                    <span asp-validation-for="Nombre_cargo" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group form-actions">
+                    <button type="submit" value="Guardar" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Volver a la Lista</a>
+<div class="mt-3">
+    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
 
 @section Scripts {
