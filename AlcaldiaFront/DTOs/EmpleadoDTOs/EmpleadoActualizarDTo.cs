@@ -2,6 +2,7 @@
 {
     public class EmpleadoActualizarDTo
     {
+        public int Id_empleado {get; set; }
         public string Nombre { get; set; } = "";
         public string Apellido { get; set; } = "";
         public DateTime Fecha_contratacion { get; set; }

@@ -1,0 +1,81 @@
+﻿@model IEnumerable<AlcaldiaFront.DTOs.EmpleadoDTOs.EmpleadoRespuestaDTo>
+@using System.Collections.Generic
+
+@{
+    ViewData["Title"] = "Listado de Empleados";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+    Dictionary<int, string> cargoNombres = ViewBag.CargoNombres as Dictionary<int, string>;
+}
+
+<h1>Empleados</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Empleado</a>
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["Ok"]
+    </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Id_empleado)</th>
+            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Apellido)</th>
+            <th>@Html.DisplayNameFor(model => model.Fecha_contratacion)</th>
+            <th>@Html.DisplayNameFor(model => model.Estado)</th>
+            <th>Cargo</th>
+            <th>Municipio</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id_empleado)</td>
+                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Apellido)</td>
+                <td>@Html.DisplayFor(modelItem => item.Fecha_contratacion)</td>
+                <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                <td>
+                    @{
+                        string nombreCargo = "No encontrado";
+                        // Asegúrate de que el diccionario no es nulo y contiene la clave.
+                        if (cargoNombres != null && cargoNombres.ContainsKey(item.CargoId))
+                        {
+                            nombreCargo = cargoNombres[item.CargoId];
+                        }
+                    }
+                    @nombreCargo
+                </td>
+                <td>
+                    @{
+                        string nombreMunicipio = "No encontrado";
+                        // Asegúrate de que el diccionario no es nulo y contiene la clave.
+                        if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
+                        {
+                            nombreMunicipio = municipioNombres[item.MunicipioId];
+                        }
+                    }
+                    @nombreMunicipio
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id_empleado" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id_empleado" class="btn btn-sm btn-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id_empleado" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
