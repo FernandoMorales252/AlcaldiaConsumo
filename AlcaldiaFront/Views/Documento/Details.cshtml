@@ -1,0 +1,41 @@
+﻿@model AlcaldiaFront.DTOs.DocumentoDTOs.DocumentoRespuestaDTO
+
+@{
+    ViewData["Title"] = "Detalles del Documento";
+}
+
+<h1>Detalles</h1>
+
+<div>
+    <h4>Documento</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id_documento)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Id_documento)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Numero_documento)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Numero_documento)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Fecha_emision)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Fecha_emision)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Propietario)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Propietario)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Estado)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoDocumentoId)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.TipoDocumentoId)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.MunicipioId)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.MunicipioId)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id_documento" class="btn btn-warning">Editar</a> |
+    <a asp-action="Index">Volver a la Lista</a>
+</div>

@@ -95,7 +95,7 @@ namespace AlcaldiaFront.Controllers
                 return NotFound();
             }
 
-            // ✅ CORREGIDO: Mapear desde 'documento' (la respuesta de la API) a 'dto'.
+            
             var dto = new DocumentoActualizarDTO
             {
                 Id_documento = documento.Id_documento, // Usar documento.Id_documento
@@ -139,6 +139,30 @@ namespace AlcaldiaFront.Controllers
             ModelState.AddModelError("", "Error al actualizar el documento.");
             await PopulateDropdowns();
             return View(dto);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var documentos = await _documentoService.GetByIdAsync(id);
+            if (documentos == null)
+            {
+                return NotFound();
+            }
+            return View(documentos);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var success = await _documentoService.DeleteAsync(id, "tu_token_de_acceso");
+            if (success)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            ModelState.AddModelError("", "Error al eliminar el cargo.");
+            return View("Delete", await _documentoService.GetByIdAsync(id));
         }
 
         // This is a helper method to fetch data for dropdowns.

@@ -18,6 +18,7 @@ builder.Services.AddScoped<AlcaldiaFront.Services.TipoDocService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.MunicipioService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.DocumentoService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.CargoService>();
+builder.Services.AddScoped<AlcaldiaFront.Services.InventarioService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,29 @@
+﻿@model AlcaldiaFront.DTOs.DocumentoDTOs.DocumentoRespuestaDTO
+
+@{
+    ViewData["Title"] = "Eliminar Documento";
+}
+
+<h1>Eliminar</h1>
+
+<h3>¿Estás seguro de que deseas eliminar este documento?</h3>
+<div>
+    <h4>Documento: @Model.Numero_documento</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id_documento)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Id_documento)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Propietario)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Propietario)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Fecha_emision)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Fecha_emision)</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id_documento" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index">Volver a la Lista</a>
+    </form>
+</div>
