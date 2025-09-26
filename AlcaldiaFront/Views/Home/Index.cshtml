@@ -1,8 +1,182 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio - Alcaldía Municipal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /* --------------------------------------------------
+           ESTILOS FORMALES AÑADIDOS
+           -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita - Formal */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
+
+    /* Estilo del Hero Section */
+    .hero-formal {
+        background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), /* Overlay oscuro */
+        url('tu-imagen-ciudad.jpg') no-repeat center center/cover;
+        color: white;
+        padding: 6rem 0;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+        .hero-formal h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 4px solid var(--color-secundario);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .hero-formal p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+    /* Estilo de la barra de acceso rápido */
+    .quick-access-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: -4rem auto 3rem; /* Lo subimos para que se superponga al hero */
+        padding: 0 1rem;
+    }
+
+        .quick-access-bar a {
+            background: white;
+            padding: 2rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--color-texto);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 5px solid var(--color-primario);
+        }
+
+            .quick-access-bar a:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                border-top-color: var(--color-secundario);
+            }
+
+        .quick-access-bar i {
+            font-size: 2rem;
+            color: var(--color-secundario);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+    /* Estilo de la sección de noticias */
+    .news-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Noticias a la izquierda, Anuncios a la derecha */
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .urgent-announcement {
+        background: var(--color-primario);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+    }
+
+        .urgent-announcement h3 {
+            color: var(--color-secundario);
+        }
+
+    /* Si usas FontAwesome, asegúrate de incluir la librería en tu Layout */
+    /* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> */
+
+</style>
+
+<div class="main-content">
+
+    <section class="hero-formal">
+        <h1>Alcaldía Municipal de [Tu Ciudad]</h1>
+        <p>Gobernando con Transparencia, Innovación y Servicio al Ciudadano.</p>
+        <a href="/Tramites" class="btn btn-warning btn-lg">
+            <i class="fas fa-file-contract"></i> Portal de Trámites en Línea
+        </a>
+    </section>
+
+    <section class="quick-access-bar">
+        <a href="/Pagos">
+            <i class="fas fa-money-check-alt"></i> Pagar Impuestos
+        </a>
+        <a href="/Citas">
+            <i class="fas fa-calendar-check"></i> Solicitar Cita
+        </a>
+        <a href="/Quejas">
+            <i class="fas fa-bullhorn"></i> Buzón Ciudadano
+        </a>
+        <a href="/Licitaciones">
+            <i class="fas fa-gavel"></i> Licitaciones
+        </a>
+        <a href="/Directorio">
+            <i class="fas fa-address-book"></i> Directorio Oficial
+        </a>
+    </section>
+
+    <section class="news-grid">
+        <div class="news-list">
+            <h2>Últimas Noticias Oficiales</h2>
+            <hr />
+            <div class="news-item mb-3">
+                <small class="text-muted">25 de Septiembre de 2025</small>
+                <h4><a href="#">Inauguración del Nuevo Parque Ecológico Metropolitano</a></h4>
+                <p>El Alcalde [Nombre] lideró la ceremonia de apertura del parque, un proyecto clave de la agenda verde municipal.</p>
+            </div>
+            <div class="news-item mb-3">
+                <small class="text-muted">20 de Septiembre de 2025</small>
+                <h4><a href="#">Campaña de Actualización de Datos Catastrales</a></h4>
+                <p>Recordatorio importante a todos los contribuyentes sobre el nuevo plazo para la actualización de sus propiedades.</p>
+            </div>
+            <div class="news-item mb-3">
+                <small class="text-muted">15 de Septiembre de 2025</small>
+                <h4><a href="#">Resultados del Programa de Becas Municipales 2025</a></h4>
+                <p>Consulte la lista oficial de beneficiarios para el ciclo académico. ¡Felicidades a los ganadores!</p>
+            </div>
+            <a href="/ArchivoNoticias" class="btn btn-outline-secondary mt-3">Ver Archivo Completo →</a>
+        </div>
+
+        <div class="urgent-announcement">
+            <h3>📢 Anuncio de Interés Público</h3>
+            <hr style="border-color: rgba(255,255,255,0.3);" />
+            <p><strong>ALERTA MUNICIPAL:</strong> Se informa a la ciudadanía el cierre temporal de la Av. Central por trabajos de reparación mayores desde el 26 al 28 de septiembre. Por favor, tomar rutas alternas.</p>
+            <p class="text-right mt-3"><a href="#" class="text-warning">Más detalles aquí</a></p>
+        </div>
+    </section>
+
+    <section class="bg-light py-5 mt-5">
+        <div class="container text-center">
+            <h2>Transparencia en Cifras</h2>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <h3 class="display-4 text-primary">62.5%</h3>
+                    <p class="lead">Presupuesto Ejecutado (Q3)</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="display-4 text-success">980</h3>
+                    <p class="lead">Proyectos de Infraestructura Culminados</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="display-4 text-warning">4.8 / 5</h3>
+                    <p class="lead">Calificación Ciudadana de Servicios</p>
+                </div>
+            </div>
+            <a href="/Transparencia" class="btn btn-primary mt-4">Visitar Portal de Transparencia</a>
+        </div>
+    </section>
+
 </div>
