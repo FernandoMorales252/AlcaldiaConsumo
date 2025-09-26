@@ -4,28 +4,135 @@
     ViewData["Title"] = "Crear Municipio";
 }
 
-<h1>Agregar Municipio</h1>
+@* Incluimos Font Awesome para los iconos *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
-<h4>Municipio</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nombre_Municipio" class="control-label"></label>
-                <input asp-for="Nombre_Municipio" class="form-control" />
-                <span asp-validation-for="Nombre_Municipio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-            </div>
-        </form>
+<style>
+    /* --------------------------------------------------
+            PATRÓN DE COLORES FORMAL ADAPTADO A FORMULARIOS
+            -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
+
+    /* Contenedor principal del formulario (simulando una tarjeta) */
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        border-left: 5px solid var(--color-secundario);
+        padding-left: 15px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    h4 {
+        color: #7f8c8d; /* Gris tenue para subtítulos */
+    }
+
+    /* Estilo de los campos de formulario */
+    .form-control {
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.25rem rgba(243, 156, 18, 0.25); /* Sombra de acento */
+        }
+
+    /* Estilo para las etiquetas (labels) */
+    .control-label {
+        font-weight: 600;
+        color: var(--color-texto);
+        margin-bottom: 5px;
+    }
+
+    /* Botón Crear */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    /* Botón Cancelar/Volver */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: var(--color-texto);
+        }
+
+    /* Contenedor de botones (para espaciado) */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    /* Mensajes de validación */
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+</style>
+
+<div class="form-container">
+
+    <h1><i class="fas fa-city"></i> @ViewData["Title"]</h1>
+    <h4>Datos del Municipio</h4>
+    <hr />
+
+    <div class="row">
+        @* Usamos una columna más ancha (col-md-6) para formularios simples *@
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <form asp-action="Create">
+                @* Mensaje de resumen de validación, estilizado como alerta *@
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-group mb-4">
+                    @* Agregamos mb-4 para espaciado inferior *@
+                    <label asp-for="Nombre_Municipio" class="control-label"></label>
+                    <input asp-for="Nombre_Municipio" class="form-control" placeholder="Ej: San Salvador Centro" />
+                    <span asp-validation-for="Nombre_Municipio" class="text-danger"></span>
+                </div>
+
+                @* Contenedor para botones de acción *@
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary me-2"><i class="fas fa-save"></i> Crear</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Volver a la Lista</a>
+<div class="mt-3">
+    <a asp-action="Index" class="text-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
 
 @section Scripts {

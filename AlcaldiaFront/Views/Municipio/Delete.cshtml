@@ -4,31 +4,163 @@
     ViewData["Title"] = "Eliminar Municipio";
 }
 
-<h1>Eliminar</h1>
+@* Incluimos Font Awesome para los iconos *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
-<h3>¿Estás seguro de que deseas eliminar este registro?</h3>
-<div>
-    <h4>Municipio</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id_Municipio)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id_Municipio)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre_Municipio)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre_Municipio)
-        </dd>
-    </dl>
+<style>
+    /* --------------------------------------------------
+            PATRÓN DE COLORES FORMAL ADAPTADO A CONFIRMACIÓN
+            -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-peligro: #c0392b; /* Rojo de Advertencia */
+        --color-texto: #2c3e50;
+    }
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id_Municipio" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-action="Index">Volver a la Lista</a>
-    </form>
+    /* Contenedor principal (Tarjeta de advertencia) */
+    .delete-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-peligro); /* Borde de peligro */
+        max-width: 700px; /* Limita el ancho en escritorio */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    /* Pregunta de confirmación */
+    h3 {
+        color: var(--color-peligro); /* Resaltar la pregunta en rojo */
+        border-bottom: 2px solid #f2dede;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+        font-weight: 400;
+        font-size: 1.5rem;
+    }
+
+    /* Título de la sección de datos */
+    h4 {
+        color: var(--color-primario);
+        font-weight: 500;
+    }
+
+    /* Lista de Detalles (dl) */
+    .dl-horizontal dt {
+        color: var(--color-secundario); /* Etiquetas en color de acento */
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        padding-top: 5px;
+    }
+
+    .dl-horizontal dd {
+        margin-bottom: 10px;
+        border-bottom: 1px dashed #ecf0f1;
+        padding-bottom: 5px;
+    }
+
+    /* Responsive adjustment for small screens */
+    @@media (max-width: 576px) {
+        .dl-horizontal dt {
+            /* Ocupa todo el ancho en móvil para que el dato vaya abajo */
+            width: 100% !important;
+            float: none !important;
+            text-align: left !important;
+        }
+
+        .dl-horizontal dd {
+            /* Estilo para el dato debajo de la etiqueta */
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+        }
+    }
+
+
+    /* Botón Eliminar (Rojo de peligro) */
+    .btn-danger {
+        background-color: var(--color-peligro);
+        border-color: var(--color-peligro);
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-danger:hover {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+    /* Botón Cancelar/Volver (Secundario) */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: var(--color-texto);
+        }
+
+    .delete-actions {
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #bdc3c7;
+    }
+</style>
+
+<div class="delete-card">
+    <h1><i class="fas fa-trash-alt"></i> Eliminar Municipio</h1>
+    <h3>🚨 ¿Estás seguro de que deseas eliminar este registro? Esta acción es irreversible.</h3>
+
+    <div>
+        <h4>Información del Municipio</h4>
+        <hr />
+        @* Usamos la estructura 'row dl-horizontal' y col-sm-X para responsive *@
+        <dl class="row dl-horizontal">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Id_Municipio)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Id_Municipio)
+            </dd>
+
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Nombre_Municipio)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Nombre_Municipio)
+            </dd>
+        </dl>
+    </div>
+
+    <div class="delete-actions">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id_Municipio" />
+
+            @* Botón de eliminación en rojo y con icono de advertencia *@
+            <button type="submit" class="btn btn-danger me-2"><i class="fas fa-exclamation-triangle"></i> Eliminar</button>
+
+            @* Botón de cancelación en color secundario *@
+            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Cancelar</a>
+        </form>
+    </div>
 </div>
 
+@section Scripts {
+    @{
+        // Aquí puedes incluir cualquier script de validación si fuera necesario.
+    }
+}
