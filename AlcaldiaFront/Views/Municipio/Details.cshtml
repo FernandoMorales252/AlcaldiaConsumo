@@ -100,7 +100,7 @@
     <hr />
 
     <dl class="row dl-detalle">
-@* ID del Municipio *@
+        @* ID del Municipio *@
         <dt class="col-sm-4 col-md-3">
             @Html.DisplayNameFor(model => model.Id_Municipio)
         </dt>
@@ -108,10 +108,23 @@
             <span class="badge bg-secondary">#@Html.DisplayFor(model => model.Id_Municipio)</span>
         </dd>
 
-@* Nombre del Municipio *@
+        @* Nombre del Municipio *@
         <dt class="col-sm-4 col-md-3">
             @Html.DisplayNameFor(model => model.Nombre_Municipio)
         </dt>
         <dd class="col-sm-8 col-md-9">
             <h3 class="mb-0 text-primary">@Html.DisplayFor(model => model.Nombre_Municipio)</h3>
         </dd>
+
+        @* Aquí se podrían agregar más campos si el DTO de Municipio fuera más complejo *@
+
+    </dl>
+
+    <div class="action-bar">
+        @* Botón Editar *@
+        <a asp-action="Edit" asp-route-id="@Model?.Id_Municipio" class="btn btn-primary me-2"><i class="fas fa-edit"></i> Editar Municipio</a>
+
+        @* Botón Volver *@
+        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+    </div>
+</div>
