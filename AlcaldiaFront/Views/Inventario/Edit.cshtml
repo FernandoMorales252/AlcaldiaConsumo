@@ -1,0 +1,78 @@
+﻿@model AlcaldiaFront.DTOs.InventarioDTOs.InventarioActualizarDTO
+@{
+    ViewData["Title"] = "Editar Elemento";
+}
+
+<h1>Editar Elemento</h1>
+<h4>Inventario</h4>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Nombre_item" class="control-label"></label>
+                <input asp-for="Nombre_item" class="form-control" />
+                <span asp-validation-for="Nombre_item" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Cantidad" class="control-label"></label>
+                        <input asp-for="Cantidad" class="form-control" type="number" />
+                        <span asp-validation-for="Cantidad" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Fecha_ingreso" class="control-label"></label>
+                <input asp-for="Fecha_ingreso" class="form-control" type="date" />
+                <span asp-validation-for="Fecha_ingreso" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Estado" class="control-label"></label>
+                <select asp-for="Estado" class="form-control">
+                    <option value="">Seleccionar Estado</option>
+                    <option value="disponible">disponible</option>
+                    <option value="agotado">agotado</option>
+                    <option value="baja">baja</option>
+                </select>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MunicipioId" class="control-label"></label>
+                <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
+                    <option value="">Seleccionar Municipio</option>
+                </select>
+                <span asp-validation-for="MunicipioId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="editar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

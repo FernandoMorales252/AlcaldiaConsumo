@@ -64,6 +64,43 @@ namespace AlcaldiaFront.Services
         }
 
 
+        // AlcaldiaFront/Services/ApiService.cs
+
+        // ... (El constructor y otros métodos se mantienen igual)
+
+        // ✅ Método Put que no espera contenido (ideal para 204 No Content)
+        public async Task PutNoContentAsync<TRequest>(string endpoint, int Id, TRequest data, string token = null)
+        {
+            // Limpia y añade el token (si no es null)
+            AddAuthorizationHeader(token);
+
+            if (!Uri.TryCreate(_httpClient.BaseAddress, $"{endpoint}/{Id}", out var finalUri))
+            {
+                throw new ArgumentException($"URL de actualización no válida: {endpoint}/{Id}");
+            }
+
+            var content = new StringContent(
+                JsonSerializer.Serialize(data, _jsonOptions),
+                Encoding.UTF8,
+                "application/json");
+
+            // Usa el Uri final
+            var response = await _httpClient.PutAsync(finalUri, content);
+
+            // Manejo detallado de errores para capturar el 404
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorContent = await response.Content.ReadAsStringAsync();
+
+                // Lanzamos la excepción con la URL de la falla
+                throw new HttpRequestException(
+                    $"Actualización fallida. URL: {finalUri}. Código: {(int)response.StatusCode}. Mensaje del servidor: {errorContent}",
+                    null,
+                    response.StatusCode
+                );
+            }
+        }
+
 
         //Delete generico 
         public async Task<bool> DeleteAsync(string endpoint, int Id, string token = null)

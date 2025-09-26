@@ -112,15 +112,20 @@ namespace AlcaldiaFront.Controllers
             return View(dto);
         }
 
-        // POST: Documento/Edit/5
-        // Processes the update of a document.
+        // DocumentoController.cs - POST Edit (MODIFICADO)
+
+        // AlcaldiaFront/Controllers/DocumentoController.cs
+
+        // AlcaldiaFront/Controllers/DocumentoController.cs
+        // ...
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, DocumentoActualizarDTO dto)
         {
             if (id != dto.Id_documento)
             {
-                return NotFound();
+                return NotFound(); // Ya manejado por la verificación previa
             }
 
             if (!ModelState.IsValid)
@@ -129,14 +134,40 @@ namespace AlcaldiaFront.Controllers
                 return View(dto);
             }
 
-            var success = await _documentoService.UpdateAsync(id, dto, "your_access_token");
-            if (success)
+            try
             {
+                // Llama al servicio que ahora lanza HttpRequestException en caso de 404.
+                await _documentoService.UpdateAsync(id, dto, "your_access_token");
+
                 TempData["Ok"] = "Documento actualizado con éxito.";
                 return RedirectToAction(nameof(Index));
             }
+            catch (HttpRequestException ex)
+            {
+                // 🚨 Captura la excepción. El mensaje contendrá la URL, el código (404) y el cuerpo del error.
 
-            ModelState.AddModelError("", "Error al actualizar el documento.");
+                string errorMessage = $"Error al actualizar el documento: {ex.Message}";
+
+                // Si el código es 404, el problema es la URL o el ID.
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    errorMessage = $"Error 404: No se encontró el documento con ID {id}. Verifique si existe o si la URL es correcta.";
+                }
+
+                ModelState.AddModelError("", errorMessage);
+            }
+            catch (ArgumentException ex)
+            {
+                // Captura el error de ID inconsistente lanzado en el DocumentoService
+                ModelState.AddModelError("", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Captura cualquier otra excepción inesperada
+                ModelState.AddModelError("", $"Ocurrió un error inesperado: {ex.Message}");
+            }
+
+            // Si hubo un error, volvemos a la vista.
             await PopulateDropdowns();
             return View(dto);
         }
