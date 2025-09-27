@@ -1,7 +1,9 @@
 ﻿@model AlcaldiaFront.DTOs.ProyectoDTOs.ProyectoRespuestaDTo
 @{
     ViewData["Title"] = "Eliminar Proyecto";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
 }
+
 
 <style>
     /* --------------------------------------------------
@@ -102,52 +104,55 @@
         <hr />
         <dl class="row dl-horizontal">
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Id_Proyecto)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Id_Proyecto)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Nombre)
+                Nombre del proyecto
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Nombre)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Descripcion)
+                Descripcion del proyecto
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Descripcion)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Fecha_Inicio)
+                Fecha de inicio
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Fecha_Inicio)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Fecha_Fin)
+                Fecha de finalizacion
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Fecha_Fin)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Presupuesto)
+                Presupuesto destinado
             </dt>
             <dd class="col-sm-9">
                 $@Html.DisplayFor(model => model.Presupuesto)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Estado)
+                Estado actual
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Estado)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.MunicipioId)
+                Municipio
             </dt>
             <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.MunicipioId)
+                @{
+                    string nombreMunicipio = "ID de Municipio no encontrado"; 
+                    if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                    {
+                        nombreMunicipio = municipioNombres[Model.MunicipioId];
+                    }
+                }
+                <strong class="text-primary">@nombreMunicipio</strong>
+
+                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
             </dd>
         </dl>
     </div>

@@ -120,7 +120,6 @@
         <table class="table table-hover table-striped" id="tipoDocTable">
             <thead>
                 <tr>
-                    <th class="col-1">@Html.DisplayNameFor(model => model.Id_tipo)</th>
                     <th class="text-start-col">@Html.DisplayNameFor(model => model.Nombre)</th>
                     <th class="col-3">Acciones</th>
                 </tr>
@@ -129,7 +128,6 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Id_tipo)</td>
                         <td class="text-start-col">@Html.DisplayFor(modelItem => item.Nombre)</td>
                         <td class="action-buttons">
                             <a asp-action="Edit" asp-route-id="@item.Id_tipo" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>

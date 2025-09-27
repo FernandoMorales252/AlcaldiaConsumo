@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Detalles del Empleado";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+    Dictionary<int, string> cargoNombres = ViewBag.CargoNombres as Dictionary<int, string>;
     // Mapeo simple de estado a clase de Bootstrap para los badges
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
@@ -110,35 +112,28 @@
 
     <dl class="row dl-detalle">
         <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Id_empleado)
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Id_empleado)
-        </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Nombre)
+            Nombre empleado
         </dt>
         <dd class="col-sm-8 col-md-9">
             <h5 class="mb-0">@Html.DisplayFor(model => model.Nombre)</h5>
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Apellido)
+            Apellido empleado
         </dt>
         <dd class="col-sm-8 col-md-9">
             <h5 class="mb-0">@Html.DisplayFor(model => model.Apellido)</h5>
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Fecha_contratacion)
+            Fecha de contratacion
         </dt>
         <dd class="col-sm-8 col-md-9">
             <i class="far fa-calendar-alt"></i> @Html.DisplayFor(model => model.Fecha_contratacion)
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Estado)
+            Estado
         </dt>
         <dd class="col-sm-8 col-md-9">
             @{
@@ -150,17 +145,35 @@
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.CargoId)
+            Cargo
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <i class="fas fa-briefcase"></i> @Html.DisplayFor(model => model.CargoId)
+        <dd class="col-sm-9">
+            @{
+                string nombreCargo = "ID de Municipio no encontrado";
+                if (cargoNombres != null && cargoNombres.ContainsKey(Model.MunicipioId))
+                {
+                    nombreCargo = cargoNombres[Model.MunicipioId];
+                }
+            }
+            <strong class="text-primary">@nombreCargo</strong>
+
+            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.MunicipioId)
+            Municipio
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <i class="fas fa-map-marker-alt"></i> @Html.DisplayFor(model => model.MunicipioId)
+        <dd class="col-sm-9">
+            @{
+                string nombreMunicipio = "ID de Municipio no encontrado";
+                if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                {
+                    nombreMunicipio = municipioNombres[Model.MunicipioId];
+                }
+            }
+            <strong class="text-primary">@nombreMunicipio</strong>
+
+            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
         </dd>
     </dl>
 </div>

@@ -1,6 +1,8 @@
 ﻿@model AlcaldiaFront.DTOs.ProyectoDTOs.ProyectoRespuestaDTo
+@using System.Collections.Generic
 @{
     ViewData["Title"] = "Detalles del Proyecto";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     // Mapeo simple de estado a clase de Bootstrap para los badges
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
@@ -111,74 +113,62 @@
     <h1><i class="fas fa-info-circle text-primary"></i> Detalles del Proyecto</h1>
     <h4>Resumen de la Ficha Técnica</h4>
     <hr />
-
-    <dl class="row dl-detalle">
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Id_Proyecto)
+    <dl class="row dl-horizontal">
+        <dt class="col-sm-3">
+            Nombre del proyecto
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Id_Proyecto)
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Nombre)
         </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Nombre)
+        <dt class="col-sm-3">
+            Descripcion del proyecto
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <h5 class="mb-0">@Html.DisplayFor(model => model.Nombre)</h5>
-        </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class="col-sm-8 col-md-9 descripcion-text">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Fecha_Inicio)
+        <dt class="col-sm-3">
+            Fecha de inicio
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <i class="far fa-calendar-alt"></i> @Html.DisplayFor(model => model.Fecha_Inicio)
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Fecha_Inicio)
         </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Fecha_Fin)
+        <dt class="col-sm-3">
+            Fecha de finalizacion
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <i class="far fa-calendar-check"></i> @Html.DisplayFor(model => model.Fecha_Fin)
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Fecha_Fin)
         </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Presupuesto)
+        <dt class="col-sm-3">
+            Presupuesto destinado
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <strong class="text-success"><i class="fas fa-dollar-sign"></i> @Html.DisplayFor(model => model.Presupuesto)</strong>
+        <dd class="col-sm-9">
+            $@Html.DisplayFor(model => model.Presupuesto)
         </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Estado)
+        <dt class="col-sm-3">
+            Estado actual
         </dt>
-        <dd class="col-sm-8 col-md-9">
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Estado)
+        </dd>
+        <dt class="col-sm-3">
+            Municipio
+        </dt>
+        <dd class="col-sm-9">
             @{
-                string badgeClass = GetBadgeClass(Model?.Estado);
+                string nombreMunicipio = "N/A";
+                if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                {
+                    nombreMunicipio = municipioNombres[Model.MunicipioId];
+                }
             }
-            <span class="badge bg-@badgeClass badge-lg">
-                @Html.DisplayFor(model => model.Estado)
-            </span>
-        </dd>
-
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.MunicipioId)
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            <i class="fas fa-map-marker-alt"></i> @Html.DisplayFor(model => model.MunicipioId)
+            @nombreMunicipio
         </dd>
     </dl>
 </div>
 
 <div class="action-bar">
-    <a asp-action="Edit" asp-route-id="@Model?.Id_Proyecto" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
-    <a asp-action="Delete" asp-route-id="@Model?.Id_Proyecto" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id_Proyecto" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id_Proyecto" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
     <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
 

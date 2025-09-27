@@ -110,13 +110,13 @@
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                 <div class="form-group">
-                    <label asp-for="Nombre_cargo" class="control-label"></label>
+                    <label asp-for="Nombre_cargo" class="control-label">Nombre del cargo</label>
                     <input asp-for="Nombre_cargo" class="form-control" placeholder="Ej: Ingeniero de Proyectos" />
                     <span asp-validation-for="Nombre_cargo" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Descripcion" class="control-label"></label>
+                    <label asp-for="Descripcion" class="control-label">Descripcion</label>
                     <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Funciones y responsabilidades del puesto..."></textarea>
                     <span asp-validation-for="Descripcion" class="text-danger"></span>
                 </div>

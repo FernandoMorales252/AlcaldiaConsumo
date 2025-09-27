@@ -123,7 +123,7 @@
 
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        <label asp-for="Fecha_contratacion" class="control-label"></label>
+                        <label asp-for="Fecha_contratacion" class="control-label"> Fecha de contratacion</label>
                         <input asp-for="Fecha_contratacion" type="date" class="form-control" />
                         <span asp-validation-for="Fecha_contratacion" class="text-danger"></span>
                     </div>
@@ -132,7 +132,6 @@
                         <select asp-for="Estado" class="form-control">
                             <option value="">-- Seleccionar Estado --</option>
                             <option value="activo">Activo</option>
-                            <option value="licencia">De Licencia</option>
                             <option value="inactivo">Inactivo</option>
                         </select>
                         <span asp-validation-for="Estado" class="text-danger"></span>

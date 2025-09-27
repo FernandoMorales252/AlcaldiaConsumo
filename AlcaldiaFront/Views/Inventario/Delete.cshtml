@@ -1,6 +1,7 @@
 ﻿@model AlcaldiaFront.DTOs.InventarioDTOs.InventarioRespuestaDTO
 @{
     ViewData["Title"] = "Eliminar Elemento";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
         "disponible" => "success",
@@ -84,43 +85,57 @@
         <hr />
         <dl class="row dl-detalle">
             <dt class="col-sm-4 col-md-3">
-                @Html.DisplayNameFor(model => model.Nombre_item)
+                Nombre de item)
             </dt>
             <dd class="col-sm-8 col-md-9">
-                @Html.DisplayFor(model => model.Nombre_item)
+                <h5>@Html.DisplayFor(model => model.Nombre_item)</h5>
             </dd>
+
             <dt class="col-sm-4 col-md-3">
-                @Html.DisplayNameFor(model => model.Descripcion)
+                Descripcion
             </dt>
             <dd class="col-sm-8 col-md-9">
                 @Html.DisplayFor(model => model.Descripcion)
             </dd>
+
             <dt class="col-sm-4 col-md-3">
-                @Html.DisplayNameFor(model => model.Fecha_ingreso)
+                Fecha de ingreso
             </dt>
             <dd class="col-sm-8 col-md-9">
                 @Html.DisplayFor(model => model.Fecha_ingreso)
             </dd>
+
             <dt class="col-sm-4 col-md-3">
-                @Html.DisplayNameFor(model => model.Cantidad)
+                Cantidad
             </dt>
             <dd class="col-sm-8 col-md-9">
-                @Html.DisplayFor(model => model.Cantidad)
+                <strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong>
             </dd>
+
             <dt class="col-sm-4 col-md-3">
-                @Html.DisplayNameFor(model => model.MunicipioId)
+                Municipio
             </dt>
-            <dd class="col-sm-8 col-md-9">
-                @Html.DisplayFor(model => model.MunicipioId)
+            <dd class="col-sm-9">
+                @{
+                    string nombreMunicipio = "ID de Municipio no encontrado";
+                    if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                    {
+                        nombreMunicipio = municipioNombres[Model.MunicipioId];
+                    }
+                }
+                <strong class="text-primary">@nombreMunicipio</strong>
+
+                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
             </dd>
+
             <dt class="col-sm-4 col-md-3">
-                @Html.DisplayNameFor(model => model.Estado)
+                Estado
             </dt>
             <dd class="col-sm-8 col-md-9">
                 @{
                     string badgeClass = GetBadgeClass(Model?.Estado);
                 }
-                <span class="badge bg-@badgeClass">
+                <span class="badge bg-@badgeClass badge-lg">
                     @Html.DisplayFor(model => model.Estado)
                 </span>
             </dd>

@@ -108,7 +108,6 @@
         <table class="table table-hover" id="cargosTable">
             <thead>
                 <tr>
-                    <th><i class="fas fa-fingerprint"></i> ID</th>
                     <th><i class="fas fa-id-badge"></i> Nombre</th>
                     <th><i class="fas fa-align-left"></i> Descripción</th>
                     <th class="text-center"><i class="fas fa-cog"></i> Acciones</th>
@@ -118,7 +117,6 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Id_Cargo)</td>
                         <td>@Html.DisplayFor(modelItem => item.Nombre_cargo)</td>
                         <td>
                             @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)

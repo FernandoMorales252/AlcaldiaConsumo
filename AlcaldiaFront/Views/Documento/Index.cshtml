@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Listado de Documentos";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+    Dictionary<int, string> tipoNombres = ViewBag.TipoNombres as Dictionary<int, string>;
     int pageSize = 5; // Definición del tamaño de página
 
     // Mapeo simple de estado a clase de Bootstrap para los badges
@@ -123,11 +124,11 @@
         <table class="table table-hover table-striped" id="documentoTable">
             <thead>
                 <tr>
-                    <th class="text-start">@Html.DisplayNameFor(model => model.Numero_documento)</th>
-                    <th>@Html.DisplayNameFor(model => model.Fecha_emision)</th>
-                    <th>@Html.DisplayNameFor(model => model.Propietario)</th>
-                    <th>@Html.DisplayNameFor(model => model.Estado)</th>
-                    <th>Tipo Doc.</th>
+                    <th># Documento</th>
+                    <th>Fecha de emision</th>
+                    <th>Propietario</th>
+                    <th>Estado</th>
+                    <th>Tipo Documento</th>
                     <th>Municipio</th>
                     <th class="col-2">Acciones</th>
                 </tr>
@@ -136,7 +137,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td class="text-start">@Html.DisplayFor(modelItem => item.Numero_documento)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Numero_documento)</td>
                         <td>@Html.DisplayFor(modelItem => item.Fecha_emision)</td>
                         <td>@Html.DisplayFor(modelItem => item.Propietario)</td>
                         <td>
@@ -147,7 +148,16 @@
                                 @Html.DisplayFor(modelItem => item.Estado)
                             </span>
                         </td>
-                        <td>@Html.DisplayFor(modelItem => item.TipoDocumentoId)</td>
+                        <td>
+                            @{
+                                string nombreTipo = "N/A";
+                                if (tipoNombres != null && tipoNombres.ContainsKey(item.TipoDocumentoId))
+                                {
+                                    nombreTipo = tipoNombres[item.TipoDocumentoId];
+                                }
+                            }
+                            @nombreTipo
+                        </td>
                         <td>
                             @{
                                 string nombreMunicipio = "N/A";

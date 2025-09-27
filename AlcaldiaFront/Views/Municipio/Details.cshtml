@@ -100,23 +100,19 @@
     <hr />
 
     <dl class="row dl-detalle">
-        @* ID del Municipio *@
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Id_Municipio)
+        <dt class="col-sm-3">
+            Codigo de municipio
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <span class="badge bg-secondary">#@Html.DisplayFor(model => model.Id_Municipio)</span>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Id_Municipio)
         </dd>
 
-        @* Nombre del Municipio *@
-        <dt class="col-sm-4 col-md-3">
-            @Html.DisplayNameFor(model => model.Nombre_Municipio)
+        <dt class="col-sm-3">
+            Nombre del municipio
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            <h3 class="mb-0 text-primary">@Html.DisplayFor(model => model.Nombre_Municipio)</h3>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Nombre_Municipio)
         </dd>
-
-        @* Aquí se podrían agregar más campos si el DTO de Municipio fuera más complejo *@
 
     </dl>
 

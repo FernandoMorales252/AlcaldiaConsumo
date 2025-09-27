@@ -119,11 +119,8 @@
         <table class="table table-hover table-striped" id="municipiosTable">
             <thead>
                 <tr>
-                    <th style="width: 100px;" class="text-center">
-                        @Html.DisplayNameFor(model => model.Id_Municipio)
-                    </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Nombre_Municipio)
+                        Nombre de municipio
                     </th>
                     <th style="width: 150px;" class="text-center">Acciones</th>
                 </tr>
@@ -134,7 +131,6 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td class="text-center">@Html.DisplayFor(modelItem => item.Id_Municipio)</td>
                             <td>@Html.DisplayFor(modelItem => item.Nombre_Municipio)</td>
                             <td class="text-center action-buttons">
                                 <a asp-action="Edit" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>

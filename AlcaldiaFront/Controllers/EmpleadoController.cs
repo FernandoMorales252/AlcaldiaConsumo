@@ -49,6 +49,13 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var empleado = await _empleadoService.GetByIdAsync(id);
+            // Obtener listas para los nombres de los municipios y cargos
+            var municipios = await _municipioService.GetAllAsync();
+            var cargos = await _cargoService.GetAllAsync();
+
+            // Convertir las listas a diccionarios para la vista
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.CargoNombres = cargos.ToDictionary(c => c.Id_Cargo, c => c.Nombre_cargo);
             if (empleado == null)
             {
                 return NotFound();
@@ -157,6 +164,13 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var empleado = await _empleadoService.GetByIdAsync(id);
+            // Obtener listas para los nombres de los municipios y cargos
+            var municipios = await _municipioService.GetAllAsync();
+            var cargos = await _cargoService.GetAllAsync();
+
+            // Convertir las listas a diccionarios para la vista
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.CargoNombres = cargos.ToDictionary(c => c.Id_Cargo, c => c.Nombre_cargo);
             if (empleado == null)
             {
                 return NotFound();

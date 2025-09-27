@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Detalles del Documento";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+    Dictionary<int, string> tipoNombres = ViewBag.TipoNombres as Dictionary<int, string>;
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
         "activo" => "success",
@@ -81,13 +83,7 @@
     <hr />
 
     <dl class="row dl-detalle">
-        <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-key"></i> @Html.DisplayNameFor(model => model.Id_documento)
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Id_documento)
-        </dd>
-
+       
         <dt class="col-sm-4 col-md-3">
             <i class="fas fa-hashtag"></i> @Html.DisplayNameFor(model => model.Numero_documento)
         </dt>
@@ -96,28 +92,28 @@
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            <i class="far fa-calendar-alt"></i> @Html.DisplayNameFor(model => model.Fecha_emision)
+            Fecha de emision
         </dt>
         <dd class="col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.Fecha_emision)
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-user-tag"></i> @Html.DisplayNameFor(model => model.Propietario)
+            Ciudadano
         </dt>
         <dd class="col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.Propietario)
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-info-circle"></i> @Html.DisplayNameFor(model => model.Detalles)
+            Detalles
         </dt>
         <dd class="col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.Detalles)
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-check-circle"></i> @Html.DisplayNameFor(model => model.Estado)
+            Estado actual
         </dt>
         <dd class="col-sm-8 col-md-9">
             @{
@@ -129,17 +125,35 @@
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-file-invoice"></i> Tipo Documento ID
+            Tipo de documento
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.TipoDocumentoId)
+        <dd class="col-sm-9">
+            @{
+                string nombreTipo = "ID de TipoDoc no encontrado";
+                if (tipoNombres != null && tipoNombres.ContainsKey(Model.TipoDocumentoId))
+                {
+                    nombreTipo = tipoNombres[Model.TipoDocumentoId];
+                }
+            }
+            <strong class="text-primary">@nombreTipo</strong>
+
+            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
         </dd>
 
         <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-map-marker-alt"></i> Municipio ID
+            Municipio
         </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.MunicipioId)
+        <dd class="col-sm-9">
+            @{
+                string nombreMunicipio = "ID de Municipio no encontrado";
+                if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                {
+                    nombreMunicipio = municipioNombres[Model.MunicipioId];
+                }
+            }
+            <strong class="text-primary">@nombreMunicipio</strong>
+
+            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
         </dd>
     </dl>
 </div>

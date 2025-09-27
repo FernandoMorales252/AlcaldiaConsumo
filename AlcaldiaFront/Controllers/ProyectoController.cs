@@ -38,6 +38,9 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);
+            var municipios = await _municipioService.GetAllAsync();
+            var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.MunicipioNombres = municipioNombres;
             if (proyecto == null)
             {
                 return NotFound();
@@ -137,6 +140,9 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);
+            var municipios = await _municipioService.GetAllAsync();
+            var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.MunicipioNombres = municipioNombres;
             if (proyecto == null)
             {
                 return NotFound();

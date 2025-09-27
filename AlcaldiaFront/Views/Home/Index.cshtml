@@ -162,21 +162,32 @@
         <div class="container text-center">
             <h2>Transparencia en Cifras</h2>
             <div class="row mt-4">
+
                 <div class="col-md-4">
-                    <h3 class="display-4 text-primary">62.5%</h3>
-                    <p class="lead">Presupuesto Ejecutado (Q3)</p>
+                    <h3 class="display-4 text-primary">
+                        <i class="fas fa-dollar-sign"></i> @(ViewData["PresupuestoTotalFormato"] ?? "$0,00")
+                    </h3>
+                    <p class="lead">Presupuesto Total de Proyectos</p>
                 </div>
+
                 <div class="col-md-4">
-                    <h3 class="display-4 text-success">980</h3>
+                    <h3 class="display-4 text-success">
+                        @(ViewData["ProyectosCulminados"] ?? 0)
+                    </h3>
                     <p class="lead">Proyectos de Infraestructura Culminados</p>
                 </div>
+
                 <div class="col-md-4">
-                    <h3 class="display-4 text-warning">4.8 / 5</h3>
-                    <p class="lead">Calificación Ciudadana de Servicios</p>
+                    <h3 class="display-4 text-warning">
+                        <i class="fas fa-hand-holding-usd"></i> @(ViewData["PresupuestoEjecucionFormato"] ?? "$0,00")
+                    </h3>
+                    <p class="lead">Presupuesto en Ejecución</p>
                 </div>
+
             </div>
             <a href="/Transparencia" class="btn btn-primary mt-4">Visitar Portal de Transparencia</a>
         </div>
     </section>
+
 
 </div>

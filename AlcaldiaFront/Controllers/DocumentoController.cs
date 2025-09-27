@@ -26,6 +26,12 @@ namespace AlcaldiaFront.Controllers
             try
             {
                 var documentos = await _documentoService.GetAllAsync();
+                var municipios = await _municipioService.GetAllAsync();
+                var tipos = await _tipoDocService.GetAllAsync();
+                var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+                ViewBag.MunicipioNombres = municipioNombres;
+                var tipoNombres = tipos.ToDictionary(m => m.Id_tipo, m => m.Nombre);
+                ViewBag.TipoNombres = tipoNombres;
                 return View(documentos);
             }
             catch (Exception ex)
@@ -40,6 +46,12 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var documento = await _documentoService.GetByIdAsync(id);
+            var municipios = await _municipioService.GetAllAsync();
+            var tipos = await _tipoDocService.GetAllAsync();
+            var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.MunicipioNombres = municipioNombres;
+            var tipoNombres = tipos.ToDictionary(m => m.Id_tipo, m => m.Nombre);
+            ViewBag.TipoNombres = tipoNombres;
             if (documento == null)
             {
                 return NotFound();
@@ -175,6 +187,12 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var documentos = await _documentoService.GetByIdAsync(id);
+            var municipios = await _municipioService.GetAllAsync();
+            var tipos = await _tipoDocService.GetAllAsync();
+            var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.MunicipioNombres = municipioNombres;
+            var tipoNombres = tipos.ToDictionary(m => m.Id_tipo, m => m.Nombre);
+            ViewBag.TipoNombres = tipoNombres;
             if (documentos == null)
             {
                 return NotFound();

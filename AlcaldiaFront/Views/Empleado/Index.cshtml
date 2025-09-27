@@ -123,7 +123,6 @@
         <table class="table table-hover" id="empleadosTable">
             <thead>
                 <tr>
-                    <th><i class="fas fa-id-card"></i> ID</th>
                     <th><i class="fas fa-user"></i> Nombre Completo</th>
                     <th class="text-center"><i class="far fa-calendar-alt"></i> Contratación</th>
                     <th class="text-center"><i class="fas fa-circle-notch"></i> Estado</th>
@@ -138,7 +137,6 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@Html.DisplayFor(modelItem => item.Id_empleado)</td>
                             <td>@Html.DisplayFor(modelItem => item.Nombre) @Html.DisplayFor(modelItem => item.Apellido)</td>
                             <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_contratacion)</td>
                             <td class="text-center">
@@ -146,7 +144,6 @@
                                     string badgeClass = item.Estado?.ToLower() switch
                                     {
                                         "activo" => "success",
-                                        "de licencia" => "info",
                                         "inactivo" => "danger",
                                         _ => "secondary"
                                     };

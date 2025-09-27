@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Eliminar Empleado";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+    Dictionary<int, string> cargoNombres = ViewBag.CargoNombres as Dictionary<int, string>;
 }
 
 <style>
@@ -104,46 +106,59 @@
         <hr />
         <dl class="row dl-horizontal">
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Id_empleado)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Id_empleado)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Nombre)
+               Nombre empleado
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Nombre)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Apellido)
+             Apellido empleado
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Apellido)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Fecha_contratacion)
+               Fecha de contratacion)
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Fecha_contratacion)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Estado)
+                Estado
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Estado)
             </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.CargoId)
+            <dt class="col-sm-4 col-md-3">
+                Cargo
             </dt>
             <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.CargoId)
+                @{
+                    string nombreCargo = "ID de Municipio no encontrado";
+                    if (cargoNombres != null && cargoNombres.ContainsKey(Model.MunicipioId))
+                    {
+                        nombreCargo = cargoNombres[Model.MunicipioId];
+                    }
+                }
+                <strong class="text-primary">@nombreCargo</strong>
+
+                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
             </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.MunicipioId)
+
+            <dt class="col-sm-4 col-md-3">
+                Municipio
             </dt>
             <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.MunicipioId)
+                @{
+                    string nombreMunicipio = "ID de Municipio no encontrado";
+                    if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                    {
+                        nombreMunicipio = municipioNombres[Model.MunicipioId];
+                    }
+                }
+                <strong class="text-primary">@nombreMunicipio</strong>
+
+                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
             </dd>
         </dl>
     </div>
