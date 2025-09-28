@@ -21,6 +21,8 @@ builder.Services.AddScoped<AlcaldiaFront.Services.CargoService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.InventarioService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.ProyectoService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.EmpleadoService>();
+builder.Services.AddScoped<AlcaldiaFront.Services.AvisoService>();
+builder.Services.AddScoped<AlcaldiaFront.Services.QuejaService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,182 @@
+﻿@model AlcaldiaFront.DTOs.QuejaDTOs.QuejaCrearDTO
+@{
+    ViewData["Title"] = "Crear Reporte";
+}
+
+<style>
+    /* --------------------------------------------------
+               PATRÓN DE COLORES FORMAL ADAPTADO A FORMULARIOS
+               -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
+
+    /* Contenedor principal del formulario (simulando una tarjeta) */
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        border-left: 5px solid var(--color-secundario);
+        padding-left: 15px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    h4 {
+        color: #7f8c8d; /* Gris tenue para subtítulos */
+    }
+
+    /* Estilo de los campos de formulario */
+    .form-control {
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.25rem rgba(243, 156, 18, 0.25); /* Sombra de acento */
+        }
+
+    /* Estilo para las etiquetas (labels) */
+    .control-label {
+        font-weight: 600;
+        color: var(--color-texto);
+        margin-bottom: 5px;
+    }
+
+    /* Botón Crear */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    /* Botón Cancelar/Volver */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: var(--color-texto);
+        }
+
+    /* Contenedor de botones (para espaciado) */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    /* Mensajes de validación */
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="fas fa-plus-square"></i> Agregar Nuevo Reporte</h1>
+    <h4>Datos del Reporte</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-group">
+                    <label asp-for="Titulo" class="control-label">Titulo del Reporte</label>
+                    <input asp-for="Titulo" class="form-control" placeholder="Ej: Daño de calle principal" />
+                    <span asp-validation-for="Titulo" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"> Descripcion</label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="4" placeholder="Detalles especificos y afectados ..."></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Fecha_Registro" class="control-label">Fecha de Registro</label>
+                        <input asp-for="Fecha_Registro" class="form-control" type="date" />
+                        <span asp-validation-for="Fecha_Registro" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Tipo" class="control-label">Tipo de Reporte</label>
+                        <select asp-for="Tipo" class="form-control">
+                            <option value="">-- Seleccionar Tipo --</option>
+                            <option value="desechos">Recoleccion de desechos</option>
+                            <option value="contaminacion">Contaminacion ambiental</option>
+                            <option value="seguridad">Seguridad publica</option>
+                            <option value="infraestructura">Infraestructura publica</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <span asp-validation-for="Tipo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Nivel" class="control-label">Nivel de Reporte</label>
+                        <select asp-for="Nivel" class="form-control">
+                            <option value="">-- Seleccionar Tipo --</option>
+                            <option value="bajo">Bajo</option>
+                            <option value="medio">Medio</option>
+                            <option value="alto">Alto</option>
+                            <option value="riesgo">Riesgo</option>
+                        </select>
+                        <span asp-validation-for="Nivel" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <label asp-for="MunicipioId" class="control-label">Municipio</label>
+                        <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
+                            <option value="">-- Seleccionar Municipio --</option>
+                        </select>
+                        <span asp-validation-for="MunicipioId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Crear</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

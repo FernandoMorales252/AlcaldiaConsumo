@@ -1,0 +1,167 @@
+﻿@model AlcaldiaFront.DTOs.QuejaDTOs.QuejaRespuestaDTO
+@{
+    ViewData["Title"] = "Eliminar Reporte";
+    Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+}
+
+
+<style>
+    /* --------------------------------------------------
+               PATRÓN DE COLORES FORMAL ADAPTADO A CONFIRMACIÓN
+               -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-peligro: #c0392b; /* Rojo de Advertencia */
+    }
+
+    /* Contenedor principal (Tarjeta de advertencia) */
+    .delete-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        border-top: 5px solid var(--color-peligro); /* Borde de peligro */
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    /* Pregunta de confirmación */
+    h3 {
+        color: var(--color-peligro); /* Resaltar la pregunta en rojo */
+        border-bottom: 2px solid #f2dede;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+        font-weight: 400;
+    }
+
+    /* Título de la sección de datos */
+    h4 {
+        color: var(--color-primario);
+        font-weight: 500;
+    }
+
+    /* Lista de Detalles (dl) */
+    .dl-horizontal dt {
+        color: var(--color-secundario); /* Etiquetas en color de acento */
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .dl-horizontal dd {
+        margin-bottom: 10px;
+        border-bottom: 1px dashed #ecf0f1;
+        padding-bottom: 5px;
+    }
+
+    /* Botón Eliminar (Rojo de peligro) */
+    .btn-danger {
+        background-color: var(--color-peligro);
+        border-color: var(--color-peligro);
+        transition: background-color 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-danger:hover {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+    /* Botón Volver (Secundario) */
+    .btn-secondary {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+        color: var(--color-texto);
+        min-width: 120px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+        }
+
+    .delete-actions {
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #bdc3c7;
+    }
+</style>
+
+<div class="delete-card">
+    <h1><i class="fas fa-trash-alt"></i> Eliminar</h1>
+    <h3>🚨 ¿Estás seguro de que deseas eliminar este Reporte?</h3>
+
+    <div>
+        <h4>Detalles del Reporte</h4>
+        <hr />
+        <dl class="row dl-horizontal">
+            <dt class="col-sm-3">
+                Titulo del Reporte
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Titulo)
+            </dd>
+            <dt class="col-sm-3">
+                Descripcion del Reporte
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Descripcion)
+            </dd>
+            <dt class="col-sm-3">
+                Fecha de registro
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Fecha_Registro)
+            </dd>
+            <dt class="col-sm-3">
+                Tipo de Reporte
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Tipo)
+            </dd>
+            <dt class="col-sm-3">
+                Nivel de Reporte
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Nivel)
+            </dd>
+            <dt class="col-sm-3">
+                Municipio
+            </dt>
+            <dd class="col-sm-9">
+                @{
+                    string nombreMunicipio = "ID de Municipio no encontrado";
+                    if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
+                    {
+                        nombreMunicipio = municipioNombres[Model.MunicipioId];
+                    }
+                }
+                <strong class="text-primary">@nombreMunicipio</strong>
+
+                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
+            </dd>
+        </dl>
+    </div>
+
+    <div class="delete-actions">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id_queja" />
+            <button type="submit" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i> Eliminar</button>
+            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // Opcional, pero se recomienda siempre para mantener la estructura de la vista Razor
+    }
+}
