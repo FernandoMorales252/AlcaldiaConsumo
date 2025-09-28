@@ -41,8 +41,46 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        public async Task<IActionResult> Menu()
+        {
+            try
+            {
+                var avisos = await _avisoService.GetAllAsync("your_access_token");
+
+                // Obtener listas para los nombres de los municipios y cargos
+                var municipios = await _municipioService.GetAllAsync();
+
+                // Convertir las listas a diccionarios para la vista
+                ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+
+                return View(avisos);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "No se pudieron cargar los avisos: " + ex.Message;
+                // Si hay un error, inicializar los ViewBag para evitar NullReferenceException
+                ViewBag.MunicipioNombres = new Dictionary<int, string>();
+                return View(new List<AvisoRespuestaDTO>());
+            }
+        }
+
         // GET: Empleado/Details/5
         public async Task<IActionResult> Details(int id)
+        {
+            var aviso = await _avisoService.GetByIdAsync(id);
+            // Obtener listas para los nombres de los municipios y cargos
+            var municipios = await _municipioService.GetAllAsync();
+
+            // Convertir las listas a diccionarios para la vista
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            if (aviso == null)
+            {
+                return NotFound();
+            }
+            return View(aviso);
+        }
+
+        public async Task<IActionResult> Public(int id)
         {
             var aviso = await _avisoService.GetByIdAsync(id);
             // Obtener listas para los nombres de los municipios y cargos
@@ -168,6 +206,7 @@ namespace AlcaldiaFront.Controllers
             }
             return View(aviso);
         }
+
 
         // POST: Empleado/Delete/5
         [HttpPost, ActionName("Delete")]

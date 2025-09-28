@@ -103,28 +103,31 @@
 <div class="main-content">
 
     <section class="hero-formal">
-        <h1>Alcaldía Municipal de [Tu Ciudad]</h1>
+        <h1>Alcaldía Municipal de ES</h1>
         <p>Gobernando con Transparencia, Innovación y Servicio al Ciudadano.</p>
         <a href="/Tramites" class="btn btn-warning btn-lg">
-            <i class="fas fa-file-contract"></i> Portal de Trámites en Línea
+            <i class="fas fa-file-contract"></i> Portal de Trámites en Línea (En proceso)
         </a>
     </section>
 
     <section class="quick-access-bar">
-        <a href="/Pagos">
-            <i class="fas fa-money-check-alt"></i> Pagar Impuestos
+        <a asp-controller="Home" asp-action="History">
+            <i class="fas fa-landmark"></i> Historia
         </a>
-        <a href="/Citas">
-            <i class="fas fa-calendar-check"></i> Solicitar Cita
+
+        <a asp-controller="Home" asp-action="Create">
+            <i class="fas fa-calendar-check"></i> Crear Reporte
         </a>
-        <a href="/Quejas">
-            <i class="fas fa-bullhorn"></i> Buzón Ciudadano
+
+        <a asp-controller="Queja" asp-action="Menu">
+            <i class="fas fa-bullhorn"></i> Lista de Reportes
         </a>
-        <a href="/Licitaciones">
-            <i class="fas fa-gavel"></i> Licitaciones
+
+        <a asp-controller="Aviso" asp-action="Menu">
+            <i class="fas fa-gavel"></i> Lista de Avisos
         </a>
-        <a href="/Directorio">
-            <i class="fas fa-address-book"></i> Directorio Oficial
+        <a asp-controller="Home" asp-action="Contacto">
+            <i class="fas fa-landmark"></i> Contactanos
         </a>
     </section>
 
@@ -134,27 +137,56 @@
             <hr />
             <div class="news-item mb-3">
                 <small class="text-muted">25 de Septiembre de 2025</small>
-                <h4><a href="#">Inauguración del Nuevo Parque Ecológico Metropolitano</a></h4>
-                <p>El Alcalde [Nombre] lideró la ceremonia de apertura del parque, un proyecto clave de la agenda verde municipal.</p>
+                <h4><a href="https://github.com/FernandoMorales252/AlcaldiaConsumo">Nuestro Repositorio Git Frontend</a></h4>
+                <p>Nuestro equipo se involucro en la parte del frontend para el consumo de la api,mas detalles aca.</p>
             </div>
             <div class="news-item mb-3">
                 <small class="text-muted">20 de Septiembre de 2025</small>
-                <h4><a href="#">Campaña de Actualización de Datos Catastrales</a></h4>
-                <p>Recordatorio importante a todos los contribuyentes sobre el nuevo plazo para la actualización de sus propiedades.</p>
+                <h4><a href="https://github.com/FernandoMorales252/Alcaldia-sys">Nuestro Repositorio Git Backend</a></h4>
+                <p>Nuestro equipo se involucro en la parte del Backend para la construccion de una api,mas detalles aca</p>
             </div>
             <div class="news-item mb-3">
                 <small class="text-muted">15 de Septiembre de 2025</small>
-                <h4><a href="#">Resultados del Programa de Becas Municipales 2025</a></h4>
-                <p>Consulte la lista oficial de beneficiarios para el ciclo académico. ¡Felicidades a los ganadores!</p>
+                <h4><a href="https://portal.esco.gob.sv/es-ES/0/PUB/Home/Becas_Show?nav=YMJm1Wp6&niv=1">Programa de Becas Internacionales 2025</a></h4>
+                <p>Conoce oportunidades de estudio en el extranjero ! puedes ser parte de esto ¡</p>
             </div>
-            <a href="/ArchivoNoticias" class="btn btn-outline-secondary mt-3">Ver Archivo Completo →</a>
         </div>
 
         <div class="urgent-announcement">
-            <h3>📢 Anuncio de Interés Público</h3>
-            <hr style="border-color: rgba(255,255,255,0.3);" />
-            <p><strong>ALERTA MUNICIPAL:</strong> Se informa a la ciudadanía el cierre temporal de la Av. Central por trabajos de reparación mayores desde el 26 al 28 de septiembre. Por favor, tomar rutas alternas.</p>
-            <p class="text-right mt-3"><a href="#" class="text-warning">Más detalles aquí</a></p>
+            @{
+                // Intentamos obtener el aviso reciente del ViewData
+                var aviso = ViewData["AvisoReciente"] as AlcaldiaFront.DTOs.AvisoDTOs.AvisoRespuestaDTO;
+            }
+
+            @if (aviso != null)
+            {
+                // 📢 MUESTRA EL AVISO DINÁMICO
+                <h3>📢 @Html.DisplayFor(model => aviso.Titulo)</h3>
+                <hr style="border-color: rgba(255,255,255,0.3);" />
+
+                <h4>@Html.DisplayFor(model => aviso.Tipo)</h4>
+                <p>
+                    <strong>Fecha:</strong> @aviso.Fecha_Registro.ToString("dd MMM yyyy")
+                </p>
+                <p>
+                    @(aviso.Descripcion.Length > 150 ? aviso.Descripcion.Substring(0, 150) + "..." : aviso.Descripcion)
+                </p>
+                <p class="text-right mt-3">
+                    <a asp-controller="Aviso" asp-action="Public" asp-route-id="@aviso.Id_aviso" class="text-warning">
+                        Más detalles aquí →
+                    </a>
+                </p>
+            }
+            else
+            {
+                // 🛑 MUESTRA EL MENSAJE POR DEFECTO O ESTÁTICO SI NO HAY AVISOS
+                <h3>📢 Sin Avisos Urgentes</h3>
+                <hr style="border-color: rgba(255,255,255,0.3);" />
+                <p>La Alcaldía no ha emitido avisos urgentes o de interés público recientemente. Consulte el archivo de noticias para más información.</p>
+                <p class="text-right mt-3">
+                    <a href="/ArchivoAvisos" class="text-warning">Ver Archivo de Avisos</a>
+                </p>
+            }
         </div>
     </section>
 
@@ -185,7 +217,8 @@
                 </div>
 
             </div>
-            <a href="/Transparencia" class="btn btn-primary mt-4">Visitar Portal de Transparencia</a>
+
+            <a asp-controller="Proyecto" asp-action="Menu" class="btn btn-primary mt-4">Visitar Portal de Proyectos</a>
         </div>
     </section>
 

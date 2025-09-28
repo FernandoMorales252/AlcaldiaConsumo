@@ -40,6 +40,30 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        public async Task<IActionResult> Menu()
+        {
+            try
+            {
+                var avisos = await _quejaService.GetAllAsync("your_access_token");
+
+                // Obtener listas para los nombres de los municipios y cargos
+                var municipios = await _municipioService.GetAllAsync();
+
+                // Convertir las listas a diccionarios para la vista
+                ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+
+                return View(avisos);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "No se pudieron cargar las quejas: " + ex.Message;
+                // Si hay un error, inicializar los ViewBag para evitar NullReferenceException
+                ViewBag.MunicipioNombres = new Dictionary<int, string>();
+                return View(new List<QuejaRespuestaDTO>());
+            }
+        }
+
+
         // GET: Empleado/Details/5
         public async Task<IActionResult> Details(int id)
         {
@@ -57,42 +81,7 @@ namespace AlcaldiaFront.Controllers
         }
 
         // GET: Empleado/Create
-        public async Task<IActionResult> Create()
-        {
-            await PopulateDropdowns();
-            return View(new QuejaCrearDTO());
-        }
-
-        // POST: Empleado/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(QuejaCrearDTO quejaDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                await PopulateDropdowns();
-                return View(quejaDto);
-            }
-
-            try
-            {
-                var nuevoQueja = await _quejaService.CreateAsync(quejaDto, "your_access_token");
-                if (nuevoQueja == null)
-                {
-                    ModelState.AddModelError("", "No se pudo crear el Reporte.");
-                    await PopulateDropdowns();
-                    return View(quejaDto);
-                }
-                TempData["Ok"] = "Reporte creado con éxito.";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al crear el Reporte: " + ex.Message);
-                await PopulateDropdowns();
-                return View(quejaDto);
-            }
-        }
+       
 
         // GET: Empleado/Edit/5
         public async Task<IActionResult> Edit(int id)

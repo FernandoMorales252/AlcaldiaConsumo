@@ -1,0 +1,235 @@
+﻿@using System.Collections.Generic
+@using System.Text.Json
+@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Directorio de Contactos Municipales";
+    // Datos estáticos de ejemplo (puedes reemplazarlos con un ViewModel en el futuro)
+    var alcaldias = new List<dynamic>
+    {
+        new { Nombre = "San Salvador Centro", Telefono = "(503) 2500-0000", Correo = "contacto@sscentro.gob.sv", Ubicacion = "Av. Cuscatlán #123", Horario = "L-V: 8:00 AM - 4:00 PM" },
+        new { Nombre = "Santa Ana Oeste", Telefono = "(503) 2441-1000", Correo = "info@staana.gob.sv", Ubicacion = "4ta Calle Poniente #2", Horario = "L-V: 7:30 AM - 3:30 PM" },
+        new { Nombre = "San Miguel Oriente", Telefono = "(503) 2661-5000", Correo = "atencion@smiguel.gob.sv", Ubicacion = "Bo. El Centro, 5a Av. Sur", Horario = "L-V: 8:00 AM - 4:00 PM" },
+        new { Nombre = "Apopa Norte", Telefono = "(503) 2216-7000", Correo = "servicios@apopa.gob.sv", Ubicacion = "Km 12 Carretera Troncal", Horario = "L-S: 8:00 AM - 12:00 PM" },
+        new { Nombre = "Santa Tecla Sur", Telefono = "(503) 2228-5000", Correo = "alcaldia@stecla.gob.sv", Ubicacion = "Av. José Simeón Cañas", Horario = "L-V: 7:30 AM - 4:00 PM" },
+        new { Nombre = "La Unión", Telefono = "(503) 2661-8000", Correo = "munilahoy@launion.gob.sv", Ubicacion = "Calle Principal, Cienega", Horario = "L-V: 8:00 AM - 3:00 PM" },
+        new { Nombre = "Zacatecoluca", Telefono = "(503) 2334-1100", Correo = "info@zacate.gob.sv", Ubicacion = "Barrio El Centro, #25", Horario = "L-V: 8:00 AM - 4:00 PM" },
+        new { Nombre = "Sonsonate", Telefono = "(503) 2451-2200", Correo = "contacto@sonsonate.gob.sv", Ubicacion = "Final 1a. Av. Norte", Horario = "L-S: 8:00 AM - 1:00 PM" },
+        new { Nombre = "Usulután", Telefono = "(503) 2662-3000", Correo = "atencion@usulutan.gob.sv", Ubicacion = "Calle 5a Oriente, #10", Horario = "L-V: 7:00 AM - 3:00 PM" },
+        new { Nombre = "Chalatenango", Telefono = "(503) 2330-1500", Correo = "alcaldiach@chalate.gob.sv", Ubicacion = "Bo. La Palma, Calle Central", Horario = "L-V: 8:30 AM - 4:30 PM" }
+    };
+
+    int pageSize = 5;
+    ViewData["AlcaldiasJson"] = System.Text.Json.JsonSerializer.Serialize(alcaldias);
+}
+
+<style>
+    /* --------------------------------------------------
+        /* PATRÓN DE COLORES FORMAL (Antracita/Dorado) */
+    /* -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+    }
+
+    /* Contenedor principal de la lista (Similar a 'data-card'/'form-container') */
+    .directory-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    h1 {
+        color: var(--color-primario);
+        border-left: 5px solid var(--color-secundario);
+        padding-left: 15px;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+    }
+
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    /* -------------------------------------------------- */
+    /* ESTILOS DE LA TARJETA DE CONTACTO (LISTA) */
+    /* -------------------------------------------------- */
+
+    .contact-list-item {
+        background-color: var(--color-fondo-claro);
+        border-left: 5px solid var(--color-secundario); /* Acento Dorado */
+        border-radius: 5px;
+        margin-bottom: 15px;
+        padding: 15px 20px;
+        transition: box-shadow 0.3s, background-color 0.3s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+        .contact-list-item:hover {
+            background-color: #e8ebec; /* Ligero cambio de color al pasar el mouse */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+    .contact-title {
+        color: var(--color-primario);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .contact-detail {
+        font-size: 0.95rem;
+        margin-bottom: 5px;
+        color: var(--color-texto);
+    }
+
+        .contact-detail i {
+            color: var(--color-primario); /* Iconos en color primario */
+            width: 25px;
+            text-align: center;
+        }
+
+    /* Paginación */
+    .pagination-container {
+        margin-top: 30px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+    }
+
+    .page-link-custom {
+        color: var(--color-primario);
+    }
+
+    .page-item.active .page-link-custom {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: white;
+    }
+
+</style>
+
+<div class="directory-card container">
+
+    <h1><i class="fas fa-address-book me-2"></i> Directorio de Contactos</h1>
+    <h4 class="text-secondary mb-4">Información de contacto oficial de las principales alcaldías.</h4>
+
+    <div class="mb-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Volver al menú</a>
+    </div>
+
+    <div id="contactosList">
+    </div>
+
+    <div class="pagination-container d-flex justify-content-center">
+        <nav aria-label="Paginación de Alcaldías">
+            <ul class="pagination" id="pagination-ul"></ul>
+        </nav>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Obtener los datos estáticos de C#
+            const alcaldias = @Html.Raw(ViewData["AlcaldiasJson"]);
+            const pageSize = @pageSize;
+            const totalItems = alcaldias.length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+            const listContainer = $('#contactosList');
+            const paginationUl = $('#pagination-ul');
+
+            function renderAlcaldia(alcaldia) {
+                // Función para construir la tarjeta de contacto
+                return `
+                    <div class="contact-list-item row">
+                        <div class="col-12">
+                            <h3 class="contact-title">${alcaldia.Nombre}</h3>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="contact-detail"><i class="fas fa-phone-alt"></i> ${alcaldia.Telefono}</p>
+                            <p class="contact-detail"><i class="fas fa-envelope"></i> ${alcaldia.Correo}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="contact-detail"><i class="fas fa-map-marker-alt"></i> ${alcaldia.Ubicacion}</p>
+                            <p class="contact-detail"><i class="fas fa-clock"></i> ${alcaldia.Horario}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function displayPage(page) {
+                listContainer.empty();
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                const itemsToShow = alcaldias.slice(startIndex, endIndex);
+
+                itemsToShow.forEach(alcaldia => {
+                    listContainer.append(renderAlcaldia(alcaldia));
+                });
+
+                updatePaginationControls(page);
+            }
+
+            function updatePaginationControls(currentPage) {
+                paginationUl.empty();
+
+                // Botón Anterior
+                const prevDisabled = currentPage === 1 ? 'disabled' : '';
+                paginationUl.append(`
+                    <li class="page-item ${prevDisabled}">
+                        <a class="page-link page-link-custom" href="#" data-page="${currentPage - 1}"><i class="fas fa-angle-left"></i></a>
+                    </li>
+                `);
+
+                // Botones de Páginas Numeradas
+                for (let i = 1; i <= totalPages; i++) {
+                    const active = i === currentPage ? 'active' : '';
+                    paginationUl.append(`
+                        <li class="page-item ${active}">
+                            <a class="page-link page-link-custom" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `);
+                }
+
+                // Botón Siguiente
+                const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+                paginationUl.append(`
+                    <li class="page-item ${nextDisabled}">
+                        <a class="page-link page-link-custom" href="#" data-page="${currentPage + 1}"><i class="fas fa-angle-right"></i></a>
+                    </li>
+                `);
+            }
+
+            // Manejador de clic para los botones de paginación
+            paginationUl.on('click', 'a.page-link', function (e) {
+                e.preventDefault();
+                const newPage = parseInt($(this).data('page'));
+
+                if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
+                    displayPage(newPage);
+                    // Mover la vista al principio de la lista
+                    $('html, body').animate({
+                        scrollTop: $("#contactosList").offset().top - 50
+                    }, 300);
+                }
+            });
+
+            // Inicializar la vista en la página 1
+            if (alcaldias.length > 0) {
+                displayPage(1);
+            }
+        });
+    </script>
+}

@@ -1,7 +1,7 @@
-﻿@model IEnumerable<AlcaldiaFront.DTOs.QuejaDTOs.QuejaRespuestaDTO>
+﻿@model IEnumerable<AlcaldiaFront.DTOs.ProyectoDTOs.ProyectoRespuestaDTo>
 @using System.Collections.Generic
 @{
-    ViewData["Title"] = "Listado de Reportes";
+    ViewData["Title"] = "Listado de Proyectos";
     // Nota: Es mejor definir las variables de color en el _Layout.cshtml,
     // pero las incluimos aquí para la autonomía de la vista.
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
@@ -10,8 +10,8 @@
 
 <style>
     /* --------------------------------------------------
-                   PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-                   -------------------------------------------------- */
+           PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
+           -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
@@ -34,6 +34,18 @@
         padding-left: 15px;
         margin-bottom: 25px;
     }
+
+    /* Botón Crear Nuevo */
+    .btn-primary {
+        background-color: var(--color-primario);
+        border-color: var(--color-primario);
+        transition: background-color 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b6279; /* Tono más claro del primario */
+            border-color: #4b6279;
+        }
 
     /* Estilo de la tabla */
     .table-striped > tbody > tr:nth-of-type(odd) {
@@ -78,7 +90,10 @@
 <div class="data-card">
 
     <h1><i class="fas fa-tasks text-secondary"></i> @ViewData["Title"]</h1>
-   
+    <p>
+        <a asp-controller="Home"  asp-action="Index" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Volver al menu</a>
+    </p>
+
     @if (ViewBag.Error != null)
     {
         <div class="alert alert-danger" role="alert">
@@ -90,20 +105,20 @@
         <table class="table table-hover" id="proyectosTable">
             <thead>
                 <tr>
-                    <th>Reporte</th>
-                    <th>Motivo</th>
-                    <th class="text-center">Fecha de registro</th>
-                    <th class="text-center">Tipo de reporte</th>
-                    <th class="text-center">Nivel de atencion</th>
+                    <th>Proyecto</th>
+                    <th>Proposito</th>
+                    <th class="text-center">Inicio</th>
+                    <th class="text-center">Finalización</th>
+                    <th class="text-right">Presupuesto</th>
+                    <th class="text-center">Estado</th>
                     <th>Municipio</th>
-                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Titulo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
                         <td>
                             @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)
                             {
@@ -114,36 +129,22 @@
                                 @Html.DisplayFor(modelItem => item.Descripcion)
                             }
                         </td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Registro)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Inicio)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Fin)</td>
+                        <td class="text-right">$@Html.DisplayFor(modelItem => item.Presupuesto)</td>
                         <td class="text-center">
                             @{
-                                string badgeClass = item.Tipo switch
+                                string badgeClass = item.Estado switch
                                 {
-                                    "desechos" => "success",
-                                    "contaminacion" => "primary",
-                                    "seguridad" => "info",
-                                    "infraestructura" => "danger",
-                                    "otro" => "primary",
+                                    "finalizado" => "success",
+                                    "en_ejecucion" => "primary",
+                                    "planificado" => "info",
+                                    "cancelado" => "danger",
                                     _ => "secondary"
                                 };
                             }
                             <span class="badge bg-@badgeClass">
-                                @Html.DisplayFor(modelItem => item.Tipo)
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            @{
-                                string lvlClass = item.Nivel switch
-                                {
-                                    "bajo" => "success",
-                                    "medio" => "primary",
-                                    "alto" => "info",
-                                    "riesgo" => "danger",
-                                    _=> "secondary"
-                                };
-                            }
-                            <span class="badge bg-@lvlClass">
-                                @Html.DisplayFor(modelItem => item.Nivel)
+                                @Html.DisplayFor(modelItem => item.Estado)
                             </span>
                         </td>
                         <td>
@@ -155,11 +156,6 @@
                                 }
                             }
                             @nombreMunicipio
-                        </td>
-                        <td class="text-center action-buttons">
-                            <a asp-action="Edit" asp-route-id="@item.Id_queja" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
-                            <a asp-action="Details" asp-route-id="@item.Id_queja" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
-                            <a asp-action="Delete" asp-route-id="@item.Id_queja" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                 }

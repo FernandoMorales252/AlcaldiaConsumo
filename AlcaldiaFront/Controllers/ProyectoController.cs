@@ -34,6 +34,23 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        public async Task<IActionResult> Menu()
+        {
+            try
+            {
+                var proyectos = await _proyectoService.GetAllAsync();
+                var municipios = await _municipioService.GetAllAsync();
+                var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+                ViewBag.MunicipioNombres = municipioNombres;
+                return View(proyectos);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "No se pudieron cargar los proyectos: " + ex.Message;
+                return View(new List<ProyectoRespuestaDTo>());
+            }
+        }
+
         // GET: Proyecto/Details/5
         public async Task<IActionResult> Details(int id)
         {
