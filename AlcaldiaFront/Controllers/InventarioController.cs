@@ -1,4 +1,5 @@
-﻿using AlcaldiaFront.DTOs.InventarioDTOs;
+﻿using AlcaldiaFront.DTOs.EmpleadoDTOs;
+using AlcaldiaFront.DTOs.InventarioDTOs;
 using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -83,6 +84,8 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var inventario = await _inventarioService.GetByIdAsync(id);
@@ -90,6 +93,7 @@ namespace AlcaldiaFront.Controllers
             {
                 return NotFound();
             }
+
             var dto = new InventarioActualizarDTO
             {
                 Id_inventario = inventario.Id_inventario,
@@ -106,29 +110,24 @@ namespace AlcaldiaFront.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, InventarioActualizarDTO dto)
+        public async Task<IActionResult> Edit(int id, InventarioActualizarDTO inventario)
         {
-            if (id != dto.Id_inventario)
-            {
-                return NotFound();
-            }
 
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(dto);
+                return View(inventario);
             }
-
-            var success = await _inventarioService.UpdateAsync(id, dto, "your_access_token");
+            var success = await _inventarioService.UpdateAsync(id, inventario, "");
             if (success)
             {
-                TempData["Ok"] = "Elemento actualizado con éxito.";
                 return RedirectToAction(nameof(Index));
             }
-            ModelState.AddModelError("", "Error al actualizar el elemento de inventario.");
+            ModelState.AddModelError("", "Error al actualizar el elemento.");
             await PopulateDropdowns();
-            return View(dto);
+            return View(inventario);
         }
+
 
         public async Task<IActionResult> Delete(int id)
         {

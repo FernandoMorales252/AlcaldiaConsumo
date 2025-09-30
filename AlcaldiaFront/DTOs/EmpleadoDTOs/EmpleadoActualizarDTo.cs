@@ -1,7 +1,10 @@
-﻿namespace AlcaldiaFront.DTOs.EmpleadoDTOs
+﻿using System.Text.Json.Serialization;
+
+namespace AlcaldiaFront.DTOs.EmpleadoDTOs
 {
     public class EmpleadoActualizarDTo
     {
+        [JsonIgnore]
         public int Id_empleado {get; set; }
         public string Nombre { get; set; } = "";
         public string Apellido { get; set; } = "";

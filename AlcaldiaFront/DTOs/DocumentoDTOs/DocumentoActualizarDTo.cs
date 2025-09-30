@@ -1,7 +1,10 @@
-﻿namespace AlcaldiaFront.DTOs.DocumentoDTOs
+﻿using System.Text.Json.Serialization;
+
+namespace AlcaldiaFront.DTOs.DocumentoDTOs
 {
     public class DocumentoActualizarDTO
     {
+        [JsonIgnore]
         public int Id_documento { get; set; }
         public string Numero_documento { get; set; } = "";
         public DateTime Fecha_emision { get; set; }

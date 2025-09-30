@@ -1,5 +1,7 @@
 ﻿using AlcaldiaFront.DTOs.AvisoDTOs;
+using AlcaldiaFront.DTOs.DocumentoDTOs;
 using AlcaldiaFront.DTOs.EmpleadoDTOs;
+using AlcaldiaFront.DTOs.QuejaDTOs;
 using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -133,7 +135,8 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        // GET: Empleado/Edit/5
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var aviso = await _avisoService.GetByIdAsync(id);
@@ -144,7 +147,7 @@ namespace AlcaldiaFront.Controllers
 
             var dto = new AvisoActualizarDTO
             {
-                Id_aviso= aviso.Id_aviso,
+                Id_aviso = aviso.Id_aviso,
                 Titulo = aviso.Titulo,
                 Descripcion = aviso.Descripcion,
                 Fecha_Registro = aviso.Fecha_Registro,
@@ -155,41 +158,26 @@ namespace AlcaldiaFront.Controllers
             return View(dto);
         }
 
-        // POST: Empleado/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, AvisoActualizarDTO avisoDto)
+        public async Task<IActionResult> Edit(int id, AvisoActualizarDTO aviso)
         {
-            if (id != avisoDto.Id_aviso)
-            {
-                return NotFound();
-            }
 
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(avisoDto);
+                return View(aviso);
             }
-            try
+            var success = await _avisoService.UpdateAsync(id, aviso, "");
+            if (success)
             {
-                var success = await _avisoService.UpdateAsync(id, avisoDto, "your_access_token");
-                if (success)
-                {
-                    TempData["Ok"] = "Aviso actualizado con éxito.";
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Error al actualizar el aviso.");
-                await PopulateDropdowns();
-                return View(avisoDto);
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al actualizar el Aviso: " + ex.Message);
-                await PopulateDropdowns();
-                return View(avisoDto);
-
-            }
+            ModelState.AddModelError("", "Error al actualizar el aviso.");
+            await PopulateDropdowns();
+            return View(aviso);
         }
+
 
         // GET: Empleado/Delete/5
         public async Task<IActionResult> Delete(int id)

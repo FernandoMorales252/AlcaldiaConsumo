@@ -1,7 +1,8 @@
-﻿using AlcaldiaFront.Services;
+﻿using AlcaldiaFront.DTOs.DocumentoDTOs;
+using AlcaldiaFront.DTOs.EmpleadoDTOs;
+using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using AlcaldiaFront.DTOs.EmpleadoDTOs;
 
 namespace AlcaldiaFront.Controllers
 {
@@ -101,7 +102,8 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        // GET: Empleado/Edit/5
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var empleado = await _empleadoService.GetByIdAsync(id);
@@ -124,40 +126,24 @@ namespace AlcaldiaFront.Controllers
             return View(dto);
         }
 
-        // POST: Empleado/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EmpleadoActualizarDTo empleadoDto)
+        public async Task<IActionResult> Edit(int id, EmpleadoActualizarDTo empleado)
         {
-            if (id != empleadoDto.Id_empleado)
-            {
-                return NotFound();
-            }
 
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(empleadoDto);
+                return View(empleado);
             }
-            try
+            var success = await _empleadoService.UpdateAsync(id, empleado, "");
+            if (success)
             {
-                var success = await _empleadoService.UpdateAsync(id, empleadoDto, "your_access_token");
-                if (success)
-                {
-                    TempData["Ok"] = "Empleado actualizado con éxito.";
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Error al actualizar el empleado.");
-                await PopulateDropdowns();
-                return View(empleadoDto);
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al actualizar el empleado: " + ex.Message);
-                await PopulateDropdowns();
-                return View(empleadoDto);
-
-            }
+            ModelState.AddModelError("", "Error al actualizar el empleado.");
+            await PopulateDropdowns();
+            return View(empleado);
         }
 
         // GET: Empleado/Delete/5

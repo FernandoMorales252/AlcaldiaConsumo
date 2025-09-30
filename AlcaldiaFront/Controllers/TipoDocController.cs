@@ -1,4 +1,5 @@
-﻿using AlcaldiaFront.DTOs.TipoDocumentoDTOs;
+﻿using AlcaldiaFront.DTOs.MunicipioDTOs;
+using AlcaldiaFront.DTOs.TipoDocumentoDTOs;
 using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -67,44 +68,40 @@ using Microsoft.AspNetCore.Mvc;
                 }
             }
 
-            
-            public async Task<IActionResult> Edit(int id)
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var tipoDoc = await _tipoDocService.GetByIdAsync(id);
+            if (tipoDoc == null)
             {
-                var tipoDoc = await _tipoDocService.GetByIdAsync(id);
-                if (tipoDoc == null)
-                {
-                    return NotFound();
-                }
-            
-                var dto = new TipoDocActualizarDTO
-                {
-                    Id_tipo = tipoDoc.Id_tipo,
-                    Nombre = tipoDoc.Nombre
-                };
-                return View(dto);
+                return NotFound();
             }
 
+            var dto = new TipoDocActualizarDTO
+            {
+               Id_tipo = tipoDoc.Id_tipo,
+               Nombre = tipoDoc.Nombre
+            };
+            return View(dto);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TipoDocActualizarDTO tipoDocDto)
+        public async Task<IActionResult> Edit(int id, TipoDocActualizarDTO tipoDoc)
         {
-            // 2. Validación del modelo
+
             if (!ModelState.IsValid)
             {
-                return View(tipoDocDto);
+                return View(tipoDoc);
             }
-
-            // 3. Llamada al servicio con el ID y el DTO
-            var success = await _tipoDocService.UpdateAsync(id, tipoDocDto, "tu_token_de_acceso");
+            var success = await _tipoDocService.UpdateAsync(id, tipoDoc, "");
             if (success)
             {
                 return RedirectToAction(nameof(Index));
             }
-
-            // 4. Manejo de errores si la actualización falla
-            ModelState.AddModelError("", "Error al actualizar el tipo de documento.");
-            return View(tipoDocDto);
+            ModelState.AddModelError("", "Error al actualizar el tipoDoc.");
+            return View(tipoDoc);
         }
 
 

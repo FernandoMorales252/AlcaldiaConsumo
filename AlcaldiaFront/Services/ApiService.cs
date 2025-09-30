@@ -52,54 +52,30 @@ namespace AlcaldiaFront.Services
 
 
 
-        //Put generico
         public async Task<TResponse> PutAsync<TRequest, TResponse>(string endpoint, int Id, TRequest data, string token = null)
         {
+            // 1. Configuración y Llamada
             var content = new StringContent(JsonSerializer.Serialize(data, _jsonOptions), Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync($"{endpoint}/{Id}", content);
+
+            // Si la respuesta no es exitosa (400, 404, 500), lanza una excepción
+            // NOTA: Si quieres ver el mensaje de error del backend, deberías mejorar
+            // esta sección con un try-catch que lea el contenido del error antes de EnsureSuccessStatusCode
             response.EnsureSuccessStatusCode();
 
+            // 2. Manejo de 204 No Content (¡La Solución!)
+            // Si la actualización es exitosa (código 204), no hay cuerpo JSON para leer.
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                // Retorna el valor por defecto para TResponse (ej. null para clases)
+                return default(TResponse);
+            }
+
+            // 3. Deserialización normal (para respuestas 200 OK con cuerpo)
             var JsonResponse = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TResponse>(JsonResponse, _jsonOptions);
         }
 
-
-        // AlcaldiaFront/Services/ApiService.cs
-
-        // ... (El constructor y otros métodos se mantienen igual)
-
-        // ✅ Método Put que no espera contenido (ideal para 204 No Content)
-        public async Task PutNoContentAsync<TRequest>(string endpoint, int Id, TRequest data, string token = null)
-        {
-            // Limpia y añade el token (si no es null)
-            AddAuthorizationHeader(token);
-
-            if (!Uri.TryCreate(_httpClient.BaseAddress, $"{endpoint}/{Id}", out var finalUri))
-            {
-                throw new ArgumentException($"URL de actualización no válida: {endpoint}/{Id}");
-            }
-
-            var content = new StringContent(
-                JsonSerializer.Serialize(data, _jsonOptions),
-                Encoding.UTF8,
-                "application/json");
-
-            // Usa el Uri final
-            var response = await _httpClient.PutAsync(finalUri, content);
-
-            // Manejo detallado de errores para capturar el 404
-            if (!response.IsSuccessStatusCode)
-            {
-                string errorContent = await response.Content.ReadAsStringAsync();
-
-                // Lanzamos la excepción con la URL de la falla
-                throw new HttpRequestException(
-                    $"Actualización fallida. URL: {finalUri}. Código: {(int)response.StatusCode}. Mensaje del servidor: {errorContent}",
-                    null,
-                    response.StatusCode
-                );
-            }
-        }
 
 
         //Delete generico 

@@ -1,7 +1,10 @@
-﻿namespace AlcaldiaFront.DTOs.InventarioDTOs
+﻿using System.Text.Json.Serialization;
+
+namespace AlcaldiaFront.DTOs.InventarioDTOs
 {
     public class InventarioActualizarDTO
     {
+        [JsonIgnore]
         public int Id_inventario { get; set; }
         public string Nombre_item { get; set; } = "";
         public string Descripcion { get; set; } = "";

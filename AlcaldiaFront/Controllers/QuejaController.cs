@@ -1,4 +1,5 @@
-﻿using AlcaldiaFront.DTOs.QuejaDTOs;
+﻿using AlcaldiaFront.DTOs.ProyectoDTOs;
+using AlcaldiaFront.DTOs.QuejaDTOs;
 using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -81,9 +82,9 @@ namespace AlcaldiaFront.Controllers
         }
 
         // GET: Empleado/Create
-       
 
-        // GET: Empleado/Edit/5
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var queja = await _quejaService.GetByIdAsync(id);
@@ -106,40 +107,24 @@ namespace AlcaldiaFront.Controllers
             return View(dto);
         }
 
-        // POST: Empleado/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, QuejaActualizarDTO quejaDto)
+        public async Task<IActionResult> Edit(int id, QuejaActualizarDTO queja)
         {
-            if (id != quejaDto.Id_queja)
-            {
-                return NotFound();
-            }
 
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(quejaDto);
+                return View(queja);
             }
-            try
+            var success = await _quejaService.UpdateAsync(id, queja, "");
+            if (success)
             {
-                var success = await _quejaService.UpdateAsync(id, quejaDto, "your_access_token");
-                if (success)
-                {
-                    TempData["Ok"] = "Reporte actualizado con éxito.";
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Error al actualizar el Reporte.");
-                await PopulateDropdowns();
-                return View(quejaDto);
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al actualizar el Reporte: " + ex.Message);
-                await PopulateDropdowns();
-                return View(quejaDto);
-
-            }
+            ModelState.AddModelError("", "Error al actualizar el Reporte.");
+            await PopulateDropdowns();
+            return View(queja);
         }
 
         // GET: Empleado/Delete/5

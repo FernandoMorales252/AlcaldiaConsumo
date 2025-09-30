@@ -1,9 +1,12 @@
 ﻿using AlcaldiaFront.DTOs.CargoDTOs;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace AlcaldiaFront.Services
 {
     public class CargoService
     {
+        private readonly HttpClient _http;
 
         private readonly ApiService _api;
         private const string Base = "cargo";
@@ -40,6 +43,7 @@ namespace AlcaldiaFront.Services
                 return false;  
             }
         }
+
 
         // Eliminar un cargo por id
         public async Task<bool> DeleteAsync(int Id_Cargo, string token)

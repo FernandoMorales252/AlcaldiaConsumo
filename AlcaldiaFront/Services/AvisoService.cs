@@ -36,6 +36,8 @@ namespace AlcaldiaFront.Services
             }
         }
 
+
+
         public async Task<bool> DeleteAsync(int Id_aviso, string token)
         {
             return await _api.DeleteAsync(Base, Id_aviso, token);

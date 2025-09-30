@@ -1,7 +1,9 @@
-﻿using AlcaldiaFront.Services;
+﻿using AlcaldiaFront.DTOs.AvisoDTOs;
+using AlcaldiaFront.DTOs.DocumentoDTOs;
+using AlcaldiaFront.DTOs.ProyectoDTOs;
+using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using AlcaldiaFront.DTOs.ProyectoDTOs;
 
 namespace AlcaldiaFront.Controllers
 {
@@ -103,7 +105,8 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        // GET: Proyecto/Edit/5
+        
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);
@@ -129,31 +132,26 @@ namespace AlcaldiaFront.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProyectoActualizarDTo proyectoDto)
+        public async Task<IActionResult> Edit(int id, ProyectoActualizarDTo proyecto)
         {
-            if (id != proyectoDto.Id_Proyecto)
-            {
-                return NotFound();
-            }
+
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(proyectoDto);
+                return View(proyecto);
             }
-
-            var success = await _proyectoService.UpdateAsync(id, proyectoDto, "your_access_token");
+            var success = await _proyectoService.UpdateAsync(id, proyecto, "");
             if (success)
             {
-                TempData["Ok"] = "Proyecto actualizado con éxito."; 
                 return RedirectToAction(nameof(Index));
             }
             ModelState.AddModelError("", "Error al actualizar el proyecto.");
             await PopulateDropdowns();
-            return View(proyectoDto);
-
+            return View(proyecto);
         }
 
-        
+
+
         public async Task<IActionResult> Delete(int id)
         {
             var proyecto = await _proyectoService.GetByIdAsync(id);

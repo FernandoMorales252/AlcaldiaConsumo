@@ -60,6 +60,7 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var cargo = await _cargoService.GetByIdAsync(id);
@@ -86,7 +87,7 @@ namespace AlcaldiaFront.Controllers
             {
                 return View(cargo);
             }
-            var success = await _cargoService.UpdateAsync(id, cargo, "tu_token_de_acceso");
+            var success = await _cargoService.UpdateAsync(id, cargo,"");
             if (success)
             {
                 return RedirectToAction(nameof(Index));
@@ -95,6 +96,9 @@ namespace AlcaldiaFront.Controllers
             return View(cargo);
         }
 
+       
+
+       
         public async Task<IActionResult> Delete(int id)
         {
             var cargo = await _cargoService.GetByIdAsync(id);

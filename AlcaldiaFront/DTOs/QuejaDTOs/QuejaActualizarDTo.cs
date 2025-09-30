@@ -1,7 +1,10 @@
-﻿namespace AlcaldiaFront.DTOs.QuejaDTOs
+﻿using System.Text.Json.Serialization;
+
+namespace AlcaldiaFront.DTOs.QuejaDTOs
 {
     public class QuejaActualizarDTO
     {
+        [JsonIgnore]
         public int Id_queja { get; set; }
         public string Titulo { get; set; } = "";
         public string Descripcion { get; set; } = "";

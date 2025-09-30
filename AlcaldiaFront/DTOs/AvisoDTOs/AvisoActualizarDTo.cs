@@ -1,7 +1,10 @@
-﻿namespace AlcaldiaFront.DTOs.AvisoDTOs
+﻿using System.Text.Json.Serialization;
+
+namespace AlcaldiaFront.DTOs.AvisoDTOs
 {
     public class AvisoActualizarDTO
     {
+        [JsonIgnore]
         public int Id_aviso { get; set; }
 
         public string Titulo { get; set; } = "";

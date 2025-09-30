@@ -1,4 +1,6 @@
-﻿using AlcaldiaFront.DTOs.MunicipioDTOs;
+﻿using AlcaldiaFront.DTOs.CargoDTOs;
+using AlcaldiaFront.DTOs.InventarioDTOs;
+using AlcaldiaFront.DTOs.MunicipioDTOs;
 using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,6 +64,7 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var municipio = await _municipioService.GetByIdAsync(id);
@@ -80,26 +83,23 @@ namespace AlcaldiaFront.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, MunicipioActualizarDTO municipioDto)
+        public async Task<IActionResult> Edit(int id, MunicipioActualizarDTO municipio)
         {
-            // Validación del modelo
+
             if (!ModelState.IsValid)
             {
-                return View(municipioDto);
+                return View(municipio);
             }
-
-            // Llamada al servicio con el ID y el DTO
-            var success = await _municipioService.UpdateAsync(id, municipioDto, "tu_token_de_acceso");
+            var success = await _municipioService.UpdateAsync(id, municipio, "");
             if (success)
             {
                 return RedirectToAction(nameof(Index));
             }
-
-            // Manejo de errores si la actualización falla
             ModelState.AddModelError("", "Error al actualizar el municipio.");
-            return View(municipioDto);
+            return View(municipio);
         }
 
+        
         public async Task<IActionResult> Delete(int id)
         {
             var municipio = await _municipioService.GetByIdAsync(id);

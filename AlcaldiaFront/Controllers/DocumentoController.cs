@@ -1,7 +1,8 @@
-﻿using AlcaldiaFront.Services;
+﻿using AlcaldiaFront.DTOs.CargoDTOs;
+using AlcaldiaFront.DTOs.DocumentoDTOs;
+using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; 
-using AlcaldiaFront.DTOs.DocumentoDTOs;
 
 
 namespace AlcaldiaFront.Controllers
@@ -99,15 +100,17 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var documento = await _documentoService.GetByIdAsync(id); // <--- Objeto con datos de la API
+            var documento = await _documentoService.GetByIdAsync(id);
             if (documento == null)
             {
                 return NotFound();
             }
 
-            
             var dto = new DocumentoActualizarDTO
             {
                 Id_documento = documento.Id_documento, // Usar documento.Id_documento
@@ -119,69 +122,28 @@ namespace AlcaldiaFront.Controllers
                 TipoDocumentoId = documento.TipoDocumentoId,
                 MunicipioId = documento.MunicipioId
             };
-
             await PopulateDropdowns();
             return View(dto);
         }
 
-        // DocumentoController.cs - POST Edit (MODIFICADO)
-
-        // AlcaldiaFront/Controllers/DocumentoController.cs
-
-        // AlcaldiaFront/Controllers/DocumentoController.cs
-        // ...
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, DocumentoActualizarDTO dto)
+        public async Task<IActionResult> Edit(int id, DocumentoActualizarDTO documento)
         {
-            if (id != dto.Id_documento)
-            {
-                return NotFound(); // Ya manejado por la verificación previa
-            }
 
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
-                return View(dto);
+                return View(documento);
             }
-
-            try
+            var success = await _documentoService.UpdateAsync(id, documento, "");
+            if (success)
             {
-                // Llama al servicio que ahora lanza HttpRequestException en caso de 404.
-                await _documentoService.UpdateAsync(id, dto, "your_access_token");
-
-                TempData["Ok"] = "Documento actualizado con éxito.";
                 return RedirectToAction(nameof(Index));
             }
-            catch (HttpRequestException ex)
-            {
-                // 🚨 Captura la excepción. El mensaje contendrá la URL, el código (404) y el cuerpo del error.
-
-                string errorMessage = $"Error al actualizar el documento: {ex.Message}";
-
-                // Si el código es 404, el problema es la URL o el ID.
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    errorMessage = $"Error 404: No se encontró el documento con ID {id}. Verifique si existe o si la URL es correcta.";
-                }
-
-                ModelState.AddModelError("", errorMessage);
-            }
-            catch (ArgumentException ex)
-            {
-                // Captura el error de ID inconsistente lanzado en el DocumentoService
-                ModelState.AddModelError("", ex.Message);
-            }
-            catch (Exception ex)
-            {
-                // Captura cualquier otra excepción inesperada
-                ModelState.AddModelError("", $"Ocurrió un error inesperado: {ex.Message}");
-            }
-
-            // Si hubo un error, volvemos a la vista.
+            ModelState.AddModelError("", "Error al actualizar el documento.");
             await PopulateDropdowns();
-            return View(dto);
+            return View(documento);
         }
 
         public async Task<IActionResult> Delete(int id)

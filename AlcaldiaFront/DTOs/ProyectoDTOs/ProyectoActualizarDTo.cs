@@ -1,7 +1,10 @@
-﻿namespace AlcaldiaFront.DTOs.ProyectoDTOs
+﻿using System.Text.Json.Serialization;
+
+namespace AlcaldiaFront.DTOs.ProyectoDTOs
 {
     public class ProyectoActualizarDTo
     {
+        [JsonIgnore]
         public int Id_Proyecto { get; set; }
         public string Nombre { get; set; } = "";
         public string Descripcion { get; set; } = "";
