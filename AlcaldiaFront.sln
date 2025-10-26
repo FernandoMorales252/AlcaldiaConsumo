@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlcaldiaFront", "AlcaldiaFront\AlcaldiaFront.csproj", "{BA9D77F5-A4C5-4C84-B0F5-E2960FA73DC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlcaldiaMsTest", "AlcaldiaMsTest\AlcaldiaMsTest.csproj", "{8B957FEE-E32B-4E74-8E17-5E504A920CEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BA9D77F5-A4C5-4C84-B0F5-E2960FA73DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA9D77F5-A4C5-4C84-B0F5-E2960FA73DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA9D77F5-A4C5-4C84-B0F5-E2960FA73DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B957FEE-E32B-4E74-8E17-5E504A920CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B957FEE-E32B-4E74-8E17-5E504A920CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B957FEE-E32B-4E74-8E17-5E504A920CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B957FEE-E32B-4E74-8E17-5E504A920CEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
