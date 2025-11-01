@@ -1,11 +1,13 @@
 ﻿using AlcaldiaFront.DTOs.EmpleadoDTOs;
 using AlcaldiaFront.DTOs.InventarioDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class InventarioController : Controller
     {
         private readonly InventarioService _inventarioService;

@@ -22,6 +22,7 @@ namespace AlcaldiaFront.Services
         //Obtener todos los datos de un endpoint
         public async Task<List<T>> GetAllAsync<T>(string endpoint, string token = null)
         {
+            AddAuthorizationHeader(token);
             var response = await _httpClient.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
@@ -32,6 +33,7 @@ namespace AlcaldiaFront.Services
         //Obtener por Id
         public async Task<T> GetByIdAsync<T>(string endpoint, int Id, string token = null)
         {
+            AddAuthorizationHeader(token);
             var response = await _httpClient.GetAsync($"{endpoint}/{Id}");
             response.EnsureSuccessStatusCode();
 
@@ -42,6 +44,7 @@ namespace AlcaldiaFront.Services
         //Post generico
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string endpoint, TRequest data, string token = null)
         {
+            AddAuthorizationHeader(token);
             var content = new StringContent(JsonSerializer.Serialize(data, _jsonOptions), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(endpoint, content);
             response.EnsureSuccessStatusCode();
@@ -81,6 +84,7 @@ namespace AlcaldiaFront.Services
         //Delete generico 
         public async Task<bool> DeleteAsync(string endpoint, int Id, string token = null)
         {
+            AddAuthorizationHeader(token);
             var response = await _httpClient.DeleteAsync($"{endpoint}/{Id}");
             return response.IsSuccessStatusCode;
         }

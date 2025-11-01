@@ -1,11 +1,13 @@
 ﻿using AlcaldiaFront.DTOs.MunicipioDTOs;
 using AlcaldiaFront.DTOs.TipoDocumentoDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
     namespace AlcaldiaFront.Controllers
     {
-        public class TipoDocController : Controller
+    [Authorize]
+    public class TipoDocController : Controller
         {
             private readonly TipoDocService _tipoDocService;
 

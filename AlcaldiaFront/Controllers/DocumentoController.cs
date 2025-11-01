@@ -1,12 +1,14 @@
 ﻿using AlcaldiaFront.DTOs.CargoDTOs;
 using AlcaldiaFront.DTOs.DocumentoDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; 
 
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class DocumentoController : Controller
     {
         private readonly DocumentoService _documentoService;

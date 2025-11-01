@@ -1,11 +1,13 @@
 ﻿using AlcaldiaFront.DTOs.ProyectoDTOs;
 using AlcaldiaFront.DTOs.QuejaDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class QuejaController : Controller
     {
         private readonly QuejaService _quejaService;

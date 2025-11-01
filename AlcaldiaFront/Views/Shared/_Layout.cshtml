@@ -124,6 +124,13 @@
                         </li>
                     </ul>
                 </div>
+                @await Component.InvokeAsync("UserInfo")
+
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-flex">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        Cerrar Sesión ❌
+                    </button>
+                </form>
             </div>
         </nav>
     </header>

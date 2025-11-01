@@ -2,10 +2,12 @@
 using AlcaldiaFront.DTOs.InventarioDTOs;
 using AlcaldiaFront.DTOs.MunicipioDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class MunicipioController : Controller
     {
         private readonly MunicipioService _municipioService;

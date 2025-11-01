@@ -1,11 +1,13 @@
 ﻿using AlcaldiaFront.DTOs.DocumentoDTOs;
 using AlcaldiaFront.DTOs.EmpleadoDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class EmpleadoController : Controller
     {
         private readonly EmpleadoService _empleadoService;

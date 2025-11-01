@@ -1,9 +1,11 @@
 ﻿using AlcaldiaFront.DTOs.CargoDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class CargoController : Controller
     {
         private readonly CargoService _cargoService;

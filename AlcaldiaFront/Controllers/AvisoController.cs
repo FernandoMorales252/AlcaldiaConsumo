@@ -3,11 +3,13 @@ using AlcaldiaFront.DTOs.DocumentoDTOs;
 using AlcaldiaFront.DTOs.EmpleadoDTOs;
 using AlcaldiaFront.DTOs.QuejaDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class AvisoController : Controller
     {
         private readonly AvisoService _avisoService;

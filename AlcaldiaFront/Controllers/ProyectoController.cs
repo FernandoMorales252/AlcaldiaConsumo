@@ -2,11 +2,13 @@
 using AlcaldiaFront.DTOs.DocumentoDTOs;
 using AlcaldiaFront.DTOs.ProyectoDTOs;
 using AlcaldiaFront.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AlcaldiaFront.Controllers
 {
+    [Authorize]
     public class ProyectoController : Controller
     {
         private readonly ProyectoService _proyectoService;
