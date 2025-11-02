@@ -21,15 +21,19 @@ namespace FrontendRestauranteMarisco.WebApp.Controllers
         {
             return View();
         }
+
         // POST: Login
         [HttpPost]
         public async Task<IActionResult> Login(UsuarioLoginDTO dto)
         {
+            // Se asume que el servicio LoginAsync devolverá null si las credenciales son incorrectas
+            // (ya sea correo o contraseña).
             var result = await _authService.LoginAsync(dto);
             if (result == null)
             {
-                ViewBag.Error = "Credenciales inválidas";
-                return View();
+                // Mensaje más claro para el usuario.
+                ViewBag.Error = "Correo electrónico o contraseña incorrectos.";
+                return View(dto); // Devolver el DTO para mantener los datos del formulario.
             }
 
             // Crear y firmar los claims usando el helper
@@ -39,24 +43,49 @@ namespace FrontendRestauranteMarisco.WebApp.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
         // POST: Registro
         [HttpPost]
         public async Task<IActionResult> Registrar(UsuarioRegistroDTO dto)
         {
-            var result = await _authService.RegistrarAsync(dto);
-            if (result == null || result.Id <= 0)
+            try
             {
-                ViewBag.Error = "Error al registrar";
-                return View();
+                // Se asume que RegistrarAsync puede lanzar una excepción específica
+                // (p. ej., DuplicateEmailException) o devolver un resultado que indica el error.
+                var result = await _authService.RegistrarAsync(dto);
+
+                if (result == null || result.Id <= 0)
+                {
+                    // Si result es null o tiene Id <= 0, asumimos un error general o no capturado.
+                    ViewBag.Error = "Error al registrar. Por favor, intente de nuevo.";
+                    return View(dto);
+                }
+
+                // Crear y firmar los claims usando el helper
+                var principal = ClaimsHelper.CrearClaimsPrincipal(result);
+
+                await HttpContext.SignInAsync("AuthCookie", principal);
+
+                return RedirectToAction("Index", "Home");
             }
+            catch (System.Exception ex) // Se recomienda usar una excepción más específica (como DuplicateEmailException)
+            {
+                // Lógica para detectar si el error fue por duplicidad de email.
+                // Esto depende de cómo implementes el error en tu capa de servicio.
+                if (ex.Message.Contains("duplicate email", System.StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("correo en uso", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    ViewBag.Error = "Este correo electrónico ya está en uso. Intente iniciar sesión.";
+                }
+                else
+                {
+                    // Error genérico si no es por duplicidad de email
+                    ViewBag.Error = "Error al registrar. Por favor, intente de nuevo.";
+                }
 
-            // Crear y firmar los claims usando el helper
-            var principal = ClaimsHelper.CrearClaimsPrincipal(result);
-
-            await HttpContext.SignInAsync("AuthCookie", principal);
-
-            return RedirectToAction("Index", "Home");
+                return View(dto);
+            }
         }
+
         // Logout
         [HttpPost]
         public async Task<IActionResult> Logout()
@@ -72,4 +101,4 @@ namespace FrontendRestauranteMarisco.WebApp.Controllers
             return View();
         }
     }
-}
+ }

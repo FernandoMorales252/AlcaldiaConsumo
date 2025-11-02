@@ -12,8 +12,8 @@
 
     <style>
         /* --------------------------------------------------
-                    PATRÓN DE COLORES FORMAL (Alcaldía)
-                    -------------------------------------------------- */
+                PATRÓN DE COLORES FORMAL (Alcaldía)
+                -------------------------------------------------- */
         :root {
             --color-primario: #34495e; /* Azul Marino/Antracita - Formal */
             --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
@@ -74,6 +74,17 @@
                 .footer a:hover {
                     color: #ffe082; /* Tono más claro del acento */
                 }
+        /* Estilo específico para botones de Auth */
+        .btn-login {
+            color: white;
+            border: 1px solid white;
+            transition: all 0.2s;
+        }
+
+            .btn-login:hover {
+                background-color: white;
+                color: var(--color-primario);
+            }
     </style>
 </head>
 <body>
@@ -95,42 +106,62 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy" data-controller="Home">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="TipoDoc" asp-action="Index" data-controller="TipoDoc">Tipos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Municipio" asp-action="Index" data-controller="Municipio">Municipios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Documento" asp-action="Index" data-controller="Documento">Documentos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Cargo" asp-action="Index" data-controller="Cargo">Cargos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Inventario" asp-action="Index" data-controller="Inventario">Inventario</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Proyecto" asp-action="Index" data-controller="Proyecto">Proyectos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Empleado" asp-action="Index" data-controller="Empleado">Empleados</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Aviso" asp-action="Index" data-controller="Aviso">Avisos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Queja" asp-action="Index" data-controller="Queja">Reportes</a>
-                        </li>
+                        @* OPCIONES PRIVADAS (Solo si el usuario está autenticado) *@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="TipoDoc" asp-action="Index" data-controller="TipoDoc">Tipos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Municipio" asp-action="Index" data-controller="Municipio">Municipios</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Documento" asp-action="Index" data-controller="Documento">Documentos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cargo" asp-action="Index" data-controller="Cargo">Cargos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Inventario" asp-action="Index" data-controller="Inventario">Inventario</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Proyecto" asp-action="Index" data-controller="Proyecto">Proyectos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Empleado" asp-action="Index" data-controller="Empleado">Empleados</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Aviso" asp-action="Index" data-controller="Aviso">Avisos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Queja" asp-action="Index" data-controller="Queja">Reportes</a>
+                            </li>
+                        }
                     </ul>
                 </div>
-                @await Component.InvokeAsync("UserInfo")
 
-                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-flex">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                        Cerrar Sesión ❌
-                    </button>
-                </form>
+                @* Componente UserInfo y Botones de Sesión *@
+                <div class="d-flex align-items-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @* Muestra la información del usuario logueado *@
+                        @await Component.InvokeAsync("UserInfo")
+
+                        @* Botón de Cerrar Sesión (Visible solo si está logueado) *@
+                        <form asp-controller="Auth" asp-action="Logout" method="post" class="ms-3">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                Cerrar Sesión <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        @* Botón de Iniciar Sesión (Visible si NO está logueado) *@
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-login btn-sm ms-3">
+                            Iniciar Sesión <i class="fas fa-sign-in-alt"></i>
+                        </a>
+                    }
+                </div>
             </div>
         </nav>
     </header>

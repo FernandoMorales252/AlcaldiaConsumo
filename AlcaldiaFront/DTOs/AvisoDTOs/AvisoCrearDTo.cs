@@ -6,7 +6,7 @@
 
         public string Descripcion { get; set; } = "";
 
-        public DateTime Fecha_Registro { get; set; }
+        public DateTime Fecha_Registro { get; set; } = DateTime.Now;
 
         public string Tipo { get; set; } = "";
 
