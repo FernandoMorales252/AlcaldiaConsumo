@@ -117,13 +117,19 @@ namespace AlcaldiaFront.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var success = await _municipioService.DeleteAsync(id, "tu_token_de_acceso");
+
             if (success)
             {
+                TempData["SuccessMessage"] = $"El municipio con ID {id} ha sido eliminado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
+            
+                TempData["ErrorMessage"] = "No se pudo eliminar el municipio. Es probable que esté asociado a otros registros (proyectos, etc.).";
 
-            ModelState.AddModelError("", "Error al eliminar el municipio.");
-            return View("Delete", await _municipioService.GetByIdAsync(id));
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

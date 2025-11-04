@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
     namespace AlcaldiaFront.Controllers
     {
-    [Authorize]
-    public class TipoDocController : Controller
-        {
+      [Authorize]
+      public class TipoDocController : Controller
+       {
             private readonly TipoDocService _tipoDocService;
 
             public TipoDocController(TipoDocService tipoDocService)
@@ -71,9 +71,9 @@ using Microsoft.AspNetCore.Mvc;
             }
 
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
+           [HttpGet]
+           public async Task<IActionResult> Edit(int id)
+           {
             var tipoDoc = await _tipoDocService.GetByIdAsync(id);
             if (tipoDoc == null)
             {
@@ -86,7 +86,7 @@ using Microsoft.AspNetCore.Mvc;
                Nombre = tipoDoc.Nombre
             };
             return View(dto);
-        }
+            }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -108,14 +108,14 @@ using Microsoft.AspNetCore.Mvc;
 
 
         public async Task<IActionResult> Delete(int id)
-            {
+           {
                 var tipoDoc = await _tipoDocService.GetByIdAsync(id);
                 if (tipoDoc == null)
                 {
                     return NotFound();
                 }
                 return View(tipoDoc);
-            }
+           }
 
            
             [HttpPost, ActionName("Delete")]
@@ -123,14 +123,20 @@ using Microsoft.AspNetCore.Mvc;
             public async Task<IActionResult> DeleteConfirmed(int id)
             {
                 var success = await _tipoDocService.DeleteAsync(id, "tu_token_de_acceso");
-                if (success)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                ModelState.AddModelError("", "Error al eliminar el tipo de documento.");
-                return View("Delete", await _tipoDocService.GetByIdAsync(id));
+            if (success)
+            {
+                TempData["SuccessMessage"] = $"El Tipo con ID {id} ha sido eliminado correctamente.";
+                return RedirectToAction(nameof(Index));
             }
-        }
+            else
+            {
+
+                TempData["ErrorMessage"] = "No se pudo eliminar el tipo. Es probable que esté asociado a otros registros (Documentos).";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+         }
+       }
     }
 

@@ -96,7 +96,7 @@ namespace AlcaldiaFront.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Error al crear el documento: " + ex.Message);
+                ModelState.AddModelError("", "Error al crear: Asegurate de que el numero no este en uso y llenar los campos");
                 await PopulateDropdowns();
                 return View(dto);
             }
@@ -143,7 +143,7 @@ namespace AlcaldiaFront.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            ModelState.AddModelError("", "Error al actualizar el documento.");
+            ModelState.AddModelError("", "Error al actualizar: Asegurate de que el numero no este en uso y llenar los campos.");
             await PopulateDropdowns();
             return View(documento);
         }

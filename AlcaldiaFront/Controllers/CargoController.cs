@@ -118,11 +118,16 @@ namespace AlcaldiaFront.Controllers
             var success = await _cargoService.DeleteAsync(id, "tu_token_de_acceso");
             if (success)
             {
+                TempData["SuccessMessage"] = $"El Cargo con ID {id} ha sido eliminado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
 
-            ModelState.AddModelError("", "Error al eliminar el cargo.");
-            return View("Delete", await _cargoService.GetByIdAsync(id));
+                TempData["ErrorMessage"] = "No se pudo eliminar el cargo. Es probable que esté asociado a otros registros (Empleado).";
+
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

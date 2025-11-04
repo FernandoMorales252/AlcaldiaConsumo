@@ -1,6 +1,162 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Soporte Técnico y Desarrolladores";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+@* Incluimos Font Awesome para los iconos *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+<style>
+    /* --------------------------------------------------
+                PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
+                -------------------------------------------------- */
+    :root {
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-fondo-claro: #ecf0f1;
+        --color-texto: #2c3e50;
+        --color-sombra: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Contenedor principal de la página */
+    .data-card {
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px var(--color-sombra);
+        max-width: 1200px;
+        margin: 40px auto;
+    }
+
+    /* Encabezado principal */
+    h1 {
+        color: var(--color-primario);
+        border-bottom: 3px solid var(--color-secundario);
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    h2 {
+        color: var(--color-texto);
+        margin-top: 30px;
+        margin-bottom: 25px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    /* Estilos para el contenedor de cartas (Responsive Grid) */
+    .developer-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    /* Estilo para cada carta de desarrollador */
+    .card-developer {
+        background-color: var(--color-fondo-claro);
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 10px var(--color-sombra);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+        .card-developer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--color-sombra);
+        }
+
+        .card-developer h3 {
+            color: var(--color-primario);
+            font-size: 1.5rem;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .card-developer .role {
+            color: var(--color-secundario);
+            font-style: italic;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .card-developer p {
+            color: var(--color-texto);
+            margin-bottom: 10px;
+        }
+
+    .icon-large {
+        font-size: 3rem;
+        color: var(--color-secundario);
+        margin-bottom: 10px;
+    }
+
+    .contact-info a {
+        display: block;
+        color: var(--color-primario);
+        text-decoration: none;
+        margin-top: 5px;
+        transition: color 0.3s;
+    }
+
+        .contact-info a:hover {
+            color: var(--color-secundario);
+        }
+</style>
+
+<div class="data-card">
+
+    <h1><i class="fas fa-handshake"></i> @ViewData["Title"]</h1>
+
+    <p style="text-align: center; color: var(--color-texto); font-size: 1.1rem; margin-bottom: 40px;">
+        Esta página está dedicada a proporcionar información de soporte y presentar al equipo que hizo posible este sistema.
+        Para cualquier consulta técnica o problemas con la aplicación, por favor contacte a nuestros desarrolladores.
+    </p>
+
+    <h2>Equipo de Desarrollo de la Aplicación</h2>
+
+    <div class="developer-cards">
+
+        @* Desarrollador 1 *@
+        <div class="card-developer">
+            <i class="fas fa-code icon-large"></i>
+            <h3>Paola Nicole Mendoza</h3>
+            <span class="role">Arquitecta Frontend & Product Owner</span>
+            <p>Especialista en experiencia de usuario y desarrollo de vistas responsivas.</p>
+            <div class="contact-info">
+                <a href="mailto:MO25001@esfe.agape.edu.sv"><i class="fas fa-envelope"></i>MO25001@esfe.agape.edu.sv</a>
+                <a href="tel:+50311112222"><i class="fas fa-phone"></i> +503 1111-2222</a>
+            </div>
+        </div>
+
+        @* Desarrollador 2 *@
+        <div class="card-developer">
+            <i class="fas fa-database icon-large"></i>
+            <h3>Elias Flores Zaña</h3>
+            <span class="role">Especialista Backend & API</span>
+            <p>Encargado de la lógica de negocio, bases de datos y seguridad de la API.</p>
+            <div class="contact-info">
+                <a href="mailto:FZ25001@esfe.agape.edu.sv"><i class="fas fa-envelope"></i> FZ25001@esfe.agape.edu.sv</a>
+                <a href="tel:+50333334444"><i class="fas fa-phone"></i> +503 3333-4444</a>
+            </div>
+        </div>
+
+        @* Desarrollador 3 *@
+        <div class="card-developer">
+            <i class="fas fa-user-shield icon-large"></i>
+            <h3>Luis Fernando Morales</h3>
+            <span class="role">Lider Scrum & Ingeniero de Calidad</span>
+            <p>Asegurando la estabilidad del sistema, despliegue y monitoreo continuo.</p>
+            <div class="contact-info">
+                <a href="mailto:MP25005@esfe.agape.edu.sv"><i class="fas fa-envelope"></i> MP25005@esfe.agape.edu.sv</a>
+                <a href="tel:+50355556666"><i class="fas fa-phone"></i> +503 5555-6666</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
