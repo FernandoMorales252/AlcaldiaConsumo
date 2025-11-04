@@ -81,6 +81,7 @@ namespace AlcaldiaFront.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProyectoCrearDTo proyectoDto)
         {
+            // *** ESTA LÍNEA AHORA EJECUTA AUTOMÁTICAMENTE LA LÓGICA DE IValidatableObject ***
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
@@ -96,7 +97,7 @@ namespace AlcaldiaFront.Controllers
                     await PopulateDropdowns();
                     return View(proyectoDto);
                 }
-                TempData["Ok"] = "Proyecto creado con éxito."; 
+                TempData["Ok"] = "Proyecto creado con éxito.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -107,7 +108,7 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -136,7 +137,7 @@ namespace AlcaldiaFront.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProyectoActualizarDTo proyecto)
         {
-
+            // *** ESTA LÍNEA TAMBIÉN EJECUTA LA LÓGICA DE VALIDACIÓN DE FECHAS ***
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns();
