@@ -1,5 +1,6 @@
 using AlcaldiaFront.Services;
 using AlcaldiaFront.WebApp.Services;
+using Microsoft.AspNetCore.Http; // Necesario para SameSiteMode
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,12 +10,11 @@ builder.Services.AddControllersWithViews();
 // Defincion de la url base de la Api
 builder.Services.AddHttpClient<ApiService>(client =>
 {
-    
-
-    client.BaseAddress = new Uri("https://localhost:44396/api/"); 
+    // Confirmado: HTTPS
+    client.BaseAddress = new Uri("https://localhost:44396/api/");
 });
 
-//Servicios
+// Servicios (sin cambios)
 builder.Services.AddScoped<AlcaldiaFront.Services.TipoDocService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AlcaldiaFront.Services.MunicipioService>();
@@ -31,12 +31,18 @@ builder.Services.AddAuthentication("AuthCookie")
     .AddCookie("AuthCookie", options =>
     {
         options.LoginPath = "/Auth/Login";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Después de 60 minutos, el usuario tendrá que iniciar sesión nuevamente
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+
+        // === AJUSTES DE SEGURIDAD PARA RESOLVER EL ERROR DEL NAVEGADOR ===
+        // 1. Asegura que la cookie SIEMPRE sea enviada bajo HTTPS (resuelve el 'Secure' warning)
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+        // 2. Permite que la cookie se envíe a diferentes puertos en localhost (resuelve el 'SameSite' warning)
+        // Nota: 'SameSiteMode.None' debe usarse con 'SecurePolicy.Always'
+        options.Cookie.SameSite = SameSiteMode.None;
     });
 
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
