@@ -122,21 +122,38 @@ using Microsoft.AspNetCore.Mvc;
             [ValidateAntiForgeryToken]
             public async Task<IActionResult> DeleteConfirmed(int id)
             {
+            try
+            {
                 var success = await _tipoDocService.DeleteAsync(id, "tu_token_de_acceso");
-            if (success)
-            {
-                TempData["SuccessMessage"] = $"El Tipo con ID {id} ha sido eliminado correctamente.";
-                return RedirectToAction(nameof(Index));
+
+                if (success)
+                {
+                    TempData["SuccessMessage"] = $"El Tipo con ID {id} ha sido eliminado correctamente.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "La eliminación no se completó debido a una validación del servicio.";
+                }
             }
-            else
+            catch (HttpRequestException ex)
             {
+                Console.WriteLine($"Error de solicitud HTTP durante la eliminación: {ex.Message}");
 
-                TempData["ErrorMessage"] = "No se pudo eliminar el tipo. Es probable que esté asociado a otros registros (Documentos).";
-
-                return RedirectToAction(nameof(Index));
+                // Establecemos el mensaje de error para mostrar al usuario
+                TempData["ErrorMessage"] = "No se pudo eliminar el Tipo. Es probable que esté asociado a otros registros o la API no está disponible.";
+            }
+            catch (Exception ex)
+            {
+                // Captura cualquier otro error inesperado (fallos de conexión, etc.)
+                Console.WriteLine($"Error inesperado durante la eliminación: {ex.Message}");
+                TempData["ErrorMessage"] = $"Ocurrió un error inesperado: {ex.Message}";
             }
 
-         }
+            // Finalmente, redirigimos siempre al Index, ya sea con un mensaje de éxito o de error.
+            return RedirectToAction(nameof(Index));
+             }
+
+         
        }
     }
 

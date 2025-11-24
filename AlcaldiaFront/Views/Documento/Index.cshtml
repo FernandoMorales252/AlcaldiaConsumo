@@ -2,110 +2,275 @@
 @using System.Collections.Generic
 
 @{
-    ViewData["Title"] = "Listado de Documentos";
+    ViewData["Title"] = "Listado de Documentos Oficiales";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     Dictionary<int, string> tipoNombres = ViewBag.TipoNombres as Dictionary<int, string>;
-    int pageSize = 5; // Definición del tamaño de página
+    int pageSize = 5; // Aumentamos ligeramente el tamaño de página para documentos
 
     // Mapeo simple de estado a clase de Bootstrap para los badges
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
-        "vigente" => "success",
-        "anulado" => "danger",
-       
+        "vigente" => "success-vigente",
+        "anulado" => "danger-anulado",
         _ => "secondary"
     };
 }
 
 <style>
     /* --------------------------------------------------
-           PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-           -------------------------------------------------- */
+         * ------------------ PATRÓN DE COLORES Y ESTILOS BASE ------------------
+         * -------------------------------------------------- */
     :root {
-        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-primario: #34495e; /* Azul Marino/Antracita - Fondo/Texto Principal */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
-        --color-fondo-claro: #ecf0f1;
+        --color-fondo-claro: #ecf0f1; /* Gris muy claro */
         --color-texto: #2c3e50;
+        --color-success: #27ae60; /* Verde más oscuro para Vigente */
+        --color-danger: #c0392b; /* Rojo para Anulado */
     }
 
-    /* Contenedor principal */
+    /* Contenedor principal (Tarjeta elevada) */
     .data-card {
         background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
     }
 
     /* Encabezado principal */
     h1 {
         color: var(--color-primario);
-        border-left: 5px solid var(--color-secundario);
-        padding-left: 15px;
+        border-bottom: 3px solid var(--color-secundario);
+        padding-bottom: 10px;
         margin-bottom: 25px;
-        font-weight: 600;
+        font-size: 2.2rem;
+        font-weight: 300;
+        display: flex;
+        align-items: center;
     }
 
-    /* Botón Crear Nuevo */
-    .btn-primary {
+        h1 i {
+            color: var(--color-secundario);
+            margin-right: 12px;
+            font-size: 1.8rem;
+        }
+
+    /* Botón Crear Nuevo (Fuerte con acento) */
+    .btn-create-doc {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.3s, box-shadow 0.3s;
     }
 
-        .btn-primary:hover {
+        .btn-create-doc:hover {
             background-color: #4b6279;
             border-color: #4b6279;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
     /* Estilo de la tabla */
     .table thead th {
         background-color: var(--color-primario);
         color: white;
-        border-bottom: 3px solid var(--color-secundario);
+        border-bottom: 4px solid var(--color-secundario);
         font-weight: 600;
         vertical-align: middle;
         text-align: center;
         padding: 12px 8px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: var(--color-fondo-claro);
     }
 
     .table tbody td {
         vertical-align: middle;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        padding: 12px 8px;
+        color: var(--color-texto);
         text-align: center;
     }
 
-    /* Estilos para los botones de la paginación */
+    .table-hover tbody tr:hover {
+        background-color: #f7f9fb !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: background-color 0.2s;
+    }
+
+    /* Estilos de Badges (Estado) */
+    .badge {
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 20px; /* Más redondeado */
+        min-width: 90px;
+        display: inline-block;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+    }
+
+    .bg-success-vigente {
+        background-color: var(--color-success) !important;
+        color: white;
+    }
+
+    .bg-danger-anulado {
+        background-color: var(--color-danger) !important;
+        color: white;
+    }
+
+    /* Estilos para la paginación */
     .pagination-container {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 25px;
     }
 
     .page-item .page-link {
         color: var(--color-primario);
-        border-color: var(--color-primario);
+        border-color: var(--color-fondo-claro);
+        transition: background-color 0.3s;
     }
+
+        .page-item .page-link:hover {
+            background-color: var(--color-fondo-claro);
+        }
 
     .page-item.active .page-link {
         background-color: var(--color-secundario);
         border-color: var(--color-secundario);
-        color: white;
+        color: var(--color-primario); /* Texto oscuro en el dorado */
         font-weight: bold;
     }
 
-    /* Botones de acción específicos de la tabla */
+    /* Botones de acción */
     .action-buttons a {
-        margin: 2px;
+        margin: 0 4px;
+        min-width: 35px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .action-buttons .btn-outline-primary {
+        border-color: var(--color-primario);
+        color: var(--color-primario);
+    }
+
+    .action-buttons .btn-outline-info {
+        border-color: #3498db;
+        color: #3498db;
+    }
+
+    .action-buttons .btn-outline-danger {
+        border-color: var(--color-danger);
+        color: var(--color-danger);
+    }
+
+    /* --------------------------------------------------
+         * ------------------ RESPONSIVENESS DE LA TABLA (MÓVIL) ------------------
+         * -------------------------------------------------- */
+    @@media screen and (max-width: 768px) {
+        .data-card
+
+    {
+        padding: 20px 15px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .table-responsive {
+        overflow-x: unset;
+    }
+
+    /* Oculta columnas menos esenciales en móvil */
+    #documentoTable thead th:nth-child(3), /* Propietario */
+    #documentoTable tbody td:nth-child(3) {
+        display: none;
+    }
+
+    #documentoTable, #documentoTable tbody, #documentoTable tr {
+        display: block;
+        width: 100%;
+    }
+
+        #documentoTable thead {
+            display: none;
+        }
+
+        #documentoTable tr {
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-left-width: 6px;
+            border-left-color: var(--color-primario); /* Borde por defecto */
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background-color: white;
+            padding: 8px 0;
+            text-align: left;
+        }
+
+            /* Ajustar el borde lateral basado en el estado en móvil */
+            #documentoTable tr:has(.bg-danger-anulado) {
+                border-left-color: var(--color-danger);
+            }
+
+            #documentoTable tr:has(.bg-success-vigente) {
+                border-left-color: var(--color-success);
+            }
+
+        #documentoTable td {
+            display: block;
+            text-align: right !important;
+            padding-left: 55% !important;
+            position: relative;
+            border: none;
+            border-bottom: 1px dotted var(--color-fondo-claro);
+            white-space: normal;
+        }
+
+            #documentoTable td:last-child {
+                border-bottom: none;
+            }
+
+            #documentoTable td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 50%;
+                padding-right: 10px;
+                font-weight: 700;
+                text-align: left;
+                color: var(--color-primario);
+                font-size: 0.85rem;
+            }
+
+            #documentoTable td.action-buttons {
+                text-align: center !important;
+                padding: 10px 10px;
+            }
+
+                #documentoTable td.action-buttons::before {
+                    display: none;
+                }
+
     }
 </style>
 
 <div class="data-card">
 
-    <h1><i class="fas fa-file-alt text-secondary"></i> @ViewData["Title"]</h1>
-    <p>
-        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Documento</a>
-    </p>
+    <h1><i class="fas fa-file-invoice"></i> @ViewData["Title"]</h1>
+    <div class="mb-4">
+        <a asp-action="Create" class="btn btn-create-doc"><i class="fas fa-plus-circle"></i> Crear Nuevo Documento</a>
+    </div>
 
     @if (ViewBag.Error != null)
     {
@@ -124,23 +289,23 @@
         <table class="table table-hover table-striped" id="documentoTable">
             <thead>
                 <tr>
-                    <th># Documento</th>
-                    <th>Fecha de emision</th>
-                    <th>Propietario</th>
-                    <th>Estado</th>
-                    <th>Tipo Documento</th>
-                    <th>Municipio</th>
-                    <th class="col-2">Acciones</th>
+                    <th data-label="Nro. Documento"># Documento</th>
+                    <th data-label="Fecha Emisión">Fecha de emisión</th>
+                    <th data-label="Propietario">Propietario</th>
+                    <th data-label="Estado">Estado</th>
+                    <th data-label="Tipo Documento">Tipo Documento</th>
+                    <th data-label="Municipio">Municipio</th>
+                    <th class="col-2" data-label="Acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Numero_documento)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Fecha_emision)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Propietario)</td>
-                        <td>
+                        <td data-label="Nro. Documento">@Html.DisplayFor(modelItem => item.Numero_documento)</td>
+                        <td data-label="Fecha Emisión">@Html.DisplayFor(modelItem => item.Fecha_emision)</td>
+                        <td data-label="Propietario">@Html.DisplayFor(modelItem => item.Propietario)</td>
+                        <td data-label="Estado">
                             @{
                                 string badgeClass = GetBadgeClass(item.Estado);
                             }
@@ -148,7 +313,7 @@
                                 @Html.DisplayFor(modelItem => item.Estado)
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Tipo Documento">
                             @{
                                 string nombreTipo = "N/A";
                                 if (tipoNombres != null && tipoNombres.ContainsKey(item.TipoDocumentoId))
@@ -158,7 +323,7 @@
                             }
                             @nombreTipo
                         </td>
-                        <td>
+                        <td data-label="Municipio">
                             @{
                                 string nombreMunicipio = "N/A";
                                 if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
@@ -168,7 +333,7 @@
                             }
                             @nombreMunicipio
                         </td>
-                        <td class="action-buttons">
+                        <td class="action-buttons" data-label="Acciones">
                             <a asp-action="Edit" asp-route-id="@item.Id_documento" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
                             <a asp-action="Details" asp-route-id="@item.Id_documento" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.Id_documento" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
@@ -188,7 +353,7 @@
         <div class="alert alert-info text-center mt-4" role="alert">
             <h4>No hay documentos registrados</h4>
             <p>Comienza subiendo el primer documento.</p>
-            <a asp-action="Create" class="btn btn-primary">Crear Documento</a>
+            <a asp-action="Create" class="btn btn-create-doc mt-2">Crear Documento</a>
         </div>
     }
 
@@ -197,10 +362,13 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Configuración de Paginación
+            // Configuración de Paginación (Mejorada con truncamiento)
             const table = document.getElementById('documentoTable');
+
             // Si la tabla no existe o está vacía, no inicializar la paginación.
             if (!table || table.querySelector('tbody').rows.length === 0) {
+                // Asegurar que el contenedor de paginación esté oculto si no hay filas
+                $('#pagination-ul').parent().hide();
                 return;
             }
 
@@ -224,6 +392,21 @@
             function updatePaginationControls(currentPage) {
                 paginationUl.empty();
 
+                const pagesToShow = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+                let endPage = Math.min(totalPages, currentPage + Math.floor(pagesToShow / 2));
+
+                if (endPage - startPage + 1 < pagesToShow) {
+                    if (startPage > 1) {
+                        // Ajustar inicio si hay espacio al final
+                        startPage = Math.max(1, startPage - (pagesToShow - (endPage - startPage + 1)));
+                    }
+                    if (endPage < totalPages) {
+                        // Ajustar final si hay espacio al inicio
+                        endPage = Math.min(totalPages, endPage + (pagesToShow - (endPage - startPage + 1)));
+                    }
+                }
+
                 // Botón Anterior
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';
                 paginationUl.append(`
@@ -233,13 +416,23 @@
                 `);
 
                 // Botones de Páginas Numeradas
-                for (let i = 1; i <= totalPages; i++) {
+                if (startPage > 1) {
+                    paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                    if (startPage > 2) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
                     const active = i === currentPage ? 'active' : '';
                     paginationUl.append(`
                         <li class="page-item ${active}">
                             <a class="page-link" href="#" data-page="${i}">${i}</a>
                         </li>
                     `);
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
                 }
 
                 // Botón Siguiente

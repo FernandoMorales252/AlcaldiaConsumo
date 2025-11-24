@@ -10,8 +10,8 @@
 
 <style>
     /* --------------------------------------------------
-               PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-               -------------------------------------------------- */
+         * ------------------ PATRÓN DE COLORES Y ESTILOS BASE ------------------
+         * -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
@@ -25,6 +25,7 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px; /* Espacio inferior */
     }
 
     /* Encabezado principal */
@@ -33,23 +34,12 @@
         border-left: 5px solid var(--color-secundario);
         padding-left: 15px;
         margin-bottom: 25px;
+        font-size: 1.8rem; /* Ajuste para móvil */
     }
 
-    /* Botón Crear Nuevo */
-    .btn-primary {
-        background-color: var(--color-primario);
-        border-color: var(--color-primario);
-        transition: background-color 0.3s;
-    }
-
-        .btn-primary:hover {
-            background-color: #4b6279; /* Tono más claro del primario */
-            border-color: #4b6279;
-        }
-
-    /* Estilo de la tabla */
-    .table-striped > tbody > tr:nth-of-type(odd) {
-        background-color: var(--color-fondo-claro);
+    /* Estilos de la tabla */
+    .table-hover tbody tr:hover {
+        background-color: #f7f9fb; /* Efecto hover sutil */
     }
 
     .table thead th {
@@ -59,31 +49,108 @@
         font-weight: 600;
         vertical-align: middle;
         text-align: center;
+        padding: 12px 8px; /* Mayor espacio */
     }
 
     .table tbody td {
         vertical-align: middle;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        padding: 10px 8px;
     }
 
-    /* Estilos para los botones de la paginación */
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
+    .action-buttons a {
+        margin: 0 2px; /* Espacio entre botones */
     }
 
-    .page-item .page-link {
-        color: var(--color-primario);
-        border-color: var(--color-primario);
-        transition: background-color 0.3s, color 0.3s;
+    /* --------------------------------------------------
+         * ------------------ RESPONSIVENESS DE LA TABLA (MÓVIL) ------------------
+         * -------------------------------------------------- */
+    @@media screen and (max-width: 767px) {
+        /* Desactiva el desplazamiento horizontal de Bootstrap en este punto de quiebre */
+        .table-responsive
+
+    {
+        overflow-x: unset;
     }
 
-    .page-item.active .page-link {
-        background-color: var(--color-secundario);
-        border-color: var(--color-secundario);
-        color: white;
-        font-weight: bold;
+    /* Fuerza a la tabla a comportarse como un bloque */
+    #proyectosTable {
+        border: none;
+        width: 100%;
+    }
+
+        /* Oculta los encabezados de la tabla estándar */
+        #proyectosTable thead {
+            display: none;
+        }
+
+        /* Transforma cada fila en una tarjeta */
+        #proyectosTable tbody, #proyectosTable tr {
+            display: block;
+            width: 100%;
+        }
+
+        #proyectosTable tr {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background-color: white;
+        }
+
+        /* Transforma cada celda en una fila de la "tarjeta" */
+        #proyectosTable td {
+            display: block;
+            text-align: right !important; /* Alineación del contenido de la celda */
+            padding-left: 50% !important; /* Espacio para el label */
+            position: relative;
+            border: none;
+            border-bottom: 1px dotted var(--color-fondo-claro); /* Separador de campos */
+            white-space: normal; /* Permite que el texto se envuelva */
+        }
+
+            #proyectosTable td:last-child {
+                border-bottom: none;
+            }
+
+            /* Muestra el encabezado (label) usando el atributo data-label */
+            #proyectosTable td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 45%; /* Ancho del label */
+                padding-right: 10px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-weight: 700;
+                text-align: left;
+                color: var(--color-primario);
+            }
+
+            /* Estilo especial para la columna de Acciones en móvil */
+            #proyectosTable td.action-buttons {
+                text-align: center !important;
+                padding: 10px 10px;
+            }
+
+                #proyectosTable td.action-buttons::before {
+                    display: none; /* Oculta el label 'Acciones' */
+                }
+
+    /* Asegura que los badges se muestren bien en móvil */
+    .badge {
+        display: inline-block;
+        min-width: 60px; /* Asegura un tamaño mínimo */
+        padding: 5px 8px;
+    }
+
+    /* Ajuste para el botón principal en móvil */
+    .btn-primary {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
     }
 </style>
 
@@ -105,31 +172,29 @@
         <table class="table table-hover" id="proyectosTable">
             <thead>
                 <tr>
-                    <th>Aviso</th>
-                    <th>Motivo</th>
-                    <th class="text-center">Fecha de registro</th>
-                    <th class="text-center">Tipo de aviso</th>
-                    <th>Municipio</th>
-                    <th class="text-center">Acciones</th>
+                    <th data-label="Aviso">Aviso</th>
+                    <th data-label="Motivo">Motivo</th>
+                    <th class="text-center" data-label="Fecha de registro">Fecha de registro</th>
+                    <th class="text-center" data-label="Tipo de aviso">Tipo de aviso</th>
+                    <th data-label="Municipio">Municipio</th>
+                    <th class="text-center" data-label="Acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Titulo)</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)
-                            {
-                                @(item.Descripcion.Substring(0, 50) + "...")
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.Descripcion)
+                        <td data-label="Aviso">@Html.DisplayFor(modelItem => item.Titulo)</td>
+                        <td data-label="Motivo">
+                            @{
+                                string motivoCorto = (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50) ?
+                                (item.Descripcion.Substring(0, 50) + "...") :
+                                item.Descripcion;
+                                @motivoCorto
                             }
                         </td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Registro)</td>
-                        <td class="text-center">
+                        <td class="text-center" data-label="Fecha de registro">@Html.DisplayFor(modelItem => item.Fecha_Registro)</td>
+                        <td class="text-center" data-label="Tipo de aviso">
                             @{
                                 string badgeClass = item.Tipo switch
                                 {
@@ -144,7 +209,7 @@
                                 @Html.DisplayFor(modelItem => item.Tipo)
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Municipio">
                             @{
                                 string nombreMunicipio = "N/A";
                                 if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
@@ -154,7 +219,7 @@
                             }
                             @nombreMunicipio
                         </td>
-                        <td class="text-center action-buttons">
+                        <td class="text-center action-buttons" data-label="Acciones">
                             <a asp-action="Edit" asp-route-id="@item.Id_aviso" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
                             <a asp-action="Details" asp-route-id="@item.Id_aviso" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.Id_aviso" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
@@ -169,12 +234,12 @@
         <ul class="pagination" id="pagination-ul"></ul>
     </nav>
 
-    @if (Model != null && !Model.Any())
+    @if (Model == null || !Model.Any())
     {
         <div class="alert alert-info text-center mt-4" role="alert">
-            <h4>No hay proyectos registrados</h4>
-            <p>Comienza creando tu primer proyecto.</p>
-            <a asp-action="Create" class="btn btn-primary">Crear Primer Proyecto</a>
+            <h4>No hay avisos registrados</h4>
+            <p>Comienza creando tu primer aviso.</p>
+            <a asp-action="Create" class="btn btn-primary">Crear Primer Aviso</a>
         </div>
     }
 
@@ -182,6 +247,7 @@
 
 @section Scripts {
     <script>
+        // ... (El script de paginación se mantiene idéntico, ya es funcional)
         $(document).ready(function () {
             // Configuración de Paginación
             const table = document.getElementById('proyectosTable');
@@ -214,13 +280,30 @@
                 `);
 
                 // Botones de Páginas Numeradas
-                for (let i = 1; i <= totalPages; i++) {
+                // Lógica de truncado de páginas para evitar exceso de botones
+                let startPage = Math.max(1, currentPage - 1);
+                let endPage = Math.min(totalPages, currentPage + 1);
+
+                if (currentPage === 1) endPage = Math.min(totalPages, 3);
+                if (currentPage === totalPages) startPage = Math.max(1, totalPages - 2);
+
+                if (startPage > 1) {
+                    paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                    if (startPage > 2) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
                     const active = i === currentPage ? 'active' : '';
                     paginationUl.append(`
                         <li class="page-item ${active}">
                             <a class="page-link" href="#" data-page="${i}">${i}</a>
                         </li>
                     `);
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
                 }
 
                 // Botón Siguiente

@@ -2,16 +2,14 @@
 @using System.Collections.Generic
 @{
     ViewData["Title"] = "Listado de Proyectos";
-    // Nota: Es mejor definir las variables de color en el _Layout.cshtml,
-    // pero las incluimos aquí para la autonomía de la vista.
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     int pageSize = 5; // Define cuántos elementos quieres por página
 }
 
 <style>
     /* --------------------------------------------------
-           PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-           -------------------------------------------------- */
+         * ------------------ PATRÓN DE COLORES Y ESTILOS BASE ------------------
+         * -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
@@ -23,59 +21,100 @@
     .data-card {
         background-color: white;
         padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px; /* Borde ligeramente más redondeado */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Sombra más profunda */
+        margin-bottom: 30px;
     }
 
     /* Encabezado principal */
     h1 {
         color: var(--color-primario);
-        border-left: 5px solid var(--color-secundario);
-        padding-left: 15px;
+        border-left: 6px solid var(--color-secundario); /* Borde más grueso */
+        padding-left: 18px;
         margin-bottom: 25px;
+        font-size: 2rem;
+        font-weight: 300; /* Diseño más moderno */
     }
 
     /* Botón Crear Nuevo */
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s;
+        transition: all 0.3s ease;
+        padding: 8px 15px;
+        font-weight: 500;
     }
 
         .btn-primary:hover {
-            background-color: #4b6279; /* Tono más claro del primario */
+            background-color: #4b6279;
             border-color: #4b6279;
+            transform: translateY(-1px); /* Efecto 3D sutil */
         }
 
     /* Estilo de la tabla */
-    .table-striped > tbody > tr:nth-of-type(odd) {
-        background-color: var(--color-fondo-claro);
+    .table-hover tbody tr:hover {
+        background-color: #f7f9fb; /* Efecto hover sutil */
+        transform: scale(1.005);
+        transition: background-color 0.2s, transform 0.2s;
     }
 
     .table thead th {
         background-color: var(--color-primario);
         color: white;
-        border-bottom: 3px solid var(--color-secundario);
+        border-bottom: 4px solid var(--color-secundario);
         font-weight: 600;
         vertical-align: middle;
         text-align: center;
+        padding: 12px 8px;
+        text-transform: uppercase;
+        font-size: 0.9rem;
     }
 
     .table tbody td {
         vertical-align: middle;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        padding: 10px 8px;
+        color: var(--color-texto);
+    }
+
+        /* Estilos específicos para celdas */
+
+        /* Proyecto y Proposito */
+        .table tbody td:first-child {
+            font-weight: 600;
+            color: var(--color-primario);
+        }
+
+    /* Presupuesto */
+    .budget-cell {
+        font-weight: 700;
+        color: #27ae60; /* Verde para dinero/éxito */
+        text-align: right;
+    }
+
+    /* Fechas */
+    .date-cell {
+        font-size: 0.85rem;
+        color: #7f8c8d; /* Gris para fechas */
+    }
+
+    /* Badges de Estado */
+    .badge {
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 15px;
     }
 
     /* Estilos para los botones de la paginación */
     .pagination-container {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 25px;
     }
 
     .page-item .page-link {
         color: var(--color-primario);
-        border-color: var(--color-primario);
+        border-color: var(--color-fondo-claro);
         transition: background-color 0.3s, color 0.3s;
     }
 
@@ -85,11 +124,110 @@
         color: white;
         font-weight: bold;
     }
+
+        .page-item.active .page-link:hover {
+            background-color: var(--color-secundario);
+            border-color: var(--color-secundario);
+            color: white;
+        }
+
+    .action-buttons a {
+        margin: 0 2px;
+    }
+
+    /* --------------------------------------------------
+         * ------------------ RESPONSIVENESS DE LA TABLA (MÓVIL) ------------------
+         * -------------------------------------------------- */
+    @@media screen and (max-width: 991px) { /* Aumentamos el breakpoint para tablas */
+        /* Desactiva el desplazamiento horizontal de Bootstrap en este punto de quiebre */
+        .table-responsive
+
+    {
+        overflow-x: unset;
+    }
+
+    /* Oculta columnas menos importantes en tabletas */
+    #proyectosTable thead th:nth-child(2), /* Proposito */
+    #proyectosTable tbody td:nth-child(2) {
+        display: none;
+    }
+
+    /* Fuerza a la tabla a comportarse como un bloque */
+    #proyectosTable, #proyectosTable tbody, #proyectosTable tr {
+        display: block;
+        width: 100%;
+    }
+
+        /* Oculta los encabezados de la tabla estándar */
+        #proyectosTable thead {
+            display: none;
+        }
+
+        #proyectosTable tr {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-left: 5px solid var(--color-primario); /* Borde de color para destacar el registro */
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background-color: white;
+            padding: 5px 0;
+        }
+
+        /* Transforma cada celda en una fila de la "tarjeta" */
+        #proyectosTable td {
+            display: block;
+            text-align: right !important;
+            padding-left: 55% !important; /* Espacio para el label */
+            position: relative;
+            border: none;
+            border-bottom: 1px dotted var(--color-fondo-claro);
+            white-space: normal;
+        }
+
+            #proyectosTable td:last-child {
+                border-bottom: none;
+            }
+
+            /* Muestra el encabezado (label) usando el atributo data-label */
+            #proyectosTable td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 50%;
+                padding-right: 10px;
+                font-weight: 700;
+                text-align: left;
+                color: var(--color-primario);
+                font-size: 0.9rem;
+            }
+
+            /* Estilo especial para la columna de Acciones en móvil */
+            #proyectosTable td.action-buttons {
+                text-align: center !important;
+                padding: 10px 10px;
+            }
+
+                #proyectosTable td.action-buttons::before {
+                    display: none;
+                }
+
+    /* Ajuste para el botón principal en móvil */
+    .btn-primary {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    /* Asegurar que el presupuesto quede alineado */
+    .budget-cell {
+        text-align: right !important;
+    }
+
+    }
 </style>
 
 <div class="data-card">
 
-    <h1><i class="fas fa-tasks text-secondary"></i> @ViewData["Title"]</h1>
+    <h1><i class="fas fa-project-diagram"></i> @ViewData["Title"]</h1>
     <p>
         <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Proyecto</a>
     </p>
@@ -105,35 +243,33 @@
         <table class="table table-hover" id="proyectosTable">
             <thead>
                 <tr>
-                    <th>Proyecto</th>
-                    <th>Proposito</th>
-                    <th class="text-center">Inicio</th>
-                    <th class="text-center">Finalización</th>
-                    <th class="text-right">Presupuesto</th>
-                    <th class="text-center">Estado</th>
-                    <th>Municipio</th>
-                    <th class="text-center">Acciones</th>
+                    <th data-label="Proyecto">Proyecto</th>
+                    <th data-label="Propósito">Propósito</th>
+                    <th class="text-center" data-label="Inicio">Inicio</th>
+                    <th class="text-center" data-label="Fin">Finalización</th>
+                    <th class="text-right" data-label="Presupuesto">Presupuesto</th>
+                    <th class="text-center" data-label="Estado">Estado</th>
+                    <th data-label="Municipio">Municipio</th>
+                    <th class="text-center" data-label="Acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)
-                            {
-                                @(item.Descripcion.Substring(0, 50) + "...")
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.Descripcion)
+                        <td data-label="Proyecto">@Html.DisplayFor(modelItem => item.Nombre)</td>
+                        <td data-label="Propósito">
+                            @{
+                                string propositoCorto = (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50) ?
+                                (item.Descripcion.Substring(0, 50) + "...") :
+                                item.Descripcion;
+                                @propositoCorto
                             }
                         </td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Inicio)</td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Fin)</td>
-                        <td class="text-right">$@Html.DisplayFor(modelItem => item.Presupuesto)</td>
-                        <td class="text-center">
+                        <td class="text-center date-cell" data-label="Inicio">@Html.DisplayFor(modelItem => item.Fecha_Inicio)</td>
+                        <td class="text-center date-cell" data-label="Fin">@Html.DisplayFor(modelItem => item.Fecha_Fin)</td>
+                        <td class="budget-cell" data-label="Presupuesto">$@Html.DisplayFor(modelItem => item.Presupuesto)</td>
+                        <td class="text-center" data-label="Estado">
                             @{
                                 string badgeClass = item.Estado switch
                                 {
@@ -148,7 +284,7 @@
                                 @Html.DisplayFor(modelItem => item.Estado)
                             </span>
                         </td>
-                        <td>
+                        <td data-label="Municipio">
                             @{
                                 string nombreMunicipio = "N/A";
                                 if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
@@ -158,7 +294,7 @@
                             }
                             @nombreMunicipio
                         </td>
-                        <td class="text-center action-buttons">
+                        <td class="text-center action-buttons" data-label="Acciones">
                             <a asp-action="Edit" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
                             <a asp-action="Details" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.Id_Proyecto" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
@@ -173,7 +309,7 @@
         <ul class="pagination" id="pagination-ul"></ul>
     </nav>
 
-    @if (Model != null && !Model.Any())
+    @if (Model == null || !Model.Any())
     {
         <div class="alert alert-info text-center mt-4" role="alert">
             <h4>No hay proyectos registrados</h4>
@@ -209,6 +345,20 @@
             function updatePaginationControls(currentPage) {
                 paginationUl.empty(); // Limpiar la paginación existente
 
+                // Truncamiento de páginas mejorado (similar al anterior)
+                const pagesToShow = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+                let endPage = Math.min(totalPages, currentPage + Math.floor(pagesToShow / 2));
+
+                if (endPage - startPage + 1 < pagesToShow) {
+                    if (startPage > 1) {
+                        startPage = Math.max(1, startPage - (pagesToShow - (endPage - startPage + 1)));
+                    }
+                    if (endPage < totalPages) {
+                        endPage = Math.min(totalPages, endPage + (pagesToShow - (endPage - startPage + 1)));
+                    }
+                }
+
                 // Botón Anterior
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';
                 paginationUl.append(`
@@ -218,13 +368,23 @@
                 `);
 
                 // Botones de Páginas Numeradas
-                for (let i = 1; i <= totalPages; i++) {
+                if (startPage > 1) {
+                    paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                    if (startPage > 2) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
                     const active = i === currentPage ? 'active' : '';
                     paginationUl.append(`
                         <li class="page-item ${active}">
                             <a class="page-link" href="#" data-page="${i}">${i}</a>
                         </li>
                     `);
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
                 }
 
                 // Botón Siguiente

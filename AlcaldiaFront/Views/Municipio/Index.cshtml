@@ -9,41 +9,63 @@
 
 <style>
     /* --------------------------------------------------
-            PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-            -------------------------------------------------- */
+               PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
+               -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
         --color-fondo-claro: #ecf0f1;
         --color-texto: #2c3e50;
+        --color-danger: #e74c3c;
+        --color-info: #3498db;
     }
 
-    /* Contenedor principal */
+    /* Contenedor principal - Tarjeta elevada */
     .data-card {
         background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        border-radius: 12px; /* Más redondeado */
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Sombra más profunda */
+        margin-top: 30px;
+        margin-bottom: 30px;
     }
 
-    /* Encabezado principal */
-    h1 {
+    /* Encabezado principal dinámico */
+    .page-title {
         color: var(--color-primario);
-        border-left: 5px solid var(--color-secundario);
-        padding-left: 15px;
+        font-weight: 800;
+        font-size: 2.5rem;
         margin-bottom: 25px;
+        position: relative;
+        padding-bottom: 15px;
     }
+        /* Línea de acento debajo del título */
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--color-secundario);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 2px;
+        }
 
     /* Botón Crear Nuevo */
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-weight: 600;
+        border-radius: 6px;
     }
 
         .btn-primary:hover {
-            background-color: #4b6279; /* Tono más claro del primario */
+            background-color: #4b6279;
             border-color: #4b6279;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
     /* Estilo de la tabla */
@@ -54,7 +76,7 @@
     .table thead th {
         background-color: var(--color-primario);
         color: white;
-        border-bottom: 3px solid var(--color-secundario);
+        border-bottom: 4px solid var(--color-secundario); /* Borde más grueso */
         font-weight: 600;
         vertical-align: middle;
         text-align: center;
@@ -64,18 +86,39 @@
         vertical-align: middle;
         font-size: 0.95rem;
     }
+        /* Alineación del nombre */
+        .table tbody td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: var(--color-texto);
+        }
+
+    /* Estilos para los botones de acción en la tabla */
+    .action-buttons {
+        white-space: nowrap; /* Evita saltos de línea */
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+        /* Botones de acción individuales */
+        .action-buttons a {
+            margin: 0 2px;
+            border-radius: 4px;
+            padding: 5px 8px;
+            transition: background-color 0.2s, color 0.2s;
+        }
 
     /* Estilos para los botones de la paginación */
     .pagination-container {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     .page-item .page-link {
         color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s, color 0.3s;
+        border-radius: 4px;
+        margin: 0 2px;
     }
 
     .page-item.active .page-link {
@@ -85,92 +128,144 @@
         font-weight: bold;
     }
 
-    /* Estilos responsive específicos para acciones en móviles */
-    @@media (max-width: 768px) {
-        .action-buttons a {
-            margin: 2px;
-        }
-
-        .table thead th:nth-child(1), .table tbody td:nth-child(1) {
-            min-width: 120px; /* Asegura espacio para el nombre */
-        }
-
-        .table thead th:nth-child(2), .table tbody td:nth-child(2) {
-            min-width: 150px; /* Asegura espacio para el municipio */
-        }
+    /* Estilos de las Alertas */
+    .alert-danger {
+        border-left: 5px solid var(--color-danger);
+        color: var(--color-danger);
+        background-color: #fceae9;
     }
+
+    .alert-success {
+        border-left: 5px solid #27ae60;
+        color: #27ae60;
+        background-color: #eaf7ee;
+    }
+
+    .alert-info {
+        border-left: 5px solid var(--color-info);
+    }
+
+    /* ==================================
+           MEDIA QUERIES - RESPONSIVE DESIGN
+           ================================== */
+
+    /* Móvil Pequeño y Tablet Vertical */
+    @@media (max-width: 768px)
+    {
+        .data-card
+        {
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    /* En dispositivos pequeños, ocultamos la columna de ID si existiera (no aplica aquí, pero es buena práctica) */
+    /* Hacemos que la tabla sea horizontalmente deslizable si es necesario */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Agrupación de botones en móvil para evitar desborde */
+    .action-buttons .btn-group {
+        display: flex; /* Forzar flexbox para que se agrupen */
+        flex-wrap: nowrap;
+        margin: 5px 0;
+        justify-content: center;
+    }
+
+        .action-buttons .btn-group a {
+            flex-grow: 1; /* Distribuye el espacio entre botones */
+            margin: 0 1px;
+        }
+
+    /* Aseguramos que la columna de acciones no sea demasiado ancha */
+    .table thead th:last-child, .table tbody td:last-child {
+        width: 150px;
+        min-width: 150px;
+    }
+
+    
 </style>
 
-<div class="data-card">
+<div class="container">
+    <div class="data-card">
 
-    <h1><i class="fas fa-city text-secondary"></i> @ViewData["Title"]</h1>
-    <p>
-        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Municipio</a>
-    </p>
-
-
-    @* --- Manejo de Alertas (TempData y ViewBag) --- *@
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-triangle"></i> <strong>Error:</strong> @TempData["ErrorMessage"]
+        <h1 class="page-title"><i class="fas fa-city me-2"></i> @ViewData["Title"]</h1>
+        <div class="mb-4">
+            <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Crear Nuevo Municipio</a>
         </div>
-    }
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success" role="alert">
-            <i class="fas fa-check-circle"></i> <strong>Éxito:</strong> @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @ViewBag.Error
-        </div>
-    }
 
-    <div class="table-responsive">
-        <table class="table table-hover table-striped" id="municipiosTable">
-            <thead>
-                <tr>
-                    <th>
-                        Nombre de municipio
-                    </th>
-                    <th style="width: 150px;" class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null)
-                {
-                    @foreach (var item in Model)
+
+        @* --- Manejo de Alertas (TempData y ViewBag) --- *@
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i> <strong>Error:</strong> @TempData["ErrorMessage"]
+            </div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                <i class="fas fa-check-circle me-2"></i> <strong>Éxito:</strong> @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-times-circle me-2"></i> @ViewBag.Error
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="municipiosTable">
+                <thead>
+                    <tr>
+                        <th class="text-left">
+                            Nombre del Municipio
+                        </th>
+                        <th style="width: 150px;" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
                     {
-                        <tr>
-                            <td>@Html.DisplayFor(modelItem => item.Nombre_Municipio)</td>
-                            <td class="text-center action-buttons">
-                                <a asp-action="Edit" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
-                                <a asp-action="Details" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
-                                <a asp-action="Delete" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
-                            </td>
-                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Nombre_Municipio)</td>
+                                <td class="text-center action-buttons">
+                                    <div class="btn-group" role="group" aria-label="Acciones de Municipio">
+                                        <a asp-action="Edit" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
+                                        <a asp-action="Details" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id_Municipio" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <nav class="pagination-container" aria-label="Navegación de Municipios">
-        <ul class="pagination" id="pagination-ul"></ul>
-    </nav>
-
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info text-center mt-4" role="alert">
-            <h4>No hay municipios registrados</h4>
-            <p>Comienza creando el primer municipio.</p>
-            <a asp-action="Create" class="btn btn-primary">Crear Primer Municipio</a>
+                </tbody>
+            </table>
         </div>
-    }
 
+        <nav class="pagination-container" aria-label="Navegación de Municipios">
+            <ul class="pagination" id="pagination-ul"></ul>
+        </nav>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info text-center mt-4 p-4" role="alert">
+                <h4><i class="fas fa-clipboard-list me-2"></i> No hay municipios registrados</h4>
+                <p class="mb-3">Comienza creando el primer municipio para administrar la información local.</p>
+                <a asp-action="Create" class="btn btn-primary btn-lg">Crear Primer Municipio</a>
+            </div>
+        }
+
+    </div>
 </div>
 
 @section Scripts {
@@ -178,7 +273,7 @@
         $(document).ready(function () {
             // Configuración de Paginación
             const table = document.getElementById('municipiosTable');
-            const tbody = table.querySelector('tbody');
+            const tbody = table ? table.querySelector('tbody') : null;
             // Si Model es nulo o vacío, rows será vacío y se mostrará el mensaje de "No hay municipios registrados"
             const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
             const pageSize = @pageSize; // Viene de la variable Razor
@@ -205,12 +300,23 @@
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';
                 paginationUl.append(`
                     <li class="page-item ${prevDisabled}">
-                        <a class="page-link" href="#" data-page="${currentPage - 1}"><i class="fas fa-angle-left"></i> Anterior</a>
+                        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Anterior"><i class="fas fa-angle-left"></i></a>
                     </li>
                 `);
 
                 // Botones de Páginas Numeradas
-                for (let i = 1; i <= totalPages; i++) {
+                // Lógica simplificada para mostrar solo 5 páginas centradas alrededor de la actual
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
+
+                if (currentPage <= 3) {
+                    endPage = Math.min(totalPages, 5);
+                } else if (currentPage > totalPages - 2) {
+                    startPage = Math.max(1, totalPages - 4);
+                }
+
+
+                for (let i = startPage; i <= endPage; i++) {
                     const active = i === currentPage ? 'active' : '';
                     paginationUl.append(`
                         <li class="page-item ${active}">
@@ -223,7 +329,7 @@
                 const nextDisabled = currentPage === totalPages ? 'disabled' : '';
                 paginationUl.append(`
                     <li class="page-item ${nextDisabled}">
-                        <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente <i class="fas fa-angle-right"></i></a>
+                        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Siguiente"><i class="fas fa-angle-right"></i></a>
                     </li>
                 `);
             }
@@ -238,6 +344,8 @@
 
                 if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
                     displayPage(newPage);
+                    // Desplazar la ventana hacia arriba para ver la tabla
+                    $('html, body').animate({ scrollTop: $('.data-card').offset().top }, 300);
                 }
             });
 

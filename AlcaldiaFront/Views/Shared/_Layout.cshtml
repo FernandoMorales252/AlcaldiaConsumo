@@ -4,95 +4,163 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AlcaldiaFront</title>
+    <!-- Usa siempre la versión más reciente de Bootstrap para mejor responsividad -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AlcaldiaFront.styles.css" asp-append-version="true" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         /* --------------------------------------------------
-                PATRÓN DE COLORES FORMAL (Alcaldía)
-                -------------------------------------------------- */
+                   PATRÓN DE COLORES VIBRANTE Y FORMAL (Alcaldía)
+                   -------------------------------------------------- */
         :root {
-            --color-primario: #34495e; /* Azul Marino/Antracita - Formal */
-            --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
-            --color-fondo: #ecf0f1;
-            --color-texto: #2c3e50;
-            --color-link-activo: #ffffff; /* Color de texto para el enlace activo */
+            /* Azul Profundo (Confianza, Formalidad) */
+            --color-primario: #0A3A58;
+            /* Azul Claro/Cian (Modernidad, Limpieza) */
+            --color-secundario: #0077B6;
+            /* Amarillo Dorado (Acento, Energía, Jerarquía) */
+            --color-acento: #FFC300;
+            /* Fondo (Gris muy claro) */
+            --color-fondo: #F8F9FA;
+            /* Texto principal */
+            --color-texto: #343A40;
         }
 
-        /* 1. Estilos Generales y Fondo */
+        /* 1. Estilos Generales y Tipografía */
         body {
             background-color: var(--color-fondo);
             color: var(--color-texto);
+            font-family: 'Inter', sans-serif; /* Usando una fuente moderna */
+            min-height: 100vh; /* Asegura que el cuerpo ocupe al menos el viewport completo */
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 2. Barra de Navegación Personalizada */
+        /* 2. Barra de Navegación */
         .navbar {
-            background-color: var(--color-primario) !important; /* Fondo del color primario */
-            border-bottom: 5px solid var(--color-secundario) !important; /* Borde de acento */
+            background-color: var(--color-primario) !important;
+            border-bottom: 5px solid var(--color-acento) !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
         }
 
         .navbar-brand {
-            color: var(--color-secundario) !important; /* Nombre de la marca con color de acento */
-            font-weight: bold;
-            text-transform: uppercase;
+            color: var(--color-acento) !important;
+            font-weight: 700; /* Bold */
+            letter-spacing: 1px;
+            transition: color 0.3s;
         }
 
-        /* Enlaces de la barra de navegación */
+            .navbar-brand:hover {
+                color: #ffffff !important;
+            }
+
+        /* Enlaces de navegación */
         .navbar-nav .nav-link {
-            color: var(--color-fondo) !important; /* Enlaces blancos/claros */
-            padding: 10px 15px;
+            color: var(--color-fondo) !important;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 6px;
             transition: background-color 0.3s, color 0.3s;
-            border-radius: 4px;
+            font-weight: 500;
         }
 
             .navbar-nav .nav-link:hover {
-                color: var(--color-secundario) !important; /* Resaltado al pasar el mouse */
+                background-color: rgba(255, 255, 255, 0.1);
+                color: var(--color-acento) !important;
             }
 
         /* ESTILO DINÁMICO: Enlace Activo */
         .navbar-nav .nav-item.active .nav-link {
-            background-color: var(--color-secundario) !important;
-            color: var(--color-primario) !important; /* Texto oscuro sobre fondo de acento */
+            background-color: var(--color-acento) !important;
+            color: var(--color-primario) !important; /* Texto oscuro sobre acento dorado */
             font-weight: bold;
         }
 
-        /* 3. Footer */
+        /* 3. Contenedor Principal (Mejora de Adaptabilidad) */
+        .container {
+            /* Usamos un max-width para desktop, pero el ancho es fluido */
+            max-width: 1400px;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        /* Asegura que el contenido principal ocupe el espacio restante */
+        main {
+            flex-grow: 1;
+            padding-top: 20px;
+        }
+
+        /* 4. Footer */
         .footer {
+            margin-top: auto; /* Empuja el footer hacia abajo */
             background-color: var(--color-primario);
             color: var(--color-fondo);
-            border-top: 1px solid var(--color-secundario) !important;
+            border-top: 5px solid var(--color-secundario) !important;
+            padding: 15px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
         }
 
             .footer a {
-                color: var(--color-secundario);
+                color: var(--color-acento);
                 text-decoration: none;
+                transition: color 0.3s;
             }
 
                 .footer a:hover {
-                    color: #ffe082; /* Tono más claro del acento */
+                    color: #ffffff;
                 }
-        /* Estilo específico para botones de Auth */
-        .btn-login {
-            color: white;
-            border: 1px solid white;
-            transition: all 0.2s;
+
+        /* 5. Botones de Sesión */
+        .btn-login, .btn-logout {
+            border: 2px solid var(--color-acento);
+            color: var(--color-acento);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 8px;
         }
 
-            .btn-login:hover {
-                background-color: white;
+            .btn-login:hover, .btn-logout:hover {
+                background-color: var(--color-acento);
                 color: var(--color-primario);
+                box-shadow: 0 4px 10px rgba(255, 195, 0, 0.4);
+                transform: translateY(-1px);
             }
+
+        /* Responsividad Móvil: Ajusta el padding del container en pantallas pequeñas */
+        @@media (max-width: 576px) {
+            .container
+
+        {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .navbar-brand {
+            font-size: 1.1rem;
+        }
+
+        /* Ajuste para el colapso del navbar en móvil */
+        .navbar-collapse {
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-nav .nav-link {
+            margin: 5px 0;
+        }
+
+        }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-city"></i> AlcaldiaFront
+                    <i class="fas fa-building"></i> AlcaldiaEs
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -101,47 +169,47 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1" id="main-navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" data-controller="Home">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" data-controller="Home"><i class="fas fa-home me-1"></i> Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy" data-controller="Home">Soporte</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy" data-controller="Home"><i class="fas fa-headset me-1"></i> Soporte</a>
                         </li>
                         @* OPCIONES PRIVADAS (Solo si el usuario está autenticado) *@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="TipoDoc" asp-action="Index" data-controller="TipoDoc">Tipos</a>
+                                <a class="nav-link" asp-controller="TipoDoc" asp-action="Index" data-controller="TipoDoc"><i class="fas fa-file-alt me-1"></i> Tipos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Municipio" asp-action="Index" data-controller="Municipio">Municipios</a>
+                                <a class="nav-link" asp-controller="Municipio" asp-action="Index" data-controller="Municipio"><i class="fas fa-map-marked-alt me-1"></i> Municipios</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Documento" asp-action="Index" data-controller="Documento">Documentos</a>
+                                <a class="nav-link" asp-controller="Documento" asp-action="Index" data-controller="Documento"><i class="fas fa-folder-open me-1"></i> Documentos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Cargo" asp-action="Index" data-controller="Cargo">Cargos</a>
+                                <a class="nav-link" asp-controller="Cargo" asp-action="Index" data-controller="Cargo"><i class="fas fa-briefcase me-1"></i> Cargos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Inventario" asp-action="Index" data-controller="Inventario">Inventario</a>
+                                <a class="nav-link" asp-controller="Inventario" asp-action="Index" data-controller="Inventario"><i class="fas fa-warehouse me-1"></i> Inventario</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Proyecto" asp-action="Index" data-controller="Proyecto">Proyectos</a>
+                                <a class="nav-link" asp-controller="Proyecto" asp-action="Index" data-controller="Proyecto"><i class="fas fa-tasks me-1"></i> Proyectos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Empleado" asp-action="Index" data-controller="Empleado">Empleados</a>
+                                <a class="nav-link" asp-controller="Empleado" asp-action="Index" data-controller="Empleado"><i class="fas fa-users me-1"></i> Empleados</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Aviso" asp-action="Index" data-controller="Aviso">Avisos</a>
+                                <a class="nav-link" asp-controller="Aviso" asp-action="Index" data-controller="Aviso"><i class="fas fa-bullhorn me-1"></i> Avisos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Queja" asp-action="Index" data-controller="Queja">Reportes</a>
+                                <a class="nav-link" asp-controller="Queja" asp-action="Index" data-controller="Queja"><i class="fas fa-exclamation-triangle me-1"></i> Reportes</a>
                             </li>
                         }
                     </ul>
                 </div>
 
                 @* Componente UserInfo y Botones de Sesión *@
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center ms-auto">
                     @if (User.Identity.IsAuthenticated)
                     {
                         @* Muestra la información del usuario logueado *@
@@ -149,7 +217,7 @@
 
                         @* Botón de Cerrar Sesión (Visible solo si está logueado) *@
                         <form asp-controller="Auth" asp-action="Logout" method="post" class="ms-3">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <button type="submit" class="btn btn-logout btn-sm btn-outline-danger">
                                 Cerrar Sesión <i class="fas fa-sign-out-alt"></i>
                             </button>
                         </form>
@@ -165,15 +233,15 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-center">
+    <footer class="footer text-center mt-auto">
         <div class="container">
-            &copy; @DateTime.Now.Year - AlcaldiaFront - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - AlcaldiaFront - <a asp-area="" asp-controller="Home" asp-action="Privacy">Política de Privacidad</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -183,28 +251,31 @@
     <script>
         $(document).ready(function() {
             var currentController = '@ViewContext.RouteData.Values["Controller"]';
-            var currentAction = '@ViewContext.RouteData.Values["Action"]';
-
             // 1. Desactivar todos los enlaces y elementos
             $('#main-navbar-nav .nav-item').removeClass('active');
 
             // 2. Iterar sobre todos los enlaces y buscar la coincidencia
             $('#main-navbar-nav .nav-item a').each(function() {
                 var linkController = $(this).data('controller');
-                var linkHref = $(this).attr('href').toLowerCase();
 
-                // Regla simple: si el controlador en el enlace coincide con el controlador actual
+                // Si el controlador en el enlace coincide con el controlador actual
                 if (linkController === currentController) {
                     $(this).closest('.nav-item').addClass('active');
-                    return false; // Salir del bucle, ya encontramos la coincidencia
+                    return false; // Salir del bucle
                 }
 
-                // Regla de respaldo: si el enlace es "/" o "Home/Index" y estamos en Home/Index
-                if (currentController === 'Home' && currentAction === 'Index' && (linkHref === '/' || linkHref.indexOf('home/index') > -1)) {
-                    $(this).closest('.nav-item').addClass('active');
-                    return false;
-                }
+                // Manejo especial para la página de inicio
+                if (currentController === 'Home' && linkController === 'Home') {
+                    // Asegurar que solo el enlace "Home" se active si estamos en Home/Index,
+                    // o que "Soporte" se active si estamos en Home/Privacy
+                    var linkAction = $(this).attr('asp-action');
+                    var currentAction = '@ViewContext.RouteData.Values["Action"]';
 
+                    if (linkAction === currentAction) {
+                        $(this).closest('.nav-item').addClass('active');
+                        return false;
+                    }
+                }
             });
         });
     </script>
