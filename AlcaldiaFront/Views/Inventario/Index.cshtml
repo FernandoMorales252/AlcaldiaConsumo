@@ -258,6 +258,35 @@
             border-bottom-right-radius: 10px;
         }
     }
+    /* --------------------------------------------------
+     * ESTILOS DE IMAGEN BASE64
+     * -------------------------------------------------- */
+
+    .imagen-inventario {
+        /* Define un tamaño fijo para la vista previa en la tabla */
+        width: 60px;
+        height: 60px;
+        object-fit: cover; /* Asegura que la imagen no se distorsione */
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    /* Modificación para el modo móvil (cards) */
+    @@media (max-width: 991px) {
+        /* Estilo especial para la columna de Imagen en móvil */
+        .responsive-inventory-table tbody td:nth-child(2)
+
+    {
+        /* Si la imagen es la segunda columna, el CSS debe apuntar a la segunda celda */
+        text-align: center !important;
+    }
+
+    .responsive-inventory-table tbody td.imagen-celda {
+        text-align: center !important;
+        /* Asegura que la imagen ocupe todo el ancho de la tarjeta si es necesario */
+    }
+
+    }
 </style>
 
 <div class="container">
@@ -287,9 +316,9 @@
                     <tr>
                         <th class="text-left">Item</th>
                         <th class="text-left">Descripcion</th>
+                        <th class="text-center">Imagen</th>
                         <th class="text-center">Cantidad</th>
                         <th class="text-center">Estado</th>
-                        <th class="text-center">Fecha de registro</th>
                         <th class="text-center">Municipio</th>
                         <th class="text-center">Acciones</th>
                     </tr>
@@ -302,7 +331,27 @@
                             <td data-label="Descripcion" class="text-left">
                                 @{
                                     string desc = item.Descripcion ?? "";
-                                    @(desc.Length > 50 ? desc.Substring(0, 50) + "..." : desc)
+                                    // Usamos un corte de texto más corto ya que añadimos la imagen
+                                    @(desc.Length > 30 ? desc.Substring(0, 30) + "..." : desc)
+                                }
+                            </td>
+
+                            <td data-label="Imagen" class="text-center imagen-celda">
+                                @{
+                                    // Verifica si el campo de imagen tiene datos (Base64)
+                                    if (!string.IsNullOrEmpty(item.Imagen_data_base64))
+                                    {
+                                        // Construye la URL de datos: Prefijo MIME + Base64
+                                        // Asumimos 'image/jpeg' o 'image/png'. Usamos 'image/webp' como default moderno.
+                                        var imgSrc = $"data:image/webp;base64,{item.Imagen_data_base64}";
+
+                                        <img src="@imgSrc" alt="@item.Nombre_item" class="imagen-inventario" />
+                                    }
+                                    else
+                                    {
+                                        // Ícono de imagen no disponible de Font Awesome
+                                        <i class="fas fa-image" style="font-size: 24px; color: #ccc;"></i>
+                                    }
                                 }
                             </td>
                             <td data-label="Cantidad" class="text-center">@Html.DisplayFor(modelItem => item.Cantidad)</td>
@@ -320,7 +369,6 @@
                                     @Html.DisplayFor(modelItem => item.Estado)
                                 </span>
                             </td>
-                            <td data-label="Fecha de registro" class="text-center">@Html.DisplayFor(modelItem => item.Fecha_ingreso)</td>
                             <td data-label="Municipio" class="text-center">
                                 @{
                                     string nombreMunicipio = "N/A";

@@ -12,29 +12,38 @@
 }
 
 <style>
-    /* Estilos globales (Antracita/Dorado) */
+    /* Estilos globales */
     :root {
         --color-primario: #34495e;
         --color-secundario: #f39c12;
+        --color-peligro: #c0392b;
     }
 
     .details-card {
         background-color: white;
         padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        border-top: 5px solid var(--color-secundario);
+        border-radius: 12px; /* Más redondeado */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        margin-top: 25px;
+        border-left: 5px solid var(--color-secundario);
     }
 
     h1 {
         color: var(--color-primario);
-        font-weight: 600;
-        margin-bottom: 5px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
+
+    .detail-section h4 {
+        color: var(--color-primario);
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
     }
 
     .dl-detalle dt {
-        color: var(--color-primario);
+        color: var(--color-secundario); /* Dorado para las etiquetas */
         font-weight: 700;
         text-transform: uppercase;
         font-size: 0.9rem;
@@ -45,97 +54,114 @@
         margin-bottom: 5px;
         border-bottom: 1px dashed #ecf0f1;
         padding-bottom: 5px;
+        color: var(--color-primario); /* Antracita para los valores */
     }
 
     .action-bar {
         margin-top: 30px;
         padding-top: 20px;
         border-top: 1px solid #ecf0f1;
-    }
-    /* Botones específicos de acciones */
-    .btn-primary {
-        background-color: var(--color-primario);
-        border-color: var(--color-primario);
+        text-align: center; /* Centrar botones */
     }
 
-    .btn-danger {
-        background-color: #c0392b;
-        border-color: #c0392b;
+    /* Imagen Destacada */
+    .image-details-container {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        min-height: 250px;
     }
 
-    .btn-secondary {
-        background-color: #bdc3c7;
-        border-color: #bdc3c7;
-        color: var(--color-primario);
+    #detailImage {
+        max-width: 100%;
+        max-height: 350px; /* Tamaño máximo para visualización destacada */
+        object-fit: contain;
+        border-radius: 6px;
+    }
+
+    .img-placeholder {
+        font-size: 40px;
+        color: #ccc;
+        margin-top: 50px;
     }
 </style>
 
-<div class="details-card">
-    <h1><i class="fas fa-clipboard-list text-secondary"></i> Detalles del Elemento</h1>
-    <h4>Ficha de Inventario</h4>
-    <hr />
+<div class="container">
+    <div class="details-card">
+        <h1><i class="fas fa-clipboard-list"></i> Detalles del Elemento</h1>
 
-    <dl class="row dl-detalle">
-        <dt class="col-sm-4 col-md-3">
-            Nombre de item)
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            <h5>@Html.DisplayFor(model => model.Nombre_item)</h5>
-        </dd>
+        <div class="row">
+            <div class="col-lg-4 col-md-5 order-md-2 detail-section">
+                <h4 class="text-center">@Model.Nombre_item</h4>
+                <div class="image-details-container">
+                    @{
+                        bool hasImage = !string.IsNullOrEmpty(Model.Imagen_data_base64);
+                        string imageSrc = hasImage ? $"data:image/webp;base64,{Model.Imagen_data_base64}" : "#";
+                    }
+                    @if (hasImage)
+                    {
+                        <img id="detailImage" src="@imageSrc" alt="Imagen del elemento @Model.Nombre_item" />
+                    }
+                    else
+                    {
+                        <div class="img-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p style="font-size: 1rem; margin-top: 10px;">No hay imagen disponible</p>
+                        </div>
+                    }
+                </div>
+            </div>
 
-        <dt class="col-sm-4 col-md-3">
-            Descripcion
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
+            <div class="col-lg-8 col-md-7 order-md-1 detail-section">
+                <h4>Información de la Ficha</h4>
+                <dl class="row dl-detalle">
 
-        <dt class="col-sm-4 col-md-3">
-            Fecha de ingreso
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Fecha_ingreso)
-        </dd>
+                    <dt class="col-sm-4">Nombre de Ítem</dt>
+                    <dd class="col-sm-8"><strong>@Html.DisplayFor(model => model.Nombre_item)</strong></dd>
 
-        <dt class="col-sm-4 col-md-3">
-            Cantidad
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            <strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong>
-        </dd>
+                    <dt class="col-sm-4">Descripción</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
 
-        <dt class="col-sm-4 col-md-3">
-            Municipio
-        </dt>
-        <dd class="col-sm-9">
-            @{
-                string nombreMunicipio = "ID de Municipio no encontrado";
-                if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
-                {
-                    nombreMunicipio = municipioNombres[Model.MunicipioId];
-                }
-            }
-            <strong class="text-primary">@nombreMunicipio</strong>
+                    <dt class="col-sm-4">Cantidad</dt>
+                    <dd class="col-sm-8"><strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong></dd>
 
-            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
-        </dd>
+                    <dt class="col-sm-4">Fecha de Ingreso</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Fecha_ingreso)</dd>
 
-        <dt class="col-sm-4 col-md-3">
-            Estado
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @{
-                string badgeClass = GetBadgeClass(Model?.Estado);
-            }
-            <span class="badge bg-@badgeClass badge-lg">
-                @Html.DisplayFor(model => model.Estado)
-            </span>
-        </dd>
-    </dl>
-</div>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">
+                        @{
+                            string badgeClass = GetBadgeClass(Model?.Estado);
+                        }
+                        <span class="badge bg-@badgeClass p-2">
+                            @Html.DisplayFor(model => model.Estado)
+                        </span>
+                    </dd>
 
-<div class="action-bar">
-    <a asp-action="Edit" asp-route-id="@Model?.Id_inventario" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
-    <a asp-action="Delete" asp-route-id="@Model?.Id_inventario" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
-    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+                    <dt class="col-sm-4">Municipio</dt>
+                    <dd class="col-sm-8">
+                        @{
+                            string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
+                            ? municipioNombres[Model.MunicipioId]
+                            : "N/A";
+                        }
+                        <strong class="text-primary">@nombreMunicipio</strong>
+                    </dd>
+
+                    <dt class="col-sm-4">ID de Inventario</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Id_inventario)</dd>
+
+                </dl>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <a asp-action="Edit" asp-route-id="@Model?.Id_inventario" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
+            <a asp-action="Delete" asp-route-id="@Model?.Id_inventario" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
+            <a asp-action="Index" class="btn btn-secondary ms-2"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+        </div>
+    </div>
 </div>

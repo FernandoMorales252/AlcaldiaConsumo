@@ -12,7 +12,7 @@
 }
 
 <style>
-    /* Estilos globales (Advertencia/Rojo) */
+    /* Estilos globales */
     :root {
         --color-primario: #34495e;
         --color-secundario: #f39c12;
@@ -22,29 +22,30 @@
     .delete-card {
         background-color: white;
         padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        border-top: 5px solid var(--color-peligro);
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        margin-top: 25px;
+        border-left: 5px solid var(--color-peligro); /* Borde de acento rojo */
     }
 
     h1 {
         color: var(--color-primario);
-        font-weight: 600;
+        font-weight: 700;
         margin-bottom: 5px;
+        font-size: 2rem;
     }
 
-    h3 {
+    h3.warning {
         color: var(--color-peligro);
         border-bottom: 2px solid #f2dede;
         padding-bottom: 10px;
         margin-bottom: 25px;
-        font-weight: 400;
+        font-weight: 600;
     }
 
     .dl-detalle dt {
-        color: var(--color-secundario);
-        font-weight: 600;
+        color: var(--color-primario);
+        font-weight: 700;
         text-transform: uppercase;
         font-size: 0.9rem;
         padding-top: 10px;
@@ -56,11 +57,30 @@
         padding-bottom: 5px;
     }
 
+    /* Imagen Destacada */
+    .image-delete-container {
+        border-radius: 8px;
+        border: 2px solid var(--color-peligro); /* Borde rojo de advertencia */
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+        background-color: #fdf5f5; /* Fondo muy claro de advertencia */
+    }
+
+    #deleteImage {
+        max-width: 100%;
+        max-height: 250px;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+
     .delete-actions {
         margin-top: 25px;
         padding-top: 15px;
         border-top: 1px solid #bdc3c7;
+        text-align: center;
     }
+
     /* Botones de acción específicos */
     .btn-danger {
         background-color: var(--color-peligro);
@@ -76,77 +96,75 @@
     }
 </style>
 
-<div class="delete-card">
-    <h1><i class="fas fa-trash-alt"></i> Eliminar Elemento</h1>
-    <h3>🚨 ¿Estás seguro de que deseas eliminar este elemento de inventario?</h3>
+<div class="container">
+    <div class="delete-card">
+        <h1><i class="fas fa-trash-alt"></i> Eliminar Elemento</h1>
+        <h3 class="warning">🚨 ¡ADVERTENCIA! Estás a punto de eliminar permanentemente el ítem: **@Model.Nombre_item**.</h3>
 
-    <div>
-        <h4>Detalles del Elemento</h4>
-        <hr />
-        <dl class="row dl-detalle">
-            <dt class="col-sm-4 col-md-3">
-                Nombre de item)
-            </dt>
-            <dd class="col-sm-8 col-md-9">
-                <h5>@Html.DisplayFor(model => model.Nombre_item)</h5>
-            </dd>
-
-            <dt class="col-sm-4 col-md-3">
-                Descripcion
-            </dt>
-            <dd class="col-sm-8 col-md-9">
-                @Html.DisplayFor(model => model.Descripcion)
-            </dd>
-
-            <dt class="col-sm-4 col-md-3">
-                Fecha de ingreso
-            </dt>
-            <dd class="col-sm-8 col-md-9">
-                @Html.DisplayFor(model => model.Fecha_ingreso)
-            </dd>
-
-            <dt class="col-sm-4 col-md-3">
-                Cantidad
-            </dt>
-            <dd class="col-sm-8 col-md-9">
-                <strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong>
-            </dd>
-
-            <dt class="col-sm-4 col-md-3">
-                Municipio
-            </dt>
-            <dd class="col-sm-9">
-                @{
-                    string nombreMunicipio = "ID de Municipio no encontrado";
-                    if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
-                    {
-                        nombreMunicipio = municipioNombres[Model.MunicipioId];
+        <div class="row">
+            <div class="col-lg-5 col-md-5 detail-section">
+                <h4 class="text-center">Elemento a Eliminar</h4>
+                <div class="image-delete-container">
+                    @{
+                        bool hasImage = !string.IsNullOrEmpty(Model.Imagen_data_base64);
+                        string imageSrc = hasImage ? $"data:image/webp;base64,{Model.Imagen_data_base64}" : "#";
                     }
-                }
-                <strong class="text-primary">@nombreMunicipio</strong>
+                    @if (hasImage)
+                    {
+                        <img id="deleteImage" src="@imageSrc" alt="Imagen del elemento @Model.Nombre_item" />
+                    }
+                    else
+                    {
+                        <div class="img-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p style="font-size: 1rem; margin-top: 10px;">Sin imagen</p>
+                        </div>
+                    }
+                </div>
+            </div>
 
-                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
-            </dd>
+            <div class="col-lg-7 col-md-7 detail-section">
+                <h4>Detalles para Confirmar</h4>
+                <dl class="row dl-detalle">
 
-            <dt class="col-sm-4 col-md-3">
-                Estado
-            </dt>
-            <dd class="col-sm-8 col-md-9">
-                @{
-                    string badgeClass = GetBadgeClass(Model?.Estado);
-                }
-                <span class="badge bg-@badgeClass badge-lg">
-                    @Html.DisplayFor(model => model.Estado)
-                </span>
-            </dd>
-        </dl>
-    </div>
+                    <dt class="col-sm-4">Nombre de Ítem</dt>
+                    <dd class="col-sm-8"><strong>@Html.DisplayFor(model => model.Nombre_item)</strong></dd>
 
-    <div class="delete-actions">
-        <form asp-action="Delete">
-            <input type="hidden" asp-for="Id_inventario" />
-            <button type="submit" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i> Eliminar</button>
-            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
-        </form>
+                    <dt class="col-sm-4">Descripción</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
+
+                    <dt class="col-sm-4">Cantidad</dt>
+                    <dd class="col-sm-8"><strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong></dd>
+
+                    <dt class="col-sm-4">Municipio</dt>
+                    <dd class="col-sm-8">
+                        @{
+                            string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
+                            ? municipioNombres[Model.MunicipioId]
+                            : "N/A";
+                        }
+                        <strong class="text-primary">@nombreMunicipio</strong>
+                    </dd>
+
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">
+                        @{
+                            string badgeClass = GetBadgeClass(Model?.Estado);
+                        }
+                        <span class="badge bg-@badgeClass p-2">
+                            @Html.DisplayFor(model => model.Estado)
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="delete-actions">
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id_inventario" />
+                <button type="submit" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i> SÍ, Eliminar Permanentemente</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2"><i class="fas fa-times-circle"></i> Cancelar</a>
+            </form>
+        </div>
     </div>
 </div>

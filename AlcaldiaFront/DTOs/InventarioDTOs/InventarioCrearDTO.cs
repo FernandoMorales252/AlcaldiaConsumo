@@ -7,6 +7,7 @@
         public int Cantidad { get; set; }
         public DateTime Fecha_ingreso { get; set; } = DateTime.Now;
         public string Estado { get; set; }
+        public string? ImagenBase64 { get; set; }
         public int MunicipioId { get; set; }
     }
 }

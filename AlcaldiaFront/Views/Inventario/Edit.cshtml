@@ -1,35 +1,41 @@
-﻿@model AlcaldiaFront.DTOs.InventarioDTOs.InventarioActualizarDTO
+﻿@model AlcaldiaFront.ViewModels.InventarioActualizarVM
+
 @{
     ViewData["Title"] = "Editar Elemento";
 }
 
 <style>
-    /* Estilos globales (Antracita/Dorado) */
+    /* Estilos globales */
     :root {
         --color-primario: #34495e;
         --color-secundario: #f39c12;
         --color-texto: #2c3e50;
+        --color-fondo-claro: #ecf0f1;
+        --color-borde: #dcdde1;
     }
 
     .form-container {
         background-color: white;
         padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        border-left: 5px solid var(--color-secundario); /* Borde de acento lateral */
+        border-radius: 12px; /* Redondeamos más */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        margin-top: 25px;
+        margin-bottom: 25px;
+        border-left: 5px solid var(--color-secundario);
     }
 
     h1 {
         color: var(--color-primario);
-        font-weight: 600;
+        font-weight: 700; /* Más audaz */
         margin-bottom: 5px;
+        font-size: 1.8rem;
     }
 
     .control-label {
         font-weight: 600;
         color: var(--color-texto);
         margin-bottom: 5px;
+        display: block;
     }
 
     .form-control:focus {
@@ -37,99 +43,226 @@
         box-shadow: 0 0 0 0.25rem rgba(243, 156, 18, 0.25);
     }
 
+    /* Estilos de Botones */
+    .btn-primary, .btn-secondary {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
-        min-width: 120px;
     }
 
-    .btn-secondary {
-        background-color: #bdc3c7;
-        border-color: #bdc3c7;
-        color: var(--color-texto);
-        min-width: 120px;
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+        }
+
+    /* Controles de Imagen (Agregados/Actualizados) */
+    .image-preview-container {
+        margin-top: 15px;
+        border: 2px dashed var(--color-borde);
+        border-radius: 8px;
+        padding: 10px;
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #999;
+        text-align: center;
     }
 
-    .form-actions {
-        margin-top: 30px;
-        padding-top: 15px;
-        border-top: 1px solid #ecf0f1;
+    #imagePreview {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 6px;
     }
+
+    .file-input-label {
+        background-color: var(--color-fondo-claro);
+        border: 1px solid var(--color-borde);
+        border-radius: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        display: inline-block;
+        margin-top: 10px;
+        transition: background-color 0.2s;
+    }
+
+        .file-input-label:hover {
+            background-color: #e4e6e7;
+        }
 </style>
 
-<div class="form-container">
-    <h1><i class="fas fa-edit"></i> Editar Elemento de Inventario</h1>
-    <h4>Actualización de Datos</h4>
-    <hr />
-    <div class="row">
-        <div class="col-lg-10 col-md-12">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+<div class="container">
+    <div class="form-container">
+        <h1><i class="fas fa-edit"></i> Editar Elemento de Inventario</h1>
+        <h4>@Model.Nombre_item</h4>
+        <hr />
 
-                <input type="hidden" asp-for="Id_inventario" />
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                <div class="form-group">
-                    <label asp-for="Nombre_item" class="control-label"></label>
-                    <input asp-for="Nombre_item" class="form-control" />
-                    <span asp-validation-for="Nombre_item" class="text-danger"></span>
-                </div>
+            <input type="hidden" asp-for="Id_inventario" />
 
-                <div class="form-group">
-                    <label asp-for="Descripcion" class="control-label"></label>
-                    <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
-                    <span asp-validation-for="Descripcion" class="text-danger"></span>
-                </div>
+            <input type="hidden" asp-for="ImagenBase64" value="@Model.ImagenDataExistente" />
 
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <label asp-for="Cantidad" class="control-label"></label>
-                        <input asp-for="Cantidad" class="form-control" type="number" />
-                        <span asp-validation-for="Cantidad" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <label asp-for="Fecha_ingreso" class="control-label"></label>
-                        <input asp-for="Fecha_ingreso" class="form-control" type="date" />
-                        <span asp-validation-for="Fecha_ingreso" class="text-danger"></span>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <label asp-for="Estado" class="control-label"></label>
-                        <select asp-for="Estado" class="form-control">
-                            <option value="">-- Seleccionar Estado --</option>
-                            <option value="disponible">Disponible</option>
-                            <option value="agotado">Agotado</option>
-                            <option value="baja">Baja</option>
-                        </select>
-                        <span asp-validation-for="Estado" class="text-danger"></span>
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <h4 class="mb-3">Información General</h4>
+                    <hr />
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Nombre_item" class="control-label"></label>
+                        <input asp-for="Nombre_item" class="form-control" />
+                        <span asp-validation-for="Nombre_item" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-6 form-group">
-                        <label asp-for="MunicipioId" class="control-label"></label>
-                        <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId">
-                            <option value="">-- Seleccionar Municipio --</option>
-                        </select>
-                        <span asp-validation-for="MunicipioId" class="text-danger"></span>
+                    <div class="form-group mb-3">
+                        <label asp-for="Descripcion" class="control-label"></label>
+                        <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group mb-3">
+                            <label asp-for="Cantidad" class="control-label"></label>
+                            <input asp-for="Cantidad" class="form-control" type="number" />
+                            <span asp-validation-for="Cantidad" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                            <label asp-for="Fecha_ingreso" class="control-label"></label>
+                            <input asp-for="Fecha_ingreso" class="form-control" type="date" />
+                            <span asp-validation-for="Fecha_ingreso" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
 
+                <div class="col-lg-6 col-md-12">
+                    <h4 class="mb-3">Ubicación y Estado</h4>
+                    <hr />
 
-                <div class="form-group form-actions">
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
-                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-times-circle"></i> Cancelar</a>
+                    <div class="row">
+                        <div class="col-md-6 form-group mb-3">
+                            <label asp-for="Estado" class="control-label"></label>
+                            <select asp-for="Estado" class="form-control">
+                                <option value="">-- Seleccionar Estado --</option>
+                                <option value="disponible">Disponible</option>
+                                <option value="agotado">Agotado</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 form-group mb-3">
+                            <label asp-for="MunicipioId" class="control-label"></label>
+                            <select asp-for="MunicipioId" class="form-control" asp-items="ViewBag.MunicipioId"></select>
+                            <span asp-validation-for="MunicipioId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <h4 class="mb-3 mt-3">Imagen Actual / Nueva Imagen</h4>
+                    <hr />
+                    <div class="form-group mb-3">
+                        <label asp-for="ArchivoImagen" class="control-label">Cambiar Imagen (Opcional)</label>
+                        <input type="file" id="imageUpload" asp-for="ArchivoImagen" class="d-none" accept="image/*" />
+
+                        <label for="imageUpload" class="file-input-label">
+                            <i class="fas fa-upload"></i> Subir Nueva Imagen
+                        </label>
+
+                        <span asp-validation-for="ArchivoImagen" class="text-danger"></span>
+
+                        <div class="image-preview-container">
+                            @{
+                                // 1. Generar la URL Base64 de la imagen existente (si hay)
+                                string existingImageSrc = string.Empty;
+                                bool hasExistingImage = !string.IsNullOrEmpty(Model.ImagenDataExistente);
+                                if (hasExistingImage)
+                                {
+                                    existingImageSrc = $"data:image/webp;base64,{Model.ImagenDataExistente}";
+                                }
+                            }
+                            <img id="imagePreview"
+                                 src="@existingImageSrc"
+                                 alt="Imagen actual del inventario"
+                                 style="display: @(hasExistingImage ? "block" : "none");" />
+
+                            <span id="previewPlaceholder" style="display: @(hasExistingImage ? "none" : "block");">
+                                <i class="fas fa-camera" style="font-size: 30px;"></i>
+                                <p class="mt-2 mb-0">Sin imagen actual. Sube una nueva.</p>
+                            </span>
+                        </div>
+                        <small class="text-muted mt-2 d-block">Si no subes una imagen, se mantendrá la imagen actual.</small>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div class="form-group form-actions text-center mt-4">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2"><i class="fas fa-times-circle"></i> Cancelar</a>
+            </div>
+        </form>
     </div>
 </div>
 
-<div class="mt-3">
-    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+<div class="mt-3 text-center">
+    <a asp-action="Index" class="btn btn-link"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
 </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+        ## 🖼️ Script de Vista Previa (JavaScript)
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageUpload = document.getElementById('imageUpload');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewPlaceholder = document.getElementById('previewPlaceholder');
+
+            if (imageUpload) {
+                imageUpload.addEventListener('change', function (event) {
+                    if (event.target.files && event.target.files[0]) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            // Muestra la nueva imagen (la Base64 temporal del navegador)
+                            imagePreview.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                            previewPlaceholder.style.display = 'none'; // Ocultar el placeholder/imagen anterior
+                        }
+
+                        // Lee el archivo de imagen como una URL de datos (Base64)
+                        reader.readAsDataURL(event.target.files[0]);
+                    } else {
+                        // Si se cancela la selección, se revierte a la imagen EXISTENTE o al placeholder
+                        // Usamos la lógica de Razor para determinar el estado inicial
+
+                        // Si había una imagen existente al cargar la página:
+                        if ('@Model.ImagenDataExistente' !== '') {
+                             imagePreview.src = `data:image/webp;base64,@{
+                             Html.Raw(Model.ImagenDataExistente);
+                                                  }
+`;
+                         imagePreview.style.display = 'block';
+                         previewPlaceholder.style.display = 'none';
+                    } else {
+                        // Si nunca hubo imagen, volver al placeholder
+                        imagePreview.src = '#';
+                        imagePreview.style.display = 'none';
+                        previewPlaceholder.style.display = 'block';
+                    }
+                }
+            });
+        }
+    });
+</script>
 }
