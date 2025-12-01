@@ -2,81 +2,206 @@
 @using System.Collections.Generic
 @{
     ViewData["Title"] = "Listado de Proyectos";
-    // Nota: Es mejor definir las variables de color en el _Layout.cshtml,
-    // pero las incluimos aquí para la autonomía de la vista.
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     int pageSize = 5; // Define cuántos elementos quieres por página
 }
 
 <style>
     /* --------------------------------------------------
-           PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-           -------------------------------------------------- */
+         * PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
+         * -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
         --color-fondo-claro: #ecf0f1;
         --color-texto: #2c3e50;
+        --color-sombra-card: 0 6px 20px rgba(0, 0, 0, 0.1);
+        --color-sombra-hover: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background-color: var(--color-fondo-claro);
     }
 
     /* Contenedor principal */
     .data-card {
         background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra profunda */
     }
 
     /* Encabezado principal */
     h1 {
         color: var(--color-primario);
-        border-left: 5px solid var(--color-secundario);
+        border-left: 6px solid var(--color-secundario);
         padding-left: 15px;
         margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 2rem;
     }
 
-    /* Botón Crear Nuevo */
+    /* Botón */
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-radius: 8px;
     }
 
         .btn-primary:hover {
-            background-color: #4b6279; /* Tono más claro del primario */
+            background-color: #4b6279;
             border-color: #4b6279;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-    /* Estilo de la tabla */
-    .table-striped > tbody > tr:nth-of-type(odd) {
+    /* --------------------------------------------------
+         * ESTILOS DE TARJETAS DE PROYECTOS (Responsive Card Grid)
+         * -------------------------------------------------- */
+
+    .projects-container {
+        display: grid;
+        gap: 20px;
+        /* Desktop: 2 columnas, Tablet: 1 columna grande */
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        margin-top: 30px;
+    }
+
+    .project-card {
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--color-sombra-card);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--color-sombra-hover);
+            border-color: var(--color-secundario);
+        }
+
+    .card-header-info {
+        padding: 15px 20px;
+        background-color: #f7f9fb;
+        border-bottom: 3px solid var(--color-secundario);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .card-header-info h4 {
+            margin: 0;
+            color: var(--color-primario);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+    .card-municipio {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #7f8c8d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-body-details {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    .description-text {
+        color: var(--color-texto);
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    /* Métricas: Presupuesto y Fechas */
+    .project-metrics {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .metric-item {
+        flex: 1;
+        text-align: center;
+        padding: 5px;
+        border-radius: 6px;
         background-color: var(--color-fondo-claro);
     }
 
-    .table thead th {
-        background-color: var(--color-primario);
+        .metric-item span {
+            display: block;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .metric-item strong {
+            font-size: 1rem;
+            color: var(--color-primario);
+            font-weight: 700;
+        }
+
+    /* Estilos para el Badge de Estado mejorados */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.5em 0.8em;
+        border-radius: 20px;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    .bg-finalizado {
+        background-color: #2ecc71 !important;
         color: white;
-        border-bottom: 3px solid var(--color-secundario);
-        font-weight: 600;
-        vertical-align: middle;
-        text-align: center;
     }
-
-    .table tbody td {
-        vertical-align: middle;
-        font-size: 0.95rem;
+    /* Success */
+    .bg-en_ejecucion {
+        background-color: var(--color-primario) !important;
+        color: white;
     }
+    /* Primary */
+    .bg-planificado {
+        background-color: #3498db !important;
+        color: white;
+    }
+    /* Info */
+    .bg-cancelado {
+        background-color: #e74c3c !important;
+        color: white;
+    }
+    /* Danger */
+    .bg-secondary {
+        background-color: #95a5a6 !important;
+        color: white;
+    }
+    /* Default */
 
-    /* Estilos para los botones de la paginación */
+    /* --------------------------------------------------
+         * PAGINACIÓN
+         * -------------------------------------------------- */
+
     .pagination-container {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     .page-item .page-link {
         color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s, color 0.3s;
     }
 
     .page-item.active .page-link {
@@ -85,145 +210,226 @@
         color: white;
         font-weight: bold;
     }
+
+    /* --------------------------------------------------
+         * ADAPTABILIDAD (RESPONSIVE)
+         * -------------------------------------------------- */
+
+    @@media (max-width: 768px) {
+        /* En móvil, la rejilla se vuelve una columna simple */
+        .projects-container {
+            grid-template-columns: 1fr;
+        }
+
+        .data-card {
+            padding: 15px;
+        }
+
+        .card-header-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+            .card-header-info h4 {
+                font-size: 1.1rem;
+            }
+
+        .project-metrics {
+            flex-direction: column;
+        }
+
+        .metric-item {
+            text-align: left;
+            padding: 10px;
+        }
+    }
 </style>
 
-<div class="data-card">
+<div class="container my-5">
+    <div class="data-card">
 
-    <h1><i class="fas fa-tasks text-secondary"></i> @ViewData["Title"]</h1>
-    <p>
-        <a asp-controller="Home"  asp-action="Index" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Volver al menu</a>
-    </p>
+        <h1><i class="fas fa-tasks me-2 text-secondary"></i> @ViewData["Title"]</h1>
+        <p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Volver al menú</a>
+        </p>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @ViewBag.Error
-        </div>
-    }
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Error
+            </div>
+        }
 
-    <div class="table-responsive">
-        <table class="table table-hover" id="proyectosTable">
-            <thead>
-                <tr>
-                    <th>Proyecto</th>
-                    <th>Proposito</th>
-                    <th class="text-center">Inicio</th>
-                    <th class="text-center">Finalización</th>
-                    <th class="text-right">Presupuesto</th>
-                    <th class="text-center">Estado</th>
-                    <th>Municipio</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+        <div id="projectsList" class="projects-container">
+            @{
+                int index = 0;
+            }
+            @foreach (var item in Model)
+            {
+                // Lógica de mapeo de municipio
+                string nombreMunicipio = "N/A";
+                if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)
+                    nombreMunicipio = municipioNombres[item.MunicipioId];
+                }
+
+                // Lógica de clase de estado
+                string badgeClass = item.Estado switch
+                {
+                    "finalizado" => "bg-finalizado",
+                    "en_ejecucion" => "bg-en_ejecucion",
+                    "planificado" => "bg-planificado",
+                    "cancelado" => "bg-cancelado",
+                    _ => "bg-secondary"
+                };
+
+                // Formato de Presupuesto
+                string presupuestoFormatted = item.Presupuesto != 0 ? $"$ {item.Presupuesto:N2}" : "$ N/A";
+
+                // Card de Proyecto
+                <div class="project-card" data-index="@index">
+
+                    <div class="card-header-info">
+                        <div>
+                            <h4>@Html.DisplayFor(modelItem => item.Nombre)</h4>
+                            <span class="card-municipio"><i class="fas fa-map-marker-alt"></i> @nombreMunicipio</span>
+                        </div>
+                        <span class="badge @badgeClass">
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </span>
+                    </div>
+
+                    <div class="card-body-details">
+                        <p class="description-text">
+                            <i class="fas fa-bullseye me-1 text-secondary"></i>
+                            @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 150)
                             {
-                                @(item.Descripcion.Substring(0, 50) + "...")
+                                @(item.Descripcion.Substring(0, 150) + "...")
                             }
                             else
                             {
                                 @Html.DisplayFor(modelItem => item.Descripcion)
                             }
-                        </td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Inicio)</td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Fin)</td>
-                        <td class="text-right">$@Html.DisplayFor(modelItem => item.Presupuesto)</td>
-                        <td class="text-center">
-                            @{
-                                string badgeClass = item.Estado switch
-                                {
-                                    "finalizado" => "success",
-                                    "en_ejecucion" => "primary",
-                                    "planificado" => "info",
-                                    "cancelado" => "danger",
-                                    _ => "secondary"
-                                };
-                            }
-                            <span class="badge bg-@badgeClass">
-                                @Html.DisplayFor(modelItem => item.Estado)
-                            </span>
-                        </td>
-                        <td>
-                            @{
-                                string nombreMunicipio = "N/A";
-                                if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
-                                {
-                                    nombreMunicipio = municipioNombres[item.MunicipioId];
-                                }
-                            }
-                            @nombreMunicipio
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                        </p>
 
-    <nav class="pagination-container" aria-label="Navegación de Proyectos">
-        <ul class="pagination" id="pagination-ul"></ul>
-    </nav>
+                        <div class="project-metrics">
+                            <div class="metric-item">
+                                <span><i class="fas fa-coins me-1"></i> Presupuesto</span>
+                                <strong>@presupuestoFormatted</strong>
+                            </div>
+                            <div class="metric-item">
+                                <span><i class="fas fa-calendar-alt me-1"></i> Inicio</span>
+                                <strong>@Html.DisplayFor(modelItem => item.Fecha_Inicio)</strong>
+                            </div>
+                            <div class="metric-item">
+                                <span><i class="fas fa-calendar-check me-1"></i> Finalización</span>
+                                <strong>@Html.DisplayFor(modelItem => item.Fecha_Fin)</strong>
+                            </div>
+                        </div>
+                    </div>
 
-    @if (Model != null && !Model.Any())
-    {
-        <div class="alert alert-info text-center mt-4" role="alert">
-            <h4>No hay proyectos registrados</h4>
-            <p>Comienza creando tu primer proyecto.</p>
-            <a asp-action="Create" class="btn btn-primary">Crear Primer Proyecto</a>
+                </div>
+                index++;
+            }
+
+            @if (Model != null && !Model.Any())
+            {
+                <div class="col-12 alert alert-info text-center mt-4" role="alert">
+                    <h4><i class="fas fa-exclamation-circle"></i> No hay proyectos registrados</h4>
+                    <p>Comienza creando tu primer proyecto.</p>
+                    <a asp-action="Create" class="btn btn-primary mt-3">Crear Primer Proyecto</a>
+                </div>
+            }
         </div>
-    }
 
+        <nav class="pagination-container" aria-label="Navegación de Proyectos">
+            <ul class="pagination" id="pagination-ul"></ul>
+        </nav>
+
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            // Configuración de Paginación
-            const table = document.getElementById('proyectosTable');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            const pageSize = @pageSize; // Viene de la variable Razor
+        document.addEventListener('DOMContentLoaded', function () {
+            const projectsList = document.getElementById('projectsList');
+            if (!projectsList) return; // Salir si no hay contenedor de proyectos
+
+            // Usamos querySelectorAll para obtener todos los elementos que representan proyectos
+            const rows = Array.from(projectsList.querySelectorAll('.project-card'));
+            const pageSize = @pageSize;
             const totalPages = Math.ceil(rows.length / pageSize);
-            const paginationUl = $('#pagination-ul');
+            const paginationUl = document.getElementById('pagination-ul');
 
             function displayPage(page) {
                 const startIndex = (page - 1) * pageSize;
                 const endIndex = startIndex + pageSize;
 
                 rows.forEach((row, index) => {
-                    row.style.display = (index >= startIndex && index < endIndex) ? '' : 'none';
+                    // Mostrar u ocultar la tarjeta del proyecto
+                    row.style.display = (index >= startIndex && index < endIndex) ? 'flex' : 'none';
                 });
 
                 updatePaginationControls(page);
+                // Mover el scroll al inicio de la lista al cambiar de página
+                projectsList.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             function updatePaginationControls(currentPage) {
-                paginationUl.empty(); // Limpiar la paginación existente
+                if (!paginationUl) return;
+
+                // Limpiar la paginación existente
+                paginationUl.innerHTML = '';
 
                 // Botón Anterior
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';
-                paginationUl.append(`
+                paginationUl.insertAdjacentHTML('beforeend', `
                     <li class="page-item ${prevDisabled}">
                         <a class="page-link" href="#" data-page="${currentPage - 1}"><i class="fas fa-angle-left"></i> Anterior</a>
                     </li>
                 `);
 
                 // Botones de Páginas Numeradas
-                for (let i = 1; i <= totalPages; i++) {
+                // Lógica de control de paginación (mostrar solo un rango de páginas)
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
+
+                if (currentPage <= 3) {
+                    endPage = Math.min(totalPages, 5);
+                } else if (currentPage > totalPages - 2) {
+                    startPage = Math.max(1, totalPages - 4);
+                }
+
+                // Botón para la primera página si es necesario
+                if (startPage > 1) {
+                    paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                    if (startPage > 2) {
+                         paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
                     const active = i === currentPage ? 'active' : '';
-                    paginationUl.append(`
+                    paginationUl.insertAdjacentHTML('beforeend', `
                         <li class="page-item ${active}">
                             <a class="page-link" href="#" data-page="${i}">${i}</a>
                         </li>
                     `);
                 }
 
+                // Botón para la última página si es necesario
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                         paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    }
+                    paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+                }
+
+
                 // Botón Siguiente
                 const nextDisabled = currentPage === totalPages ? 'disabled' : '';
-                paginationUl.append(`
+                paginationUl.insertAdjacentHTML('beforeend', `
                     <li class="page-item ${nextDisabled}">
                         <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente <i class="fas fa-angle-right"></i></a>
                     </li>
@@ -231,9 +437,12 @@
             }
 
             // Manejador de clic para los botones de paginación
-            paginationUl.on('click', 'a.page-link', function (e) {
+            paginationUl.addEventListener('click', function (e) {
+                const target = e.target.closest('a.page-link');
+                if (!target) return;
+
                 e.preventDefault();
-                const newPage = parseInt($(this).data('page'));
+                const newPage = parseInt(target.dataset.page);
 
                 if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
                     displayPage(newPage);

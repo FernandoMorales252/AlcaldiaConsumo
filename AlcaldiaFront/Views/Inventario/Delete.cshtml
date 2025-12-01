@@ -1,7 +1,11 @@
 ﻿@model AlcaldiaFront.DTOs.InventarioDTOs.InventarioRespuestaDTO
+@using System.Collections.Generic
+
 @{
-    ViewData["Title"] = "Eliminar Elemento";
+    ViewData["Title"] = "Confirmación de Eliminación de Inventario";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
+
+    // Función para asignar clase de color al estado del inventario
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
         "disponible" => "success",
@@ -11,160 +15,329 @@
     };
 }
 
+<!-- Se requiere Bootstrap y Font Awesome para los iconos y el grid layout -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
 <style>
-    /* Estilos globales */
+    /* --------------------------------------------------
+           PATRÓN DE COLORES Y TIPOGRAFÍA
+           -------------------------------------------------- */
     :root {
-        --color-primario: #34495e;
-        --color-secundario: #f39c12;
-        --color-peligro: #c0392b;
+        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-peligro: #c0392b; /* Rojo de Advertencia */
+        --color-bg-light: #f4f6f9;
+        --color-texto-claro: #7f8c8d;
+        --color-texto: #2c3e50;
     }
 
+    body {
+        background-color: var(--color-bg-light);
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Contenedor principal de eliminación (Tarjeta de advertencia) */
     .delete-card {
         background-color: white;
-        padding: 30px;
+        padding: 40px;
         border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        margin-top: 25px;
-        border-left: 5px solid var(--color-peligro); /* Borde de acento rojo */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-top: 30px;
+        margin-bottom: 30px;
+        border-top: 6px solid var(--color-peligro); /* Borde de peligro fuerte */
+        max-width: 850px; /* Ancho un poco mayor para la imagen */
+        margin-left: auto;
+        margin-right: auto;
     }
 
+    /* Encabezado y Advertencia */
     h1 {
         color: var(--color-primario);
         font-weight: 700;
-        margin-bottom: 5px;
+        margin-bottom: 20px;
         font-size: 2rem;
     }
 
-    h3.warning {
+    .warning-message {
+        background-color: #fcebeb; /* Fondo rosado claro */
         color: var(--color-peligro);
-        border-bottom: 2px solid #f2dede;
-        padding-bottom: 10px;
-        margin-bottom: 25px;
-        font-weight: 600;
-    }
-
-    .dl-detalle dt {
-        color: var(--color-primario);
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        padding-top: 10px;
-    }
-
-    .dl-detalle dd {
-        margin-bottom: 5px;
-        border-bottom: 1px dashed #ecf0f1;
-        padding-bottom: 5px;
-    }
-
-    /* Imagen Destacada */
-    .image-delete-container {
+        border: 1px solid var(--color-peligro);
+        padding: 15px;
         border-radius: 8px;
-        border: 2px solid var(--color-peligro); /* Borde rojo de advertencia */
-        padding: 10px;
-        text-align: center;
-        margin-bottom: 20px;
-        background-color: #fdf5f5; /* Fondo muy claro de advertencia */
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
     }
 
-    #deleteImage {
+        .warning-message i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+    /* Contenedor de la Imagen */
+    .image-container {
+        border: 2px solid #f9e7e7;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #fffafa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 250px;
+    }
+
+    .item-image {
         max-width: 100%;
         max-height: 250px;
         object-fit: contain;
         border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .delete-actions {
-        margin-top: 25px;
-        padding-top: 15px;
-        border-top: 1px solid #bdc3c7;
+    .img-placeholder {
         text-align: center;
+        color: var(--color-texto-claro);
     }
 
-    /* Botones de acción específicos */
+        .img-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #e4e4e4;
+        }
+
+    /* Detalles del Elemento a Eliminar */
+    .detail-container h4 {
+        color: var(--color-primario);
+        font-weight: 600;
+        font-size: 1.25rem;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .detail-label {
+        color: var(--color-secundario); /* Etiquetas en color de acento */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+        display: block;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        color: var(--color-texto);
+        margin-bottom: 15px;
+        word-wrap: break-word; /* Para descripciones largas */
+    }
+
+    .badge-lg {
+        padding: 0.5em 0.8em;
+        font-size: 0.85em;
+        font-weight: 600;
+    }
+
+    /* Botones de Acción */
+    .delete-actions {
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 20px;
+        justify-content: center; /* Centrar botones */
+    }
+
+    .btn-action {
+        padding: 12px 30px;
+        font-weight: 700;
+        border-radius: 8px;
+        min-width: 180px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Botón Eliminar (Rojo - Destacado) */
     .btn-danger {
         background-color: var(--color-peligro);
         border-color: var(--color-peligro);
-        min-width: 120px;
+        transition: transform 0.2s;
     }
 
+        .btn-danger:hover {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            transform: translateY(-2px);
+        }
+
+    /* Botón Cancelar (Secundario - Menos prominente) */
     .btn-secondary {
         background-color: #bdc3c7;
         border-color: #bdc3c7;
         color: var(--color-primario);
-        min-width: 120px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: white;
+        }
+
+    /* --------------------------------------------------
+           ADAPTACIÓN RESPONSIVE
+           -------------------------------------------------- */
+    @@media (max-width: 991.98px) {
+        /* En tablet y móvil, apilar imagen y detalles */
+        .image-section {
+            order: 1; /* Imagen primero */
+        }
+
+        .details-section {
+            order: 2;
+            margin-top: 20px;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .delete-card {
+            padding: 20px;
+            margin-top: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .delete-actions {
+            flex-direction: column; /* Apilar botones en móvil */
+            gap: 15px;
+        }
+
+        .btn-action {
+            width: 100%; /* Botones de ancho completo */
+        }
     }
 </style>
 
-<div class="container">
-    <div class="delete-card">
-        <h1><i class="fas fa-trash-alt"></i> Eliminar Elemento</h1>
-        <h3 class="warning">🚨 ¡ADVERTENCIA! Estás a punto de eliminar permanentemente el ítem: **@Model.Nombre_item**.</h3>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-10 col-12">
 
-        <div class="row">
-            <div class="col-lg-5 col-md-5 detail-section">
-                <h4 class="text-center">Elemento a Eliminar</h4>
-                <div class="image-delete-container">
-                    @{
-                        bool hasImage = !string.IsNullOrEmpty(Model.Imagen_data_base64);
-                        string imageSrc = hasImage ? $"data:image/webp;base64,{Model.Imagen_data_base64}" : "#";
-                    }
-                    @if (hasImage)
-                    {
-                        <img id="deleteImage" src="@imageSrc" alt="Imagen del elemento @Model.Nombre_item" />
-                    }
-                    else
-                    {
-                        <div class="img-placeholder">
-                            <i class="fas fa-image"></i>
-                            <p style="font-size: 1rem; margin-top: 10px;">Sin imagen</p>
-                        </div>
-                    }
+            <div class="delete-card">
+
+                <h1><i class="fas fa-box-open me-2"></i> Eliminar Elemento de Inventario</h1>
+
+                <!-- MENSAJE DE ADVERTENCIA CRÍTICO -->
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta acción es permanente e irreversible. ¿Estás seguro de que deseas eliminar el ítem @Model.Nombre_item?
                 </div>
+
+                <!-- BOTONES DE ACCIÓN (Formulario de Eliminación) -->
+                <div class="delete-actions">
+                    <form asp-action="Delete" class="d-flex justify-content-center w-100 flex-column flex-md-row gap-3">
+                        <a asp-action="Index" class="btn btn-secondary btn-action order-2 order-md-1">
+                            <i class="fas fa-times-circle me-2"></i> Cancelar
+                        </a>
+                        <input type="hidden" asp-for="Id_inventario" />
+                        <button type="submit" class="btn btn-danger btn-action order-1 order-md-2">
+                            <i class="fas fa-trash-alt me-2"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+                <hr />
+                <div class="row detail-container">
+
+                    <!-- COLUMNA 1: IMAGEN (5/12 del ancho en escritorio) -->
+                    <div class="col-lg-5 col-md-5 image-section">
+                        <h4 class="text-center mb-3">Vista Previa</h4>
+                        <div class="image-container">
+                            @{
+                                bool hasImage = !string.IsNullOrEmpty(Model.Imagen_data_base64);
+                                string imageSrc = hasImage ? $"data:image/webp;base64,{Model.Imagen_data_base64}" : "#";
+                            }
+                            @if (hasImage)
+                            {
+                                <img class="item-image" src="@imageSrc" alt="Imagen del elemento @Model.Nombre_item" />
+                            }
+                            else
+                            {
+                                <div class="img-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <p style="font-size: 1rem; margin-top: 10px;">No hay imagen disponible</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA 2: DETALLES (7/12 del ancho en escritorio) -->
+                    <div class="col-lg-7 col-md-7 details-section">
+                        <h4>Detalles para Confirmar la Eliminación</h4>
+
+                        <div class="row">
+                            <!-- Nombre de Ítem -->
+                            <div class="col-12 mb-3">
+                                <span class="detail-label">Nombre de Ítem</span>
+                                <div class="detail-value">
+                                    <i class="fas fa-tag me-1 text-primary"></i>
+                                    <strong>@Html.DisplayFor(model => model.Nombre_item)</strong>
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="col-12 mb-3">
+                                <span class="detail-label">Descripción</span>
+                                <div class="detail-value text-muted small">
+                                    @Html.DisplayFor(model => model.Descripcion)
+                                </div>
+                            </div>
+
+                            <!-- FILA 1: CANTIDAD Y ESTADO -->
+                            <div class="col-md-6 col-12">
+                                <span class="detail-label">Cantidad Actual</span>
+                                <div class="detail-value">
+                                    <i class="fas fa-cubes me-1"></i>
+                                    <strong class="text-success">@Html.DisplayFor(model => model.Cantidad) unidades</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <span class="detail-label">Estado</span>
+                                <div class="detail-value">
+                                    @{
+                                        string badgeClass = GetBadgeClass(Model?.Estado);
+                                    }
+                                    <span class="badge rounded-pill bg-@badgeClass badge-lg">
+                                        @Html.DisplayFor(model => model.Estado)
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- FILA 2: MUNICIPIO ASIGNADO -->
+                            <div class="col-12">
+                                <span class="detail-label">Municipio Asignado</span>
+                                <div class="detail-value">
+                                    @{
+                                        string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
+                                        ? municipioNombres[Model.MunicipioId]
+                                        : "N/A";
+                                    }
+                                    <i class="fas fa-city me-1 text-info"></i> <strong>@nombreMunicipio</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
             </div>
 
-            <div class="col-lg-7 col-md-7 detail-section">
-                <h4>Detalles para Confirmar</h4>
-                <dl class="row dl-detalle">
-
-                    <dt class="col-sm-4">Nombre de Ítem</dt>
-                    <dd class="col-sm-8"><strong>@Html.DisplayFor(model => model.Nombre_item)</strong></dd>
-
-                    <dt class="col-sm-4">Descripción</dt>
-                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
-
-                    <dt class="col-sm-4">Cantidad</dt>
-                    <dd class="col-sm-8"><strong class="text-primary">@Html.DisplayFor(model => model.Cantidad) unidades</strong></dd>
-
-                    <dt class="col-sm-4">Municipio</dt>
-                    <dd class="col-sm-8">
-                        @{
-                            string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
-                            ? municipioNombres[Model.MunicipioId]
-                            : "N/A";
-                        }
-                        <strong class="text-primary">@nombreMunicipio</strong>
-                    </dd>
-
-                    <dt class="col-sm-4">Estado</dt>
-                    <dd class="col-sm-8">
-                        @{
-                            string badgeClass = GetBadgeClass(Model?.Estado);
-                        }
-                        <span class="badge bg-@badgeClass p-2">
-                            @Html.DisplayFor(model => model.Estado)
-                        </span>
-                    </dd>
-                </dl>
-            </div>
-        </div>
-
-        <div class="delete-actions">
-            <form asp-action="Delete">
-                <input type="hidden" asp-for="Id_inventario" />
-                <button type="submit" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i> SÍ, Eliminar Permanentemente</button>
-                <a asp-action="Index" class="btn btn-secondary ms-2"><i class="fas fa-times-circle"></i> Cancelar</a>
-            </form>
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        // Opcional, pero se recomienda siempre para mantener la estructura de la vista Razor
+    }
+}

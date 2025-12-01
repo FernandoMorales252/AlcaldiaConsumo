@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<AlcaldiaFront.DTOs.QuejaDTOs.QuejaRespuestaDTO>
 @using System.Collections.Generic
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
     ViewData["Title"] = "Listado de Reportes Ciudadanos";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
@@ -21,7 +23,7 @@
     /* Contenedor principal */
     .data-card {
         background-color: white;
-        padding: 25px; /* Más padding */
+        padding: 25px;
         border-radius: 10px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         margin-bottom: 30px;
@@ -72,7 +74,7 @@
 
     /* Resaltar la fila de alto riesgo */
     .table-danger-row {
-        background-color: #fcebeb !important; /* Fondo muy claro para riesgo */
+        background-color: #fcebeb !important;
         border-left: 5px solid var(--color-riesgo);
     }
 
@@ -93,25 +95,24 @@
 
     /* Colores personalizados para Nivel de Atención */
     .bg-success {
-        background-color: #2ecc71 !important;
+        background-color: #2ecc71 !important; /* Bajo */
         color: white;
     }
-    /* Bajo */
+
     .bg-primary {
-        background-color: #3498db !important;
+        background-color: #3498db !important; /* Medio */
         color: white;
     }
-    /* Medio */
+
     .bg-info {
-        background-color: var(--color-secundario) !important;
+        background-color: var(--color-secundario) !important; /* Alto (Dorado) */
         color: var(--color-primario);
     }
-    /* Alto (Dorado) */
+
     .bg-danger {
-        background-color: var(--color-riesgo) !important;
+        background-color: var(--color-riesgo) !important; /* Riesgo (Rojo) */
         color: white;
     }
-    /* Riesgo (Rojo) */
 
     /* Estilos para los botones de la paginación */
     .pagination-container {
@@ -123,7 +124,7 @@
     .page-item.active .page-link {
         background-color: var(--color-secundario);
         border-color: var(--color-secundario);
-        color: var(--color-primario); /* Texto oscuro en el dorado */
+        color: var(--color-primario);
         font-weight: bold;
     }
 
@@ -133,81 +134,126 @@
     }
 
     /* --------------------------------------------------
+         * ------------------ ESTILOS DE FILTRO ------------------
+         * -------------------------------------------------- */
+    .filter-card {
+        background-color: var(--color-fondo-claro);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+        transition: all 0.3s;
+    }
+
+        .filter-card h5 {
+            color: var(--color-primario);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border-color: #ccc;
+        box-shadow: none;
+        transition: border-color 0.3s;
+        font-size: 0.95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.1rem rgba(243, 156, 18, 0.5);
+        }
+
+    .btn-filter {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: var(--color-primario);
+        font-weight: 600;
+        min-width: 100px;
+    }
+
+        .btn-filter:hover {
+            background-color: #e6b25a;
+            border-color: #e6b25a;
+            color: var(--color-primario);
+        }
+
+    .btn-clear {
+        color: var(--color-primario);
+        border-color: #bdc3c7;
+    }
+
+    /* --------------------------------------------------
          * ------------------ RESPONSIVENESS DE LA TABLA (MÓVIL) ------------------
          * -------------------------------------------------- */
     @@media screen and (max-width: 991px) {
-        .table-responsive
-
-    {
-        overflow-x: unset;
-    }
-
-    /* Oculta columnas menos esenciales en móvil */
-    #reportesTable thead th:nth-child(4), /* Tipo de reporte */
-    #reportesTable tbody td:nth-child(4) {
-        display: none;
-    }
-
-    #reportesTable, #reportesTable tbody, #reportesTable tr {
-        display: block;
-        width: 100%;
-    }
-
-        #reportesTable thead {
+        .table-responsive {
+            overflow-x: unset;
+        }
+        /* Oculta columnas menos esenciales en móvil */
+        #reportesTable thead th:nth-child(4), /* Tipo de reporte */
+        #reportesTable tbody td:nth-child(4) {
             display: none;
         }
 
-        #reportesTable tr {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-left-width: 5px; /* Define el ancho del borde lateral */
-            border-left-color: var(--color-primario); /* Borde por defecto */
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            background-color: white;
-            padding: 5px 0;
-        }
-
-            /* Aplica color de riesgo al borde lateral en móvil */
-            #reportesTable tr.table-danger-row {
-                border-left-color: var(--color-riesgo) !important;
-            }
-
-        #reportesTable td {
+        #reportesTable, #reportesTable tbody, #reportesTable tr {
             display: block;
-            text-align: right !important;
-            padding-left: 55% !important;
-            position: relative;
-            border: none;
-            border-bottom: 1px dotted var(--color-fondo-claro);
-            white-space: normal;
+            width: 100%;
         }
 
-            #reportesTable td:last-child {
-                border-bottom: none;
+            #reportesTable thead {
+                display: none;
             }
 
-            #reportesTable td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                width: 50%;
-                padding-right: 10px;
-                font-weight: 700;
-                text-align: left;
-                color: var(--color-primario);
-                font-size: 0.9rem;
+            #reportesTable tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-left-width: 5px;
+                border-left-color: var(--color-primario);
+                border-radius: 6px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                background-color: white;
+                padding: 5px 0;
             }
-
-            #reportesTable td.action-buttons {
-                text-align: center !important;
-                padding: 10px 10px;
-            }
-
-                #reportesTable td.action-buttons::before {
-                    display: none;
+                /* Aplica color de riesgo al borde lateral en móvil */
+                #reportesTable tr.table-danger-row {
+                    border-left-color: var(--color-riesgo) !important;
                 }
 
+            #reportesTable td {
+                display: block;
+                text-align: right !important;
+                padding-left: 55% !important;
+                position: relative;
+                border: none;
+                border-bottom: 1px dotted var(--color-fondo-claro);
+                white-space: normal;
+            }
+
+                #reportesTable td:last-child {
+                    border-bottom: none;
+                }
+
+                #reportesTable td::before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 10px;
+                    width: 50%;
+                    padding-right: 10px;
+                    font-weight: 700;
+                    text-align: left;
+                    color: var(--color-primario);
+                    font-size: 0.9rem;
+                }
+
+                #reportesTable td.action-buttons {
+                    text-align: center !important;
+                    padding: 10px 10px;
+                }
+
+                    #reportesTable td.action-buttons::before {
+                        display: none;
+                    }
     }
 </style>
 
@@ -221,6 +267,76 @@
             @ViewBag.Error
         </div>
     }
+
+    <div>
+        <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+            <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+        </button>
+    </div>
+
+    <div class="collapse" id="collapseFilters">
+        <div class="filter-card">
+            <form asp-action="Index" method="get">
+                <h5><i class="fas fa-search"></i> Filtros de Búsqueda</h5>
+                <div class="row g-3">
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="Titulo" class="form-label visually-hidden">Titulo</label>
+                        <input type="text"
+                               class="form-control"
+                               id="Titulo"
+                               name="Titulo"
+                               placeholder="Buscar por Título"
+                               value="@ViewBag.CurrentTitulo">
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="MunicipioId" class="form-label visually-hidden">Municipio</label>
+                        <select class="form-select" id="MunicipioId" name="MunicipioId">
+                            @* Opción para "Todos" *@
+                            <option value="">-- Todos los Municipios --</option>
+                            @foreach (var item in (List<SelectListItem>)ViewBag.MunicipioId)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentMunicipioId?.ToString())">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="Tipo" class="form-label visually-hidden">Tipo</label>
+                        <select class="form-select" id="Tipo" name="Tipo">
+                            @* Opción para "Todos" *@
+                            <option value="">-- Todos los Tipos --</option>
+                            @foreach (var item in (List<SelectListItem>)ViewBag.TipoList)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentTipo)">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <label for="Nivel" class="form-label visually-hidden">Nivel</label>
+                        <select class="form-select" id="Nivel" name="Nivel">
+                            @* Opción para "Todos" *@
+                            <option value="">-- Todos los Niveles --</option>
+                            @foreach (var item in (List<SelectListItem>)ViewBag.NivelList)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentNivel)">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-12 text-end text-sm-center">
+                        @* Alinea a la derecha en pantallas grandes, al centro en móvil *@
+                        <button type="submit" class="btn btn-filter me-2"><i class="fas fa-search"></i> Filtrar</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-clear"><i class="fas fa-undo"></i> Limpiar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @**@
 
     <div class="table-responsive">
         <table class="table table-hover" id="reportesTable">
@@ -316,6 +432,19 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Inicialmente, mostrar los filtros si ya hay valores seleccionados.
+            const currentTitulo = '@ViewBag.CurrentTitulo';
+            const currentMunicipioId = '@ViewBag.CurrentMunicipioId';
+            const currentTipo = '@ViewBag.CurrentTipo';
+            const currentNivel = '@ViewBag.CurrentNivel';
+
+            const filtersExist = currentTitulo || currentMunicipioId || currentTipo || currentNivel;
+
+            if (filtersExist) {
+                $('#collapseFilters').addClass('show');
+            }
+
+
             // Configuración de Paginación (con truncamiento mejorado)
             const table = document.getElementById('reportesTable');
             const tbody = table.querySelector('tbody');
@@ -337,6 +466,8 @@
 
             function updatePaginationControls(currentPage) {
                 paginationUl.empty();
+
+                if (totalPages <= 1) return; // No mostrar paginación si solo hay una página
 
                 const pagesToShow = 5;
                 let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));

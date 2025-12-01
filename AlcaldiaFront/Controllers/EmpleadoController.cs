@@ -1,4 +1,5 @@
-﻿using AlcaldiaFront.DTOs.EmpleadoDTOs;
+﻿using AlcaldiaFront.DTOs.DocumentoDTOs;
+using AlcaldiaFront.DTOs.EmpleadoDTOs;
 using AlcaldiaFront.Services;
 using AlcaldiaFront.WebApp.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -28,30 +29,59 @@ namespace AlcaldiaFront.Controllers
         }
 
         // GET: Empleado
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? MunicipioId, int? CargoId, string Estado, string NombreEmpleado)
         {
             try
             {
-                // CORRECTO: Usamos el token real
-                var empleados = await _empleadoService.GetAllAsync(ObtenerToken());
+                var empleados = await _empleadoService.GetAllAsync();
 
-                // Obtener listas para los nombres de los municipios y cargos
-                var municipios = await _municipioService.GetAllAsync();
-                var cargos = await _cargoService.GetAllAsync();
+                // Centraliza la carga de datos auxiliares para filtros y nombres
+                await PopulateFilterDropdowns();
 
-                // Convertir las listas a diccionarios para la vista
-                ViewBag.MunicipioNombres = municipios?.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio) ?? new Dictionary<int, string>();
-                ViewBag.CargoNombres = cargos?.ToDictionary(c => c.Id_Cargo, c => c.Nombre_cargo) ?? new Dictionary<int, string>();
+                if (empleados != null && empleados.Any())
+                {
+                    var empleadosFiltrados = empleados.AsQueryable();
 
-                return View(empleados);
+                    // Lógica de filtrado (como se detalló en el punto 1)
+                    // ... [Insertar aquí la lógica de filtrado] ... 
+                    if (MunicipioId.HasValue && MunicipioId.Value > 0)
+                    {
+                        empleadosFiltrados = empleadosFiltrados.Where(d => d.MunicipioId == MunicipioId.Value);
+                    }
+
+                    if (CargoId.HasValue && CargoId.Value > 0)
+                    {
+                        empleadosFiltrados = empleadosFiltrados.Where(d => d.CargoId == CargoId.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(Estado) && Estado != "Todos")
+                    {
+                        empleadosFiltrados = empleadosFiltrados.Where(d => d.Estado.Equals(Estado, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (!string.IsNullOrEmpty(NombreEmpleado))
+                    {
+                        empleadosFiltrados = empleadosFiltrados.Where(d =>
+                            d.Nombre != null &&
+                            d.Nombre.Contains(NombreEmpleado, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Pasar los valores de filtro actuales (IMPORTANTE)
+                    ViewBag.CurrentMunicipioId = MunicipioId;
+                    ViewBag.CurrentCargoId = CargoId;
+                    ViewBag.CurrentEstado = Estado;
+                    ViewBag.CurrentNombre = NombreEmpleado;
+
+                    return View(empleadosFiltrados.ToList());
+                }
+
+                return View(new List<DocumentoRespuestaDTO>());
             }
             catch (Exception ex)
             {
-                ViewBag.Error = "No se pudieron cargar los empleados: " + ex.Message;
-                // Si hay un error, inicializar los ViewBag para evitar NullReferenceException
-                ViewBag.MunicipioNombres = new Dictionary<int, string>();
-                ViewBag.CargoNombres = new Dictionary<int, string>();
-                return View(new List<EmpleadoRespuestaDTo>());
+                ViewBag.Error = "No se pudieron cargar los documentos: " + ex.Message;
+                await PopulateFilterDropdowns(); // Asegurar que los ViewBag estén llenos incluso con error
+                return View(new List<DocumentoRespuestaDTO>());
             }
         }
 
@@ -249,6 +279,48 @@ namespace AlcaldiaFront.Controllers
                 TempData["Error"] = $"Error al intentar descargar el Excel: {ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
+        }
+
+        private async Task PopulateFilterDropdowns()
+        {
+            // Cargar listas para filtros
+            var municipios = await _municipioService.GetAllAsync();
+            var tipos = await _cargoService.GetAllAsync();
+
+            // 1. Dropdowns para la sección de Filtro (con opción "Todos")
+            // Municipio
+            var municipiosList = municipios.Select(m => new SelectListItem
+            {
+                Value = m.Id_Municipio.ToString(),
+                Text = m.Nombre_Municipio
+            }).ToList();
+            municipiosList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Municipios" });
+            ViewBag.MunicipioId = municipiosList;
+
+            // Tipo Documento
+            var tiposList = tipos.Select(t => new SelectListItem
+            {
+                Value = t.Id_Cargo.ToString(),
+                Text = t.Nombre_cargo
+            }).ToList();
+            tiposList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Cargos" });
+            ViewBag.CargoId = tiposList;
+
+            // Estado (Estatica, se puede mejorar usando un enum o lista compartida)
+            var estadosList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "", Text = "Todos los Estados" },
+        new SelectListItem { Value = "Activo", Text = "Activo" },
+        new SelectListItem { Value = "Inactivo", Text = "Inactivo" },
+        new SelectListItem { Value = "Revision", Text = "Revisión" }
+        // Añade aquí todos los estados posibles
+    };
+            ViewBag.EstadoList = estadosList;
+
+
+            // 2. Diccionarios de Nombres (para mostrar en la tabla de resultados)
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.CargoNombres = tipos.ToDictionary(m => m.Id_Cargo, m => m.Nombre_cargo);
         }
 
         // Mapeo del Dropdown 

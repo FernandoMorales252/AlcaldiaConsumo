@@ -21,20 +21,53 @@ namespace AlcaldiaFront.Controllers
         }
 
         // GET: Proyecto
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? MunicipioId, string Estado, string Nombre)
         {
             try
             {
                 var proyectos = await _proyectoService.GetAllAsync();
-                var municipios = await _municipioService.GetAllAsync();
-                var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
-                ViewBag.MunicipioNombres = municipioNombres;
-                return View(proyectos);
+
+                // Centraliza la carga de datos auxiliares para filtros y nombres
+                await PopulateFilterDropdowns();
+
+                if (proyectos != null && proyectos.Any())
+                {
+                    var pFiltrados = proyectos.AsQueryable();
+
+                    // Lógica de filtrado (como se detalló en el punto 1)
+                    // ... [Insertar aquí la lógica de filtrado] ... 
+                    if (MunicipioId.HasValue && MunicipioId.Value > 0)
+                    {
+                        pFiltrados = pFiltrados.Where(d => d.MunicipioId == MunicipioId.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(Estado) && Estado != "Todos")
+                    {
+                        pFiltrados = pFiltrados.Where(d => d.Estado.Equals(Estado, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (!string.IsNullOrEmpty(Nombre))
+                    {
+                        pFiltrados = pFiltrados.Where(d =>
+                            d.Nombre != null &&
+                            d.Nombre.Contains(Nombre, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Pasar los valores de filtro actuales (IMPORTANTE)
+                    ViewBag.CurrentMunicipioId = MunicipioId;
+                    ViewBag.CurrentEstado = Estado;
+                    ViewBag.CurrentNombre = Nombre;
+
+                    return View(pFiltrados.ToList());
+                }
+
+                return View(new List<DocumentoRespuestaDTO>());
             }
             catch (Exception ex)
             {
-                ViewBag.Error = "No se pudieron cargar los proyectos: " + ex.Message;
-                return View(new List<ProyectoRespuestaDTo>());
+                ViewBag.Error = "No se pudieron cargar los documentos: " + ex.Message;
+                await PopulateFilterDropdowns(); // Asegurar que los ViewBag estén llenos incluso con error
+                return View(new List<DocumentoRespuestaDTO>());
             }
         }
 
@@ -192,6 +225,39 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
+        private async Task PopulateFilterDropdowns()
+        {
+            // Cargar listas para filtros
+            var municipios = await _municipioService.GetAllAsync();
+
+            // 1. Dropdowns para la sección de Filtro (con opción "Todos")
+            // Municipio
+            var municipiosList = municipios.Select(m => new SelectListItem
+            {
+                Value = m.Id_Municipio.ToString(),
+                Text = m.Nombre_Municipio
+            }).ToList();
+            municipiosList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Municipios" });
+            ViewBag.MunicipioId = municipiosList;
+
+
+
+            // Estado (Estatica, se puede mejorar usando un enum o lista compartida)
+            var estadosList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "", Text = "Todos los Estados" },
+        new SelectListItem { Value = "finalizado", Text = "Finalizado" },
+        new SelectListItem { Value = "en_ejecucion", Text = "En ejecucion" },
+        new SelectListItem { Value = "planificado", Text = "Planificado" },
+        new SelectListItem { Value = "cancelado", Text = "Cancelado" }
+        // Añade aquí todos los estados posibles
+    };
+            ViewBag.EstadoList = estadosList;
+
+
+            // 2. Diccionarios de Nombres (para mostrar en la tabla de resultados)
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+        }
         // Mapeo del Dropdown 
         private async Task PopulateDropdowns()
         {

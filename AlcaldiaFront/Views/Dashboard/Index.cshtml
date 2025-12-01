@@ -1,0 +1,278 @@
+﻿@model AlcaldiaFront.DTOs.DashboardDTOs.DashboardDataDTO
+@{
+    ViewData["Title"] = "Dashboard de Gestión Municipal";
+    // Define colores consistentes para los gráficos
+    var chartColors = new[] { "#3498db", "#f39c12", "#2ecc71", "#e74c3c", "#9b59b6", "#34495e", "#1abc9c" };
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/tu_kit_de_fontawesome.js" crossorigin="anonymous"></script>
+
+
+<style>
+    /* Estilos base del Dashboard (Mantener consistencia con el estilo original) */
+    .dashboard-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 25px;
+        height: 100%;
+    }
+
+    .kpi-box {
+        text-align: center;
+        padding: 15px;
+        border-radius: 8px;
+        color: white;
+        transition: transform 0.3s;
+        margin-bottom: 25px;
+    }
+
+        .kpi-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .kpi-box h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0;
+        }
+
+        .kpi-box p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+    /* Estilo para asegurar que el canvas no sea demasiado grande */
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+</style>
+
+<h1><i class="fas fa-chart-line"></i> Dashboard de Gestión</h1>
+<hr />
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <h4><i class="fas fa-exclamation-triangle"></i> Error de Carga</h4>
+        @ViewBag.Error
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-box" style="background-color: #34495e;">
+            <i class="fas fa-users fa-2x mb-2"></i>
+            <h2>@(Model.TotalEmpleadosActivos)</h2>
+            <p>Empleados Activos</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-box" style="background-color: #2ecc71;">
+            <i class="fas fa-file-contract fa-2x mb-2"></i>
+            <h2>@(Model.TotalDocumentosVigentes)</h2>
+            <p>Documentos Vigentes</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-box" style="background-color: #e74c3c;">
+            <i class="fas fa-bullhorn fa-2x mb-2"></i>
+            <h2>@(Model.QuejasPorTipo?.Values.Sum() ?? 0)</h2>
+            <p>Total de Quejas Registradas</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="kpi-box" style="background-color: #f39c12;">
+            <i class="fas fa-project-diagram fa-2x mb-2"></i>
+            @{
+                // Lógica de cálculo en C#
+                var proyectosEnEjecucion = Model.ProyectosPorEstado?
+                .Where(p => p.Key.ToLower() == "en_ejecucion")
+                .Sum(p => p.Value) ?? 0;
+            }
+            <h2>@proyectosEnEjecucion</h2>
+            <p>Proyectos en Ejecución</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+
+    <div class="col-lg-6">
+        <div class="dashboard-card">
+            <h5><i class="fas fa-sitemap"></i> Distribución de Empleados por Cargo</h5>
+            <div class="chart-container"><canvas id="chartEmpleadosCargo"></canvas></div>
+            <button class="btn btn-sm btn-outline-secondary mt-3" onclick="downloadChart('chartEmpleadosCargo', 'EmpleadosPorCargo')">
+                <i class="fas fa-download"></i> Descargar Gráfico
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="dashboard-card">
+            <h5><i class="fas fa-money-bill-wave"></i> Presupuesto de Proyectos por Municipio</h5>
+            <div class="chart-container"><canvas id="chartPresupuestoMunicipio"></canvas></div>
+            <button class="btn btn-sm btn-outline-secondary mt-3" onclick="downloadChart('chartPresupuestoMunicipio', 'PresupuestoPorMunicipio')">
+                <i class="fas fa-download"></i> Descargar Gráfico
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+
+    <div class="col-lg-4">
+        <div class="dashboard-card">
+            <h5><i class="fas fa-cubes"></i> Inventario por Estado</h5>
+            <div class="chart-container"><canvas id="chartInventarioEstado"></canvas></div>
+            <button class="btn btn-sm btn-outline-secondary mt-3" onclick="downloadChart('chartInventarioEstado', 'InventarioPorEstado')">
+                <i class="fas fa-download"></i> Descargar Gráfico
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="dashboard-card">
+            <h5><i class="fas fa-comments"></i> Tipos de Quejas</h5>
+            <div class="chart-container"><canvas id="chartQuejasTipo"></canvas></div>
+            <button class="btn btn-sm btn-outline-secondary mt-3" onclick="downloadChart('chartQuejasTipo', 'QuejasPorTipo')">
+                <i class="fas fa-download"></i> Descargar Gráfico
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="dashboard-card">
+            <h5><i class="fas fa-exclamation-triangle"></i> Inventario Crítico</h5>
+            <div class="chart-container"><canvas id="chartItemsAgotados"></canvas></div>
+            <button class="btn btn-sm btn-outline-secondary mt-3" onclick="downloadChart('chartItemsAgotados', 'InventarioCritico')">
+                <i class="fas fa-download"></i> Descargar Gráfico
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Colores predefinidos de Bootstrap/Paleta Municipal
+        const chartColors = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartColors));
+
+        // --- FUNCIONES DE UTILIDAD (No cambiadas) ---
+
+        function downloadChart(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                const imageURL = canvas.toDataURL('image/png', 1.0);
+                const a = document.createElement('a');
+                a.href = imageURL;
+                a.download = filename + '.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        function createPieDonutChart(ctxId, data, title, type = 'doughnut') {
+            const ctx = document.getElementById(ctxId)?.getContext('2d');
+            if (!ctx || Object.keys(data).length === 0) return;
+
+            const labels = Object.keys(data);
+            const counts = Object.values(data);
+
+            new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: counts,
+                        backgroundColor: chartColors.slice(0, labels.length),
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: false }
+                    }
+                }
+            });
+        }
+
+        function createBarChart(ctxId, labels, data, title, color = chartColors[0], horizontal = false) {
+            const ctx = document.getElementById(ctxId)?.getContext('2d');
+            if (!ctx || labels.length === 0) return;
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: color,
+                        borderColor: color,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: horizontal ? 'y' : 'x',
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // --- INICIALIZACIÓN DE GRÁFICOS (CORREGIDA) ---
+
+        $(document).ready(function () {
+            // Deserializar datos (se asume que el DTO ya está en el modelo)
+            // modelData contendrá las propiedades en camelCase (empleadosPorCargo, presupuestoPorMunicipio, etc.)
+            const modelData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+
+            // 1. Empleados por Cargo (Pie) - ¡USAR camelCase!
+            if (modelData.EmpleadosPorCargo) {
+                createPieDonutChart('chartEmpleadosCargo', modelData.EmpleadosPorCargo, 'Cargos');
+            }
+
+            // 2. Presupuesto por Municipio (Barras) - ¡USAR camelCase!
+            if (modelData.PresupuestoPorMunicipio) {
+                const labels = Object.keys(modelData.PresupuestoPorMunicipio);
+                const values = Object.values(modelData.PresupuestoPorMunicipio);
+                createBarChart('chartPresupuestoMunicipio', labels, values, 'Presupuesto (USD)', chartColors[1]);
+            }
+
+            // 3. Inventario por Estado (Donut) - ¡USAR camelCase!
+            if (modelData.InventarioPorEstado) {
+                createPieDonutChart('chartInventarioEstado', modelData.InventarioPorEstado, 'Estado de Inventario', 'doughnut');
+            }
+
+            // 4. Quejas por Tipo (Pie) - ¡USAR camelCase!
+            if (modelData.QuejasPorTipo) {
+                createPieDonutChart('chartQuejasTipo', modelData.QuejasPorTipo, 'Tipos de Queja', 'pie');
+            }
+
+            // 5. Inventario Crítico (Barras Horizontales) - ¡USAR camelCase!
+            if (modelData.TopItemsAgotados && modelData.TopItemsAgotados.length > 0) {
+                // ACCESO A PROPIEDADES INTERNAS del array también en camelCase
+                const labels = modelData.TopItemsAgotados.map(item => item.NombreItem);
+                const values = modelData.TopItemsAgotados.map(item => item.Cantidad);
+
+                createBarChart('chartItemsAgotados', labels, values, 'Cantidad Restante', chartColors[3], true);
+            }
+        });
+    </script>
+}

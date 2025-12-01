@@ -39,6 +39,7 @@ builder.Services.AddScoped<ProyectoService>();
 builder.Services.AddScoped<EmpleadoService>();
 builder.Services.AddScoped<AvisoService>();
 builder.Services.AddScoped<QuejaService>();
+builder.Services.AddScoped<DashboardService>();
 
 
 builder.Services.AddAuthentication("AuthCookie")

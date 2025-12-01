@@ -21,19 +21,37 @@
     .data-card {
         background-color: white;
         padding: 20px;
-        border-radius: 10px; /* Borde ligeramente más redondeado */
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Sombra más profunda */
+        border-radius: 10px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         margin-bottom: 30px;
     }
 
     /* Encabezado principal */
     h1 {
         color: var(--color-primario);
-        border-left: 6px solid var(--color-secundario); /* Borde más grueso */
+        border-left: 6px solid var(--color-secundario);
         padding-left: 18px;
         margin-bottom: 25px;
         font-size: 2rem;
-        font-weight: 300; /* Diseño más moderno */
+        font-weight: 300;
+    }
+
+    /* --------------------------------------------------
+         * ------------------ ESTILOS DE CONTROL (BOTONES Y FILTRO) ------------------
+         * -------------------------------------------------- */
+    .control-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap; /* Permite que los elementos se envuelvan en móvil */
+    }
+
+    .btn-control-group {
+        display: flex;
+        gap: 10px;
+        flex-grow: 1; /* Ocupa el espacio restante en escritorio */
+        justify-content: flex-start;
     }
 
     /* Botón Crear Nuevo */
@@ -41,19 +59,37 @@
         background-color: var(--color-primario);
         border-color: var(--color-primario);
         transition: all 0.3s ease;
-        padding: 8px 15px;
-        font-weight: 500;
+        padding: 10px 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
     }
 
         .btn-primary:hover {
             background-color: #4b6279;
             border-color: #4b6279;
-            transform: translateY(-1px); /* Efecto 3D sutil */
+            transform: translateY(-1px);
+        }
+
+    /* Botón de Filtro (Nuevo Estilo) */
+    .btn-toggle-filter {
+        color: var(--color-primario);
+        border: 1px solid var(--color-primario);
+        background-color: transparent;
+        transition: background-color 0.3s, color 0.3s;
+        padding: 10px 15px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+        .btn-toggle-filter:hover {
+            background-color: var(--color-primario);
+            color: white;
         }
 
     /* Estilo de la tabla */
     .table-hover tbody tr:hover {
-        background-color: #f7f9fb; /* Efecto hover sutil */
+        background-color: #f7f9fb;
         transform: scale(1.005);
         transition: background-color 0.2s, transform 0.2s;
     }
@@ -78,8 +114,6 @@
     }
 
         /* Estilos específicos para celdas */
-
-        /* Proyecto y Proposito */
         .table tbody td:first-child {
             font-weight: 600;
             color: var(--color-primario);
@@ -88,14 +122,14 @@
     /* Presupuesto */
     .budget-cell {
         font-weight: 700;
-        color: #27ae60; /* Verde para dinero/éxito */
+        color: #27ae60;
         text-align: right;
     }
 
     /* Fechas */
     .date-cell {
         font-size: 0.85rem;
-        color: #7f8c8d; /* Gris para fechas */
+        color: #7f8c8d;
     }
 
     /* Badges de Estado */
@@ -138,109 +172,209 @@
     /* --------------------------------------------------
          * ------------------ RESPONSIVENESS DE LA TABLA (MÓVIL) ------------------
          * -------------------------------------------------- */
-    @@media screen and (max-width: 991px) { /* Aumentamos el breakpoint para tablas */
-        /* Desactiva el desplazamiento horizontal de Bootstrap en este punto de quiebre */
-        .table-responsive
+    @@media screen and (max-width: 991px) {
+        /* Encapsular los botones en una columna completa en móvil */
+        .control-header {
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    {
-        overflow-x: unset;
-    }
+        .btn-control-group {
+            flex-direction: column;
+            width: 100%;
+        }
 
-    /* Oculta columnas menos importantes en tabletas */
-    #proyectosTable thead th:nth-child(2), /* Proposito */
-    #proyectosTable tbody td:nth-child(2) {
-        display: none;
-    }
-
-    /* Fuerza a la tabla a comportarse como un bloque */
-    #proyectosTable, #proyectosTable tbody, #proyectosTable tr {
-        display: block;
-        width: 100%;
-    }
-
-        /* Oculta los encabezados de la tabla estándar */
-        #proyectosTable thead {
+        .btn-primary, .btn-toggle-filter {
+            width: 100%;
+            margin: 0 !important;
+        }
+        /* Oculta columnas menos importantes en tabletas */
+        #proyectosTable thead th:nth-child(2),
+        #proyectosTable tbody td:nth-child(2) {
             display: none;
         }
-
-        #proyectosTable tr {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-left: 5px solid var(--color-primario); /* Borde de color para destacar el registro */
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            background-color: white;
-            padding: 5px 0;
-        }
-
-        /* Transforma cada celda en una fila de la "tarjeta" */
-        #proyectosTable td {
+        /* Fuerza a la tabla a comportarse como un bloque */
+        #proyectosTable, #proyectosTable tbody, #proyectosTable tr {
             display: block;
-            text-align: right !important;
-            padding-left: 55% !important; /* Espacio para el label */
-            position: relative;
-            border: none;
-            border-bottom: 1px dotted var(--color-fondo-claro);
-            white-space: normal;
+            width: 100%;
         }
-
-            #proyectosTable td:last-child {
-                border-bottom: none;
+            /* Oculta los encabezados de la tabla estándar */
+            #proyectosTable thead {
+                display: none;
             }
 
-            /* Muestra el encabezado (label) usando el atributo data-label */
-            #proyectosTable td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                width: 50%;
-                padding-right: 10px;
-                font-weight: 700;
-                text-align: left;
-                color: var(--color-primario);
-                font-size: 0.9rem;
+            #proyectosTable tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-left: 5px solid var(--color-primario);
+                border-radius: 6px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                background-color: white;
+                padding: 5px 0;
+            }
+            /* Transforma cada celda en una fila de la "tarjeta" */
+            #proyectosTable td {
+                display: block;
+                text-align: right !important;
+                padding-left: 55% !important;
+                position: relative;
+                border: none;
+                border-bottom: 1px dotted var(--color-fondo-claro);
+                white-space: normal;
             }
 
-            /* Estilo especial para la columna de Acciones en móvil */
-            #proyectosTable td.action-buttons {
-                text-align: center !important;
-                padding: 10px 10px;
-            }
-
-                #proyectosTable td.action-buttons::before {
-                    display: none;
+                #proyectosTable td:last-child {
+                    border-bottom: none;
+                }
+                /* Muestra el encabezado (label) usando el atributo data-label */
+                #proyectosTable td::before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 10px;
+                    width: 50%;
+                    padding-right: 10px;
+                    font-weight: 700;
+                    text-align: left;
+                    color: var(--color-primario);
+                    font-size: 0.9rem;
+                }
+                /* Estilo especial para la columna de Acciones en móvil */
+                #proyectosTable td.action-buttons {
+                    text-align: center !important;
+                    padding: 10px 10px;
                 }
 
-    /* Ajuste para el botón principal en móvil */
-    .btn-primary {
-        width: 100%;
-        margin-bottom: 15px;
+                    #proyectosTable td.action-buttons::before {
+                        display: none;
+                    }
+        /* Asegurar que el presupuesto quede alineado */
+        .budget-cell {
+            text-align: right !important;
+        }
     }
 
-    /* Asegurar que el presupuesto quede alineado */
-    .budget-cell {
-        text-align: right !important;
+    /* --------------------------------------------------
+         * ------------------ ESTILOS DE FILTRO ------------------
+         * -------------------------------------------------- */
+
+    .filter-card {
+        background-color: var(--color-fondo-claro);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px; /* Separación después del botón */
+        transition: all 0.3s;
     }
 
+        .filter-card h5 {
+            color: var(--color-primario);
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--color-secundario);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border-color: #ccc;
+        box-shadow: none;
+        transition: border-color 0.3s;
+        font-size: 0.95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.1rem rgba(243, 156, 18, 0.5);
+        }
+
+    .btn-filter {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: var(--color-primario);
+        font-weight: 600;
+        min-width: 100px;
+    }
+
+        .btn-filter:hover {
+            background-color: #e6b25a;
+            border-color: #e6b25a;
+            color: var(--color-primario);
+        }
+
+    .btn-clear {
+        color: var(--color-primario);
+        border-color: #bdc3c7;
     }
 </style>
 
 <div class="data-card">
 
     <h1><i class="fas fa-project-diagram"></i> @ViewData["Title"]</h1>
-    <p>
-        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Proyecto</a>
-    </p>
+
+    <div class="control-header">
+        <div class="btn-control-group">
+            <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Proyecto</a>
+        </div>
+        <button class="btn btn-toggle-filter" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+            <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+        </button>
+    </div>
+
+    <div class="collapse" id="collapseFilters">
+        <div class="filter-card">
+            <form asp-action="Index" method="get">
+                <h5><i class="fas fa-search"></i> Filtros de Búsqueda</h5>
+                <div class="row g-3">
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="Nombre" class="form-label visually-hidden">Nombre</label>
+                        <input type="text"
+                               class="form-control"
+                               id="Nombre"
+                               name="Nombre"
+                               placeholder="Buscar por Nombre"
+                               value="@ViewBag.CurrentNombre">
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="MunicipioId" class="form-label visually-hidden">Municipio</label>
+                        <select class="form-select" id="MunicipioId" name="MunicipioId">
+                            @foreach (var item in (List<SelectListItem>)ViewBag.MunicipioId)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentMunicipioId?.ToString())">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="Estado" class="form-label visually-hidden">Estado</label>
+                        <select class="form-select" id="Estado" name="Estado">
+                            @foreach (var item in (List<SelectListItem>)ViewBag.EstadoList)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentEstado)">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-filter me-2 w-100"><i class="fas fa-search"></i> Filtrar</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-clear w-100"><i class="fas fa-undo"></i> Limpiar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     @if (ViewBag.Error != null)
     {
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger mt-3" role="alert">
             @ViewBag.Error
         </div>
     }
 
     <div class="table-responsive">
-        <table class="table table-hover" id="proyectosTable">
+        <table class="table table-hover mt-3" id="proyectosTable">
             <thead>
                 <tr>
                     <th data-label="Proyecto">Proyecto</th>
@@ -327,7 +461,7 @@
             const table = document.getElementById('proyectosTable');
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
-            const pageSize = @pageSize; // Viene de la variable Razor
+            const pageSize = @pageSize;
             const totalPages = Math.ceil(rows.length / pageSize);
             const paginationUl = $('#pagination-ul');
 
@@ -343,9 +477,9 @@
             }
 
             function updatePaginationControls(currentPage) {
-                paginationUl.empty(); // Limpiar la paginación existente
+                paginationUl.empty();
 
-                // Truncamiento de páginas mejorado (similar al anterior)
+                // Truncamiento de páginas mejorado
                 const pagesToShow = 5;
                 let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
                 let endPage = Math.min(totalPages, currentPage + Math.floor(pagesToShow / 2));

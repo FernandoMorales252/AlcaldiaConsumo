@@ -2,80 +2,222 @@
 @using System.Collections.Generic
 @{
     ViewData["Title"] = "Listado de Reportes";
-    // Nota: Es mejor definir las variables de color en el _Layout.cshtml,
-    // pero las incluimos aquí para la autonomía de la vista.
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     int pageSize = 5; // Define cuántos elementos quieres por página
 }
 
 <style>
     /* --------------------------------------------------
-                   PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
-                   -------------------------------------------------- */
+         * PATRÓN DE COLORES FORMAL ADAPTADO (Antracita/Dorado)
+         * -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
         --color-fondo-claro: #ecf0f1;
         --color-texto: #2c3e50;
+        --color-sombra-card: 0 6px 20px rgba(0, 0, 0, 0.1);
+        --color-sombra-hover: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background-color: var(--color-fondo-claro);
     }
 
     /* Contenedor principal */
     .data-card {
         background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     /* Encabezado principal */
     h1 {
         color: var(--color-primario);
-        border-left: 5px solid var(--color-secundario);
+        border-left: 6px solid var(--color-secundario);
         padding-left: 15px;
         margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 2rem;
     }
 
-     .btn-primary {
+    /* Botón */
+    .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-radius: 8px;
     }
 
         .btn-primary:hover {
-            background-color: #4b6279; /* Tono más claro del primario */
+            background-color: #4b6279;
             border-color: #4b6279;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-    /* Estilo de la tabla */
-    .table-striped > tbody > tr:nth-of-type(odd) {
-        background-color: var(--color-fondo-claro);
+    /* --------------------------------------------------
+         * ESTILOS DE TARJETAS DE REPORTES (Responsive Card Grid)
+         * -------------------------------------------------- */
+
+    .reports-container {
+        display: grid;
+        gap: 20px;
+        /* Desktop: 2 columnas, Tablet/Mobile: 1 columna grande */
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        margin-top: 30px;
     }
 
-    .table thead th {
-        background-color: var(--color-primario);
-        color: white;
+    .report-card {
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--color-sombra-card);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--color-sombra-hover);
+            border-color: var(--color-secundario);
+        }
+
+    .card-header-info {
+        padding: 15px 20px;
+        background-color: #f7f9fb;
         border-bottom: 3px solid var(--color-secundario);
-        font-weight: 600;
-        vertical-align: middle;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .card-header-info h4 {
+            margin: 0;
+            color: var(--color-primario);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+    .card-municipio {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #7f8c8d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-body-details {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    .description-text {
+        color: var(--color-texto);
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    /* Métricas de Estado y Nivel */
+    .report-metrics {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .metric-item {
+        flex: 1;
         text-align: center;
     }
 
-    .table tbody td {
-        vertical-align: middle;
-        font-size: 0.95rem;
+        .metric-item span {
+            display: block;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+    /* Estilos para el Badge de Estado/Tipo */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.5em 0.8em;
+        border-radius: 20px;
+        font-weight: 700;
+        text-transform: capitalize;
     }
 
-    /* Estilos para los botones de la paginación */
+    /* Colores para Tipo de Reporte */
+    .bg-desechos {
+        background-color: #2ecc71 !important;
+        color: white;
+    }
+    /* Verde - Success */
+    .bg-contaminacion {
+        background-color: #3498db !important;
+        color: white;
+    }
+    /* Azul - Info */
+    .bg-seguridad {
+        background-color: #9b59b6 !important;
+        color: white;
+    }
+    /* Púrpura */
+    .bg-infraestructura {
+        background-color: #e74c3c !important;
+        color: white;
+    }
+    /* Rojo - Danger */
+    .bg-otro {
+        background-color: var(--color-primario) !important;
+        color: white;
+    }
+    /* Antracita */
+
+    /* Colores para Nivel de Atención */
+    .bg-lvl-bajo {
+        background-color: #27ae60 !important;
+        color: white;
+    }
+    /* Verde oscuro */
+    .bg-lvl-medio {
+        background-color: #f39c12 !important;
+        color: white;
+    }
+    /* Dorado/Amarillo - Warning */
+    .bg-lvl-alto {
+        background-color: #d35400 !important;
+        color: white;
+    }
+    /* Naranja */
+    .bg-lvl-riesgo {
+        background-color: #c0392b !important;
+        color: white;
+    }
+    /* Rojo oscuro - High Danger */
+
+
+    /* --------------------------------------------------
+         * PAGINACIÓN
+         * -------------------------------------------------- */
+
     .pagination-container {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     .page-item .page-link {
         color: var(--color-primario);
         border-color: var(--color-primario);
-        transition: background-color 0.3s, color 0.3s;
     }
 
     .page-item.active .page-link {
@@ -84,158 +226,231 @@
         color: white;
         font-weight: bold;
     }
+
+    /* --------------------------------------------------
+         * ADAPTABILIDAD (RESPONSIVE)
+         * -------------------------------------------------- */
+
+    @@media (max-width: 768px) {
+        .reports-container {
+            grid-template-columns: 1fr;
+        }
+
+        .data-card {
+            padding: 15px;
+        }
+
+        .card-header-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .report-metrics {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .metric-item {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+
+            .metric-item:last-child {
+                border-bottom: none;
+            }
+    }
 </style>
 
-<div class="data-card">
+<div class="container my-5">
+    <div class="data-card">
 
-    <h1><i class="fas fa-tasks text-secondary"></i> @ViewData["Title"]</h1>
-    <p>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Volver al menu</a>
-    </p>
-   
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @ViewBag.Error
-        </div>
-    }
+        <h1><i class="fas fa-exclamation-triangle me-2 text-secondary"></i> @ViewData["Title"]</h1>
+        <p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Volver al menú</a>
+        </p>
 
-    <div class="table-responsive">
-        <table class="table table-hover" id="proyectosTable">
-            <thead>
-                <tr>
-                    <th>Reporte</th>
-                    <th>Motivo</th>
-                    <th class="text-center">Fecha de registro</th>
-                    <th class="text-center">Tipo de reporte</th>
-                    <th class="text-center">Nivel de atencion</th>
-                    <th>Municipio</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Error
+            </div>
+        }
+
+        <div id="reportsList" class="reports-container">
+            @{
+                int index = 0;
+            }
+            @foreach (var item in Model)
+            {
+                // Lógica de mapeo de municipio
+                string nombreMunicipio = "N/A";
+                if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Titulo)</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 50)
+                    nombreMunicipio = municipioNombres[item.MunicipioId];
+                }
+
+                // Lógica de clase para el Tipo de Reporte
+                string tipoClass = item.Tipo switch
+                {
+                    "desechos" => "bg-desechos",
+                    "contaminacion" => "bg-contaminacion",
+                    "seguridad" => "bg-seguridad",
+                    "infraestructura" => "bg-infraestructura",
+                    _ => "bg-otro"
+                };
+
+                // Lógica de clase para el Nivel de Atención
+                string nivelClass = item.Nivel switch
+                {
+                    "bajo" => "bg-lvl-bajo",
+                    "medio" => "bg-lvl-medio",
+                    "alto" => "bg-lvl-alto",
+                    "riesgo" => "bg-lvl-riesgo",
+                    _ => "bg-secondary"
+                };
+
+                // Card de Reporte
+                <div class="report-card" data-index="@index">
+
+                    <div class="card-header-info">
+                        <div>
+                            <h4>@Html.DisplayFor(modelItem => item.Titulo)</h4>
+                            <span class="card-municipio"><i class="fas fa-map-marker-alt"></i> @nombreMunicipio</span>
+                        </div>
+                        <span class="badge @tipoClass">
+                            @Html.DisplayFor(modelItem => item.Tipo)
+                        </span>
+                    </div>
+
+                    <div class="card-body-details">
+                        <p class="description-text">
+                            <i class="fas fa-comment-dots me-1 text-secondary"></i>
+                            @if (!string.IsNullOrEmpty(item.Descripcion) && item.Descripcion.Length > 150)
                             {
-                                @(item.Descripcion.Substring(0, 50) + "...")
+                                @(item.Descripcion.Substring(0, 150) + "...")
                             }
                             else
                             {
                                 @Html.DisplayFor(modelItem => item.Descripcion)
                             }
-                        </td>
-                        <td class="text-center">@Html.DisplayFor(modelItem => item.Fecha_Registro)</td>
-                        <td class="text-center">
-                            @{
-                                string badgeClass = item.Tipo switch
-                                {
-                                    "desechos" => "success",
-                                    "contaminacion" => "primary",
-                                    "seguridad" => "info",
-                                    "infraestructura" => "danger",
-                                    "otro" => "primary",
-                                    _ => "secondary"
-                                };
-                            }
-                            <span class="badge bg-@badgeClass">
-                                @Html.DisplayFor(modelItem => item.Tipo)
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            @{
-                                string lvlClass = item.Nivel switch
-                                {
-                                    "bajo" => "success",
-                                    "medio" => "primary",
-                                    "alto" => "info",
-                                    "riesgo" => "danger",
-                                    _=> "secondary"
-                                };
-                            }
-                            <span class="badge bg-@lvlClass">
-                                @Html.DisplayFor(modelItem => item.Nivel)
-                            </span>
-                        </td>
-                        <td>
-                            @{
-                                string nombreMunicipio = "N/A";
-                                if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
-                                {
-                                    nombreMunicipio = municipioNombres[item.MunicipioId];
-                                }
-                            }
-                            @nombreMunicipio
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                        </p>
 
-    <nav class="pagination-container" aria-label="Navegación de Proyectos">
-        <ul class="pagination" id="pagination-ul"></ul>
-    </nav>
+                        <div class="report-metrics">
+                            <div class="metric-item">
+                                <span><i class="fas fa-clock me-1"></i> Fecha de Registro</span>
+                                <strong>@Html.DisplayFor(modelItem => item.Fecha_Registro)</strong>
+                            </div>
+                            <div class="metric-item">
+                                <span><i class="fas fa-bullhorn me-1"></i> Nivel de Atención</span>
+                                <span class="badge @nivelClass">
+                                    @Html.DisplayFor(modelItem => item.Nivel)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-    @if (Model != null && !Model.Any())
-    {
-        <div class="alert alert-info text-center mt-4" role="alert">
-            <h4>No hay proyectos registrados</h4>
-            <p>Comienza creando tu primer proyecto.</p>
-            <a asp-action="Create" class="btn btn-primary">Crear Primer Proyecto</a>
+                </div>
+                index++;
+            }
+
+            @if (Model != null && !Model.Any())
+            {
+                <div class="col-12 alert alert-info text-center mt-4" role="alert">
+                    <h4><i class="fas fa-exclamation-circle"></i> No hay reportes registrados</h4>
+                    <p>La ciudadanía no ha enviado reportes aún.</p>
+                </div>
+            }
         </div>
-    }
 
+        <nav class="pagination-container" aria-label="Navegación de Reportes">
+            <ul class="pagination" id="pagination-ul"></ul>
+        </nav>
+
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            // Configuración de Paginación
-            const table = document.getElementById('proyectosTable');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            const pageSize = @pageSize; // Viene de la variable Razor
+        document.addEventListener('DOMContentLoaded', function () {
+            const reportsList = document.getElementById('reportsList');
+            if (!reportsList) return;
+
+            // Se buscan los elementos '.report-card' en lugar de 'tr'
+            const rows = Array.from(reportsList.querySelectorAll('.report-card'));
+            const pageSize = @pageSize;
             const totalPages = Math.ceil(rows.length / pageSize);
-            const paginationUl = $('#pagination-ul');
+            const paginationUl = document.getElementById('pagination-ul');
 
             function displayPage(page) {
                 const startIndex = (page - 1) * pageSize;
                 const endIndex = startIndex + pageSize;
 
                 rows.forEach((row, index) => {
-                    row.style.display = (index >= startIndex && index < endIndex) ? '' : 'none';
+                    // Mostrar u ocultar la tarjeta del reporte
+                    // Usamos 'flex' ya que es el display configurado para .report-card
+                    row.style.display = (index >= startIndex && index < endIndex) ? 'flex' : 'none';
                 });
 
                 updatePaginationControls(page);
+                // Mover el scroll al inicio de la lista al cambiar de página
+                reportsList.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             function updatePaginationControls(currentPage) {
-                paginationUl.empty(); // Limpiar la paginación existente
+                if (!paginationUl) return;
+
+                paginationUl.innerHTML = ''; // Limpiar
 
                 // Botón Anterior
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';
-                paginationUl.append(`
+                paginationUl.insertAdjacentHTML('beforeend', `
                     <li class="page-item ${prevDisabled}">
                         <a class="page-link" href="#" data-page="${currentPage - 1}"><i class="fas fa-angle-left"></i> Anterior</a>
                     </li>
                 `);
 
-                // Botones de Páginas Numeradas
-                for (let i = 1; i <= totalPages; i++) {
+                // Lógica de control de paginación (rango limitado)
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
+
+                if (currentPage <= 3) {
+                    endPage = Math.min(totalPages, 5);
+                } else if (currentPage > totalPages - 2) {
+                    startPage = Math.max(1, totalPages - 4);
+                }
+
+                // Botón para la primera página si es necesario
+                if (startPage > 1) {
+                    paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+                    if (startPage > 2) {
+                         paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
                     const active = i === currentPage ? 'active' : '';
-                    paginationUl.append(`
+                    paginationUl.insertAdjacentHTML('beforeend', `
                         <li class="page-item ${active}">
                             <a class="page-link" href="#" data-page="${i}">${i}</a>
                         </li>
                     `);
                 }
 
+                // Botón para la última página si es necesario
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                         paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item disabled"><span class="page-link">...</span></li>`);
+                    }
+                    paginationUl.insertAdjacentHTML('beforeend', `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+                }
+
                 // Botón Siguiente
                 const nextDisabled = currentPage === totalPages ? 'disabled' : '';
-                paginationUl.append(`
+                paginationUl.insertAdjacentHTML('beforeend', `
                     <li class="page-item ${nextDisabled}">
                         <a class="page-link" href="#" data-page="${currentPage + 1}">Siguiente <i class="fas fa-angle-right"></i></a>
                     </li>
@@ -243,16 +458,19 @@
             }
 
             // Manejador de clic para los botones de paginación
-            paginationUl.on('click', 'a.page-link', function (e) {
+            paginationUl.addEventListener('click', function (e) {
+                const target = e.target.closest('a.page-link');
+                if (!target) return;
+
                 e.preventDefault();
-                const newPage = parseInt($(this).data('page'));
+                const newPage = parseInt(target.dataset.page);
 
                 if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
                     displayPage(newPage);
                 }
             });
 
-            // Inicializar la tabla y la paginación en la página 1
+            // Inicializar la vista en la página 1
             if (rows.length > 0) {
                 displayPage(1);
             }

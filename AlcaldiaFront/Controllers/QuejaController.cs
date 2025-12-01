@@ -1,4 +1,5 @@
-﻿using AlcaldiaFront.DTOs.ProyectoDTOs;
+﻿using AlcaldiaFront.DTOs.DocumentoDTOs;
+using AlcaldiaFront.DTOs.ProyectoDTOs;
 using AlcaldiaFront.DTOs.QuejaDTOs;
 using AlcaldiaFront.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,26 +20,56 @@ namespace AlcaldiaFront.Controllers
             _municipioService = municipioService;
         }
 
-        // GET: Empleado
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index(int? MunicipioId, string Tipo, string Nivel, string Reporte)
         {
             try
             {
-                var avisos = await _quejaService.GetAllAsync("your_access_token");
+                var reportes = await _quejaService.GetAllAsync();
 
-                // Obtener listas para los nombres de los municipios y cargos
-                var municipios = await _municipioService.GetAllAsync();
+                await PopulateFilterDropdowns();
 
-                // Convertir las listas a diccionarios para la vista
-                ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+                if (reportes != null && reportes.Any())
+                {
+                    var AFiltrados = reportes.AsQueryable();
 
-                return View(avisos);
+                    if (MunicipioId.HasValue && MunicipioId.Value > 0)
+                    {
+                        AFiltrados = AFiltrados.Where(d => d.MunicipioId == MunicipioId.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(Tipo) && Tipo != "Todos")
+                    {
+                        AFiltrados = AFiltrados.Where(d => d.Tipo.Equals(Tipo, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (!string.IsNullOrEmpty(Nivel) && Nivel != "Todos")
+                    {
+                        AFiltrados = AFiltrados.Where(d => d.Nivel.Equals(Nivel, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (!string.IsNullOrEmpty(Reporte))
+                    {
+                        AFiltrados = AFiltrados.Where(d =>
+                            d.Titulo != null &&
+                            d.Titulo.Contains(Reporte, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    ViewBag.CurrentMunicipioId = MunicipioId;
+                    ViewBag.CurrentEstado = Tipo;
+                    ViewBag.CurrentNivel = Nivel;
+                    ViewBag.CurrentTitulo = Reporte;
+
+                    return View(AFiltrados.ToList());
+                }
+
+                // Devolvemos una lista de QuejaRespuestaDTO si no hay resultados o si la lista es nula
+                return View(new List<QuejaRespuestaDTO>());
             }
             catch (Exception ex)
             {
-                ViewBag.Error = "No se pudieron cargar las quejas: " + ex.Message;
-                // Si hay un error, inicializar los ViewBag para evitar NullReferenceException
-                ViewBag.MunicipioNombres = new Dictionary<int, string>();
+                ViewBag.Error = "No se pudieron cargar los reportes: " + ex.Message;
+                await PopulateFilterDropdowns(); // Asegurar que los ViewBag estén llenos incluso con error
                 return View(new List<QuejaRespuestaDTO>());
             }
         }
@@ -169,12 +200,58 @@ namespace AlcaldiaFront.Controllers
             }
         }
 
-        // Mapeo del Dropdown 
+        private async Task PopulateFilterDropdowns()
+        {
+            // Cargar listas para filtros
+            var municipios = await _municipioService.GetAllAsync();
+
+            // 1. Dropdowns para la sección de Filtro (con opción "Todos")
+            // Municipio
+            var municipiosList = municipios.Select(m => new SelectListItem
+            {
+                Value = m.Id_Municipio.ToString(),
+                Text = m.Nombre_Municipio
+            }).ToList();
+            municipiosList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Municipios" });
+            ViewBag.MunicipioId = municipiosList;
+
+
+            // Estado (Tipo) - Estatica
+            var tiposList = new List<SelectListItem>
+            {
+                 new SelectListItem { Value = "", Text = "Todos los Tipos" }, // Etiqueta corregida
+                 new SelectListItem { Value = "desechos", Text = "Desechos" },
+                 new SelectListItem { Value = "contaminacion", Text = "Contaminacion" },
+                 new SelectListItem { Value = "seguridad", Text = "Seguridad" },
+                 new SelectListItem { Value = "infraestructura", Text = "Infraestructura" },
+                 new SelectListItem { Value = "otro", Text = "Otro" }
+            };
+
+            // Nivel - Estatica
+            var nivelesList = new List<SelectListItem> {
+                 new SelectListItem { Value = "", Text = "Todos los Niveles" },
+                 new SelectListItem { Value = "bajo", Text = "Bajo" },
+                 new SelectListItem { Value = "medio", Text = "Medio" },
+                 new SelectListItem { Value = "alto", Text = "Alto" },
+                 new SelectListItem { Value = "riesgo", Text = "Riesgo" }
+             };
+
+            ViewBag.TipoList = tiposList;
+            ViewBag.NivelList = nivelesList; 
+
+            // 2. Diccionarios de Nombres (para mostrar en la tabla de resultados)
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+        }
+
         private async Task PopulateDropdowns()
         {
-            // Carga y configura los dropdowns para Municipio y Cargo
+            // Carga y configura los dropdowns para Municipio, Tipo y Nivel (para Create/Edit)
             var municipios = await _municipioService.GetAllAsync();
             ViewBag.MunicipioId = new SelectList(municipios, "Id_Municipio", "Nombre_Municipio");
+
+            // Listas estáticas para Tipos y Niveles
+            ViewBag.Tipo = new SelectList(new List<string> { "desechos", "contaminacion", "seguridad", "infraestructura", "otro" });
+            ViewBag.Nivel = new SelectList(new List<string> { "bajo", "medio", "alto", "riesgo" });
         }
     }
 }

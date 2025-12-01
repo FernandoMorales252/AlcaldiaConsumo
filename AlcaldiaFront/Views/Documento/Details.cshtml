@@ -1,60 +1,141 @@
 ﻿@model AlcaldiaFront.DTOs.DocumentoDTOs.DocumentoRespuestaDTO
+@using System.Collections.Generic
 
 @{
     ViewData["Title"] = "Detalles del Documento";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     Dictionary<int, string> tipoNombres = ViewBag.TipoNombres as Dictionary<int, string>;
+
+    // Mapeo de estado a clase de Bootstrap 5
     string GetBadgeClass(string estado) => estado?.ToLower() switch
     {
-        "activo" => "success",
-        "inactivo" => "danger",
-        "pendiente" => "warning",
-        _ => "secondary"
+        "activo" => "bg-success",
+        "inactivo" => "bg-danger",
+        "pendiente" => "bg-warning text-dark",
+        _ => "bg-secondary"
     };
 }
 
+<!-- Se requiere Bootstrap y Font Awesome para los iconos y el grid layout -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
 <style>
-    /* Estilos globales (Antracita/Dorado) */
+    /* --------------------------------------------------
+           PATRÓN DE COLORES Y TIPOGRAFÍA
+           -------------------------------------------------- */
     :root {
-        --color-primario: #34495e;
-        --color-secundario: #f39c12;
+        --color-primario: #34495e; /* Azul Marino/Antracita - Principal */
+        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-texto: #2c3e50;
+        --color-bg-light: #f4f6f9;
     }
 
+    body {
+        background-color: var(--color-bg-light);
+        font-family: 'Inter', sans-serif;
+        padding: 20px;
+    }
+
+    /* Contenedor principal de detalles (Tarjeta) */
     .details-card {
         background-color: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        margin-top: 30px;
+        margin-bottom: 30px;
         border-top: 5px solid var(--color-secundario);
     }
 
+    /* Encabezado principal */
     h1 {
         color: var(--color-primario);
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
         margin-bottom: 5px;
+        padding-bottom: 10px;
     }
 
-    .dl-detalle dt {
+        h1 i {
+            color: var(--color-secundario);
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+
+    h4.subtitle {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+
+    /* Título de Sección */
+    .section-title {
         color: var(--color-primario);
         font-weight: 700;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        border-left: 4px solid var(--color-secundario);
+        padding-left: 10px;
+    }
+
+    /* Estilo de la etiqueta (Título del campo) */
+    .detail-label {
+        color: var(--color-secundario);
+        font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.9rem;
-        padding-top: 10px;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+        display: block;
     }
 
-    .dl-detalle dd {
-        margin-bottom: 5px;
+    /* Estilo del valor del campo */
+    .detail-value {
+        font-size: 1rem;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        color: var(--color-texto);
         border-bottom: 1px dashed #ecf0f1;
-        padding-bottom: 5px;
     }
 
+    /* Contenedor de la descripción/detalles */
+    .details-text-container {
+        background-color: var(--color-bg-light);
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid var(--color-primario);
+        min-height: 100px;
+    }
+
+    .details-text {
+        white-space: pre-wrap;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Botones de Acción */
     .action-bar {
-        margin-top: 30px;
+        margin-top: 40px;
         padding-top: 20px;
         border-top: 1px solid #ecf0f1;
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end; /* Alinear a la derecha */
     }
-    /* Botones específicos de acciones */
+
+    .btn-action {
+        padding: 10px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
@@ -73,93 +154,155 @@
     .btn-secondary {
         background-color: #bdc3c7;
         border-color: #bdc3c7;
+        color: var(--color-texto);
+    }
+
+    .text-large {
+        font-size: 1.25rem;
+        font-weight: 700;
         color: var(--color-primario);
+    }
+
+    /* --------------------------------------------------
+           ADAPTACIÓN RESPONSIVE
+           -------------------------------------------------- */
+    @@media (max-width: 991.98px) {
+        .details-card {
+            padding: 25px;
+            margin-top: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .action-bar {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .row > div {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
     }
 </style>
 
-<div class="details-card">
-    <h1><i class="fas fa-clipboard-list text-secondary"></i> Detalles del Documento</h1>
-    <h4>Número de Documento: @Model.Numero_documento</h4>
-    <hr />
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <!-- Contenedor principal de ancho responsivo -->
+        <div class="col-xl-9 col-lg-10 col-12">
 
-    <dl class="row dl-detalle">
-       
-        <dt class="col-sm-4 col-md-3">
-            <i class="fas fa-hashtag"></i> @Html.DisplayNameFor(model => model.Numero_documento)
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            <h5>@Html.DisplayFor(model => model.Numero_documento)</h5>
-        </dd>
+            <div class="details-card">
 
-        <dt class="col-sm-4 col-md-3">
-            Fecha de emision
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Fecha_emision)
-        </dd>
+                <h1><i class="fas fa-file-contract"></i> Detalles del Documento</h1>
+                <h4 class="subtitle">Información clave y estado del registro</h4>
 
-        <dt class="col-sm-4 col-md-3">
-            Ciudadano
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Propietario)
-        </dd>
+                <!-- SECCIÓN 1: Metadatos Principales -->
+                <h5 class="section-title">Información General</h5>
+                <div class="row">
 
-        <dt class="col-sm-4 col-md-3">
-            Detalles
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @Html.DisplayFor(model => model.Detalles)
-        </dd>
+                    <!-- Numero de Documento -->
+                    <div class="col-lg-4 col-md-6">
+                        <span class="detail-label">Número de Documento</span>
+                        <div class="detail-value text-large">
+                            <i class="fas fa-hashtag me-1"></i> @Html.DisplayFor(model => model.Numero_documento)
+                        </div>
+                    </div>
 
-        <dt class="col-sm-4 col-md-3">
-            Estado actual
-        </dt>
-        <dd class="col-sm-8 col-md-9">
-            @{
-                string badgeClass = GetBadgeClass(Model?.Estado);
-            }
-            <span class="badge bg-@badgeClass badge-lg">
-                @Html.DisplayFor(model => model.Estado)
-            </span>
-        </dd>
+                    <!-- Fecha de Emisión -->
+                    <div class="col-lg-4 col-md-6">
+                        <span class="detail-label">Fecha de Emisión</span>
+                        <div class="detail-value">
+                            <i class="far fa-calendar-alt me-1"></i> @Html.DisplayFor(model => model.Fecha_emision)
+                        </div>
+                    </div>
 
-        <dt class="col-sm-4 col-md-3">
-            Tipo de documento
-        </dt>
-        <dd class="col-sm-9">
-            @{
-                string nombreTipo = "ID de TipoDoc no encontrado";
-                if (tipoNombres != null && tipoNombres.ContainsKey(Model.TipoDocumentoId))
-                {
-                    nombreTipo = tipoNombres[Model.TipoDocumentoId];
-                }
-            }
-            <strong class="text-primary">@nombreTipo</strong>
+                    <!-- Ciudadano Propietario -->
+                    <div class="col-lg-4 col-md-12">
+                        <span class="detail-label">Ciudadano Propietario</span>
+                        <div class="detail-value">
+                            <i class="fas fa-user-tag me-1"></i> <strong>@Html.DisplayFor(model => model.Propietario)</strong>
+                        </div>
+                    </div>
 
-            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
-        </dd>
+                </div>
 
-        <dt class="col-sm-4 col-md-3">
-            Municipio
-        </dt>
-        <dd class="col-sm-9">
-            @{
-                string nombreMunicipio = "ID de Municipio no encontrado";
-                if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
-                {
-                    nombreMunicipio = municipioNombres[Model.MunicipioId];
-                }
-            }
-            <strong class="text-primary">@nombreMunicipio</strong>
+                <!-- SECCIÓN 2: Clasificación y Estado -->
+                <h5 class="section-title">Clasificación y Ubicación</h5>
+                <div class="row">
 
-            @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
-        </dd>
-    </dl>
-</div>
+                    <!-- Estado actual -->
+                    <div class="col-lg-4 col-md-6">
+                        <span class="detail-label">Estado Actual</span>
+                        <div class="detail-value">
+                            @{
+                                string badgeClass = GetBadgeClass(Model?.Estado);
+                            }
+                            <span class="badge @badgeClass p-2 text-uppercase">
+                                @Html.DisplayFor(model => model.Estado)
+                            </span>
+                        </div>
+                    </div>
 
-<div class="action-bar">
-    <a asp-action="Edit" asp-route-id="@Model?.Id_documento" class="btn btn-primary"><i class="fas fa-edit"></i> Editar</a>
-    <a asp-action="Delete" asp-route-id="@Model?.Id_documento" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</a>
-    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+                    <!-- Tipo de Documento -->
+                    <div class="col-lg-4 col-md-6">
+                        <span class="detail-label">Tipo de Documento</span>
+                        <div class="detail-value">
+                            @{
+                                string nombreTipo = tipoNombres != null && tipoNombres.ContainsKey(Model.TipoDocumentoId)
+                                ? tipoNombres[Model.TipoDocumentoId]
+                                : "ID no encontrado";
+                            }
+                            <i class="fas fa-folder me-1"></i> <strong>@nombreTipo</strong>
+                        </div>
+                    </div>
+
+                    <!-- Municipio -->
+                    <div class="col-lg-4 col-md-12">
+                        <span class="detail-label">Municipio de Registro</span>
+                        <div class="detail-value">
+                            @{
+                                string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
+                                ? municipioNombres[Model.MunicipioId]
+                                : "ID no encontrado";
+                            }
+                            <i class="fas fa-city me-1"></i> <strong>@nombreMunicipio</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: Detalles (Contenido del documento) -->
+                <h5 class="section-title">Detalles y Observaciones</h5>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="details-text-container">
+                            <p class="details-text">
+                                @Html.DisplayFor(model => model.Detalles)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Acciones -->
+                <div class="action-bar">
+                    <a asp-action="Index" class="btn btn-secondary btn-action">
+                        <i class="fas fa-arrow-left me-2"></i> Volver a la Lista
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@Model?.Id_documento" class="btn btn-primary btn-action">
+                        <i class="fas fa-edit me-2"></i> Editar
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model?.Id_documento" class="btn btn-danger btn-action">
+                        <i class="fas fa-trash-alt me-2"></i> Eliminar
+                    </a>
+                </div>
+                <br />
+                <br />
+            </div>
+
+        </div>
+    </div>
 </div>

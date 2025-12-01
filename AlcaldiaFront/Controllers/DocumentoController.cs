@@ -22,30 +22,64 @@ namespace AlcaldiaFront.Controllers
             _municipioService = municipioService;
         }
 
-        // GET: Documento
-        // Displays a list of all documents.
-        public async Task<IActionResult> Index()
+
+        // Dentro de la clase DocumentoController
+        public async Task<IActionResult> Index(int? MunicipioId, int? TipoDocumentoId, string Estado, string NombrePropietario)
         {
             try
             {
                 var documentos = await _documentoService.GetAllAsync();
-                var municipios = await _municipioService.GetAllAsync();
-                var tipos = await _tipoDocService.GetAllAsync();
-                var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
-                ViewBag.MunicipioNombres = municipioNombres;
-                var tipoNombres = tipos.ToDictionary(m => m.Id_tipo, m => m.Nombre);
-                ViewBag.TipoNombres = tipoNombres;
-                return View(documentos);
+
+                // Centraliza la carga de datos auxiliares para filtros y nombres
+                await PopulateFilterDropdowns();
+
+                if (documentos != null && documentos.Any())
+                {
+                    var documentosFiltrados = documentos.AsQueryable();
+
+                    // Lógica de filtrado (como se detalló en el punto 1)
+                    // ... [Insertar aquí la lógica de filtrado] ... 
+                    if (MunicipioId.HasValue && MunicipioId.Value > 0)
+                    {
+                        documentosFiltrados = documentosFiltrados.Where(d => d.MunicipioId == MunicipioId.Value);
+                    }
+
+                    if (TipoDocumentoId.HasValue && TipoDocumentoId.Value > 0)
+                    {
+                        documentosFiltrados = documentosFiltrados.Where(d => d.TipoDocumentoId == TipoDocumentoId.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(Estado) && Estado != "Todos")
+                    {
+                        documentosFiltrados = documentosFiltrados.Where(d => d.Estado.Equals(Estado, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (!string.IsNullOrEmpty(NombrePropietario))
+                    {
+                        documentosFiltrados = documentosFiltrados.Where(d =>
+                            d.Propietario != null &&
+                            d.Propietario.Contains(NombrePropietario, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Pasar los valores de filtro actuales (IMPORTANTE)
+                    ViewBag.CurrentMunicipioId = MunicipioId;
+                    ViewBag.CurrentTipoDocumentoId = TipoDocumentoId;
+                    ViewBag.CurrentEstado = Estado;
+                    ViewBag.CurrentNombrePropietario = NombrePropietario;
+
+                    return View(documentosFiltrados.ToList());
+                }
+
+                return View(new List<DocumentoRespuestaDTO>());
             }
             catch (Exception ex)
             {
                 ViewBag.Error = "No se pudieron cargar los documentos: " + ex.Message;
+                await PopulateFilterDropdowns(); // Asegurar que los ViewBag estén llenos incluso con error
                 return View(new List<DocumentoRespuestaDTO>());
             }
         }
 
-        // GET: Documento/Details/5
-        // Displays the details of a single document.
         public async Task<IActionResult> Details(int id)
         {
             var documento = await _documentoService.GetByIdAsync(id);
@@ -62,16 +96,12 @@ namespace AlcaldiaFront.Controllers
             return View(documento);
         }
 
-        // GET: Documento/Create
-        // Displays the form to create a new document.
         public async Task<IActionResult> Create()
         {
-            await PopulateDropdowns(); // Populate the dropdown lists
-            return View(new DocumentoCrearDTO()); // Pass an empty DTO to the view
+            await PopulateDropdowns(); 
+            return View(new DocumentoCrearDTO()); 
         }
 
-        // POST: Documento/Create
-        // Processes the creation of a new document.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DocumentoCrearDTO dto)
@@ -115,8 +145,8 @@ namespace AlcaldiaFront.Controllers
 
             var dto = new DocumentoActualizarDTO
             {
-                Id_documento = documento.Id_documento, // Usar documento.Id_documento
-                Numero_documento = documento.Numero_documento, // Usar documento.Numero_documento
+                Id_documento = documento.Id_documento, 
+                Numero_documento = documento.Numero_documento,
                 Fecha_emision = documento.Fecha_emision,
                 Propietario = documento.Propietario,
                 Detalles = documento.Detalles,
@@ -178,7 +208,51 @@ namespace AlcaldiaFront.Controllers
             return View("Delete", await _documentoService.GetByIdAsync(id));
         }
 
-        // This is a helper method to fetch data for dropdowns.
+        // Dentro de la clase DocumentoController
+        private async Task PopulateFilterDropdowns()
+        {
+            // Cargar listas para filtros
+            var municipios = await _municipioService.GetAllAsync();
+            var tipos = await _tipoDocService.GetAllAsync();
+
+            // 1. Dropdowns para la sección de Filtro (con opción "Todos")
+            // Municipio
+            var municipiosList = municipios.Select(m => new SelectListItem
+            {
+                Value = m.Id_Municipio.ToString(),
+                Text = m.Nombre_Municipio
+            }).ToList();
+            municipiosList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Municipios" });
+            ViewBag.MunicipioId = municipiosList;
+
+            // Tipo Documento
+            var tiposList = tipos.Select(t => new SelectListItem
+            {
+                Value = t.Id_tipo.ToString(),
+                Text = t.Nombre
+            }).ToList();
+            tiposList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Tipos" });
+            ViewBag.TipoDocumentoId = tiposList;
+
+            // Estado (Estatica, se puede mejorar usando un enum o lista compartida)
+            var estadosList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "", Text = "Todos los Estados" },
+        new SelectListItem { Value = "Vigente", Text = "Activo" },
+        new SelectListItem { Value = "Anulado", Text = "Inactivo" },
+        new SelectListItem { Value = "Revision", Text = "Revisión" }
+        // Añade aquí todos los estados posibles
+    };
+            ViewBag.EstadoList = estadosList;
+
+
+            // 2. Diccionarios de Nombres (para mostrar en la tabla de resultados)
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
+            ViewBag.TipoNombres = tipos.ToDictionary(m => m.Id_tipo, m => m.Nombre);
+        }
+
+        // Nota: La función existente 'PopulateDropdowns' la puedes mantener para Create/Edit, 
+        // ya que no necesita la opción "Todos".
         private async Task PopulateDropdowns()
         {
             var tipoDocs = await _tipoDocService.GetAllAsync();

@@ -1,35 +1,33 @@
 ﻿@model IEnumerable<AlcaldiaFront.DTOs.InventarioDTOs.InventarioRespuestaDTO>
 
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     ViewData["Title"] = "Listado de Inventario";
+    // Asumiendo que ViewBag.MunicipioNombres y ViewBag.EstadoList están definidos correctamente en el controlador.
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
-    // Define cuántos elementos quieres por página
-    int pageSize = 5;
+    int pageSize = 5; // Número de elementos por página para la paginación de cliente.
 }
-
-<!-- Se requiere Font Awesome para los íconos: Asegúrate de tenerlo cargado en tu layout. -->
 
 <style>
     /* --------------------------------------------------
-     * PATRÓN DE COLORES FORMAL (Antracita/Dorado)
-     * -------------------------------------------------- */
+         * PATRÓN DE COLORES FORMAL (Antracita/Dorado)
+         * -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Antracita/Dark Blue */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento fuerte */
         --color-fondo-claro: #ecf0f1; /* Gris muy claro */
         --color-texto: #2c3e50; /* Texto oscuro */
-        --color-sombra: 0 6px 20px rgba(0, 0, 0, 0.15); /* Sombra moderna */
+        --color-sombra: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     /* --------------------------------------------------
-     * ESTILOS GENERALES Y LAYOUT
-     * -------------------------------------------------- */
+         * ESTILOS GENERALES Y LAYOUT
+         * -------------------------------------------------- */
 
     body {
         background-color: var(--color-fondo-claro);
     }
 
-    /* Contenedor principal de la vista */
     .data-card {
         background-color: white;
         padding: 30px;
@@ -38,10 +36,9 @@
         margin-top: 20px;
     }
 
-    /* Encabezado principal */
     .view-title {
         color: var(--color-primario);
-        border-left: 6px solid var(--color-secundario); /* Acento fuerte */
+        border-left: 6px solid var(--color-secundario);
         padding-left: 20px;
         margin-bottom: 30px;
         font-weight: 700;
@@ -49,12 +46,12 @@
         align-items: center;
     }
 
-    .view-title i {
-        color: var(--color-secundario);
-        margin-right: 10px;
-    }
+        .view-title i {
+            color: var(--color-secundario);
+            margin-right: 10px;
+        }
 
-    /* Botón Crear Nuevo */
+    /* Botón Crear Nuevo - Primario (Antracita) */
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
@@ -64,12 +61,29 @@
         transition: all 0.3s ease;
     }
 
-    .btn-primary:hover {
-        background-color: #4b6279;
-        border-color: #4b6279;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(52, 73, 94, 0.4);
+        .btn-primary:hover {
+            background-color: #4b6279;
+            border-color: #4b6279;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(52, 73, 94, 0.4);
+        }
+
+    /* Botón Mostrar/Ocultar Filtros - Secundario (Gris Oscuro/Neutro) */
+    .btn-secondary {
+        background-color: #95a5a6;
+        border-color: #95a5a6;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+            border-color: #7f8c8d;
+            color: white;
+        }
 
     /* Alertas de Mensaje */
     .alert {
@@ -77,68 +91,94 @@
         border-radius: 8px;
         border-left: 6px solid;
     }
-    
-    .alert-success { border-left-color: #27ae60; }
-    .alert-danger { border-left-color: #e74c3c; }
+
+    .alert-success {
+        border-left-color: #27ae60;
+    }
+
+    .alert-danger {
+        border-left-color: #e74c3c;
+    }
 
     /* --------------------------------------------------
-     * ESTILOS DE LA TABLA
-     * -------------------------------------------------- */
+         * ESTILOS DE LA TABLA
+         * -------------------------------------------------- */
 
     .responsive-inventory-table {
-        min-width: 100%; /* Asegura que la tabla ocupe todo el espacio disponible */
+        min-width: 100%;
         border-collapse: separate;
         border-spacing: 0;
     }
 
-    .responsive-inventory-table thead th {
-        background-color: var(--color-primario);
-        color: white;
-        border-bottom: 4px solid var(--color-secundario); /* Borde de acento */
-        font-weight: 600;
-        vertical-align: middle;
-        text-align: center;
-        padding: 12px 8px;
-        font-size: 0.9rem;
-    }
-    
-    .responsive-inventory-table thead th:first-child { border-top-left-radius: 8px; }
-    .responsive-inventory-table thead th:last-child { border-top-right-radius: 8px; }
+        .responsive-inventory-table thead th {
+            background-color: var(--color-primario);
+            color: white;
+            border-bottom: 4px solid var(--color-secundario);
+            font-weight: 600;
+            vertical-align: middle;
+            text-align: center;
+            padding: 12px 8px;
+            font-size: 0.9rem;
+        }
 
-    .responsive-inventory-table tbody tr {
-        transition: background-color 0.2s ease, box-shadow 0.2s ease;
-        border-bottom: 1px solid var(--color-fondo-claro);
-    }
+            .responsive-inventory-table thead th:first-child {
+                border-top-left-radius: 8px;
+            }
 
-    .responsive-inventory-table tbody tr:hover {
-        background-color: #f7f9fb;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
+            .responsive-inventory-table thead th:last-child {
+                border-top-right-radius: 8px;
+            }
 
-    .responsive-inventory-table tbody td {
-        vertical-align: middle;
-        font-size: 0.9rem;
-        padding: 12px 8px;
-    }
+        .responsive-inventory-table tbody tr {
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            border-bottom: 1px solid var(--color-fondo-claro);
+        }
+
+            .responsive-inventory-table tbody tr:hover {
+                background-color: #f7f9fb;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+        .responsive-inventory-table tbody td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+            padding: 12px 8px;
+        }
 
     /* Badges de Estado Mejorados */
     .badge {
         padding: 0.5em 0.8em;
         font-size: 0.75rem;
         font-weight: 700;
-        border-radius: 50px; /* Estilo pill/cápsula */
+        border-radius: 50px;
         text-transform: uppercase;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
-    .bg-success { background-color: #2ecc71 !important; color: white; }
-    .bg-warning { background-color: #f1c40f !important; color: var(--color-texto); }
-    .bg-danger { background-color: #e74c3c !important; color: white; }
-    .bg-secondary { background-color: #95a5a6 !important; color: white; }
+
+    .bg-success {
+        background-color: #2ecc71 !important;
+        color: white;
+    }
+
+    .bg-warning {
+        background-color: #f1c40f !important;
+        color: var(--color-texto);
+    }
+
+    .bg-danger {
+        background-color: #e74c3c !important;
+        color: white;
+    }
+
+    .bg-secondary {
+        background-color: #95a5a6 !important;
+        color: white;
+    }
 
     /* Botones de Acción de la Tabla */
     .action-buttons a {
         margin: 0 3px;
-        border-radius: 50%; /* Botones redondos para los íconos */
+        border-radius: 50%;
         width: 34px;
         height: 34px;
         display: inline-flex;
@@ -152,23 +192,25 @@
         color: var(--color-primario);
         border-color: var(--color-primario);
     }
-    .btn-outline-primary:hover {
-        background-color: var(--color-primario);
-        color: white;
-    }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-primario);
+            color: white;
+        }
 
     .btn-outline-info {
         color: #3498db;
         border-color: #3498db;
     }
-    .btn-outline-info:hover {
-        background-color: #3498db;
-        color: white;
-    }
+
+        .btn-outline-info:hover {
+            background-color: #3498db;
+            color: white;
+        }
 
     /* --------------------------------------------------
-     * PAGINACIÓN
-     * -------------------------------------------------- */
+         * PAGINACIÓN
+         * -------------------------------------------------- */
 
     .page-item .page-link {
         color: var(--color-primario);
@@ -178,48 +220,47 @@
         transition: background-color 0.3s, color 0.3s;
     }
 
-    .page-item.active .page-link, .page-item .page-link:hover {
-        background-color: var(--color-secundario);
-        border-color: var(--color-secundario);
-        color: white;
-        font-weight: bold;
-    }
+        .page-item.active .page-link, .page-item .page-link:hover {
+            background-color: var(--color-secundario);
+            border-color: var(--color-secundario);
+            color: white;
+            font-weight: bold;
+        }
 
     /* --------------------------------------------------
-     * ADAPTABILIDAD (Mobile-First)
-     * -------------------------------------------------- */
+         * ADAPTABILIDAD (Mobile-First) - AJUSTE CLAVE AQUÍ
+         * -------------------------------------------------- */
 
-    /* Ocultar la tabla y mostrar cards en pantallas pequeñas */
     @@media (max-width: 991px) {
-        .table-responsive {
-            border: none;
-        }
-        
-        /* Ocultar el encabezado de la tabla original */
-        .responsive-inventory-table thead {
-            display: none;
-        }
+        .table-responsive
 
-        /* Convertir la fila en un elemento de bloque para la vista de tarjeta */
-        .responsive-inventory-table tbody tr {
-            display: block;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
+    {
+        border: none;
+    }
 
-        /* Convertir las celdas en elementos de bloque para la vista de tarjeta */
-        .responsive-inventory-table tbody td {
-            display: block;
-            text-align: right !important;
-            border-bottom: 1px dashed #ddd;
-            padding: 10px;
-            position: relative;
-            font-size: 1rem;
-        }
+    .responsive-inventory-table thead {
+        display: none;
+    }
 
-        /* Mostrar el encabezado de la columna como una etiqueta usando data-label */
+    .responsive-inventory-table tbody tr {
+        display: block;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .responsive-inventory-table tbody td {
+        display: block;
+        /* Alineamos a la derecha para que el valor no interfiera con el label */
+        text-align: right !important;
+        border-bottom: 1px dashed #ddd;
+        padding: 10px;
+        position: relative;
+        font-size: 1rem;
+    }
+
+        /* Etiqueta (data-label) */
         .responsive-inventory-table tbody td::before {
             content: attr(data-label);
             position: absolute;
@@ -228,64 +269,114 @@
             color: var(--color-primario);
         }
 
-        /* Estilo especial para la primera celda (Nombre del Item) */
-        .responsive-inventory-table tbody tr td:first-child {
-            background-color: var(--color-fondo-claro);
-            font-weight: 700;
-            text-align: left !important;
-            padding-left: 10px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            color: var(--color-secundario);
-            font-size: 1.1rem;
-        }
-
-        /* Asegurar que el badge se vea bien en la tarjeta */
-        .responsive-inventory-table td:nth-child(4) { /* Celda de Estado */
-            text-align: right !important;
-        }
-        
-        /* Centrar los botones de acción al final de la tarjeta */
-        .action-buttons {
-            text-align: center !important;
-            padding: 15px 0 !important;
-        }
-        
-        /* Eliminar el borde inferior de la última celda en la tarjeta */
-        .responsive-inventory-table tbody tr td:last-child {
-            border-bottom: none;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
+    /* *** MODIFICACIÓN CLAVE: Manejo de la primera celda (Item) *** */
+    .responsive-inventory-table tbody tr td:first-child {
+        background-color: var(--color-fondo-claro);
+        font-weight: 700;
+        text-align: left !important; /* El nombre del ítem debe ir a la izquierda */
+        padding-left: 10px;
+        padding-right: 10px; /* Aseguramos padding */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        color: var(--color-secundario);
+        font-size: 1.1rem;
+        /* Ajuste para la primera celda: Eliminamos el data-label para evitar solapamiento */
+        line-height: 1.2;
     }
+
+        /* Ocultar el data-label SOLO en la primera celda */
+        .responsive-inventory-table tbody tr td:first-child::before {
+            content: none;
+        }
+    /* *** FIN MODIFICACIÓN CLAVE *** */
+
+    .responsive-inventory-table td:nth-child(4) {
+        text-align: right !important;
+    }
+
+    .action-buttons {
+        text-align: center !important;
+        padding: 15px 0 !important;
+    }
+
+    .responsive-inventory-table tbody tr td:last-child {
+        border-bottom: none;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    }
+
     /* --------------------------------------------------
-     * ESTILOS DE IMAGEN BASE64
-     * -------------------------------------------------- */
+         * ESTILOS DE IMAGEN BASE64
+         * -------------------------------------------------- */
 
     .imagen-inventario {
-        /* Define un tamaño fijo para la vista previa en la tabla */
         width: 60px;
         height: 60px;
-        object-fit: cover; /* Asegura que la imagen no se distorsione */
+        object-fit: cover;
         border-radius: 4px;
         border: 1px solid #ddd;
     }
 
-    /* Modificación para el modo móvil (cards) */
     @@media (max-width: 991px) {
-        /* Estilo especial para la columna de Imagen en móvil */
-        .responsive-inventory-table tbody td:nth-child(2)
+        .responsive-inventory-table tbody td.imagen-celda
 
     {
-        /* Si la imagen es la segunda columna, el CSS debe apuntar a la segunda celda */
         text-align: center !important;
     }
 
-    .responsive-inventory-table tbody td.imagen-celda {
-        text-align: center !important;
-        /* Asegura que la imagen ocupe todo el ancho de la tarjeta si es necesario */
     }
 
+    /* --------------------------------------------------
+         * ESTILOS DE FILTRO
+         * -------------------------------------------------- */
+
+    .filter-card {
+        background-color: var(--color-fondo-claro);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+        transition: all 0.3s;
+    }
+
+        .filter-card h5 {
+            color: var(--color-primario);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border-color: #ccc;
+        box-shadow: none;
+        transition: border-color 0.3s;
+        font-size: 0.95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.1rem rgba(243, 156, 18, 0.5);
+        }
+
+    .btn-filter {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: var(--color-primario);
+        font-weight: 600;
+        min-width: 100px;
+    }
+
+        .btn-filter:hover {
+            background-color: #e6b25a;
+            border-color: #e6b25a;
+            color: var(--color-primario);
+        }
+
+    .btn-clear {
+        color: var(--color-primario);
+        border-color: #bdc3c7;
     }
 </style>
 
@@ -293,128 +384,179 @@
     <div class="data-card">
 
         <h1 class="view-title"><i class="fas fa-warehouse"></i> @ViewData["Title"]</h1>
-        <p>
-            <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Elemento</a>
-        </p>
 
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger" role="alert">
-                <i class="fas fa-times-circle"></i> @ViewBag.Error
-            </div>
-        }
-        @if (TempData["Ok"] != null)
-        {
-            <div class="alert alert-success" role="alert">
-                <i class="fas fa-check-circle"></i> @TempData["Ok"]
-            </div>
-        }
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <a asp-action="Create" class="btn btn-primary order-0 order-md-0 mb-2 mb-md-0">
+                <i class="fas fa-plus-circle"></i> Crear Nuevo Elemento
+            </a>
 
-        <div class="table-responsive">
-            <table class="table table-hover responsive-inventory-table" id="inventarioTable">
-                <thead>
-                    <tr>
-                        <th class="text-left">Item</th>
-                        <th class="text-left">Descripcion</th>
-                        <th class="text-center">Imagen</th>
-                        <th class="text-center">Cantidad</th>
-                        <th class="text-center">Estado</th>
-                        <th class="text-center">Municipio</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td data-label="Item" class="text-left">@Html.DisplayFor(modelItem => item.Nombre_item)</td>
-                            <td data-label="Descripcion" class="text-left">
-                                @{
-                                    string desc = item.Descripcion ?? "";
-                                    // Usamos un corte de texto más corto ya que añadimos la imagen
-                                    @(desc.Length > 30 ? desc.Substring(0, 30) + "..." : desc)
-                                }
-                            </td>
-
-                            <td data-label="Imagen" class="text-center imagen-celda">
-                                @{
-                                    // Verifica si el campo de imagen tiene datos (Base64)
-                                    if (!string.IsNullOrEmpty(item.Imagen_data_base64))
-                                    {
-                                        // Construye la URL de datos: Prefijo MIME + Base64
-                                        // Asumimos 'image/jpeg' o 'image/png'. Usamos 'image/webp' como default moderno.
-                                        var imgSrc = $"data:image/webp;base64,{item.Imagen_data_base64}";
-
-                                        <img src="@imgSrc" alt="@item.Nombre_item" class="imagen-inventario" />
-                                    }
-                                    else
-                                    {
-                                        // Ícono de imagen no disponible de Font Awesome
-                                        <i class="fas fa-image" style="font-size: 24px; color: #ccc;"></i>
-                                    }
-                                }
-                            </td>
-                            <td data-label="Cantidad" class="text-center">@Html.DisplayFor(modelItem => item.Cantidad)</td>
-                            <td data-label="Estado" class="text-center">
-                                @{
-                                    string badgeClass = item.Estado?.ToLower() switch
-                                    {
-                                        "disponible" => "success",
-                                        "agotado" => "warning",
-                                        "baja" => "danger",
-                                        _ => "secondary"
-                                    };
-                                }
-                                <span class="badge bg-@badgeClass">
-                                    @Html.DisplayFor(modelItem => item.Estado)
-                                </span>
-                            </td>
-                            <td data-label="Municipio" class="text-center">
-                                @{
-                                    string nombreMunicipio = "N/A";
-                                    if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
-                                    {
-                                        nombreMunicipio = municipioNombres[item.MunicipioId];
-                                    }
-                                }
-                                @nombreMunicipio
-                            </td>
-                            <td data-label="Acciones" class="text-center action-buttons">
-                                <a asp-action="Edit" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
-                                <a asp-action="Details" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
-                                <a asp-action="Delete" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <button class="btn btn-secondary order-1 order-md-1 mb-2 mb-md-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+                <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+            </button>
         </div>
-
-        <nav class="pagination-container" aria-label="Navegación de Inventario">
-            <ul class="pagination" id="pagination-ul"></ul>
-        </nav>
-
-        @if (Model != null && !Model.Any())
-        {
-            <div class="alert alert-info text-center mt-4" role="alert">
-                <h4><i class="fas fa-box-open"></i> No hay elementos registrados en el inventario</h4>
-                <p>Comienza creando el primer elemento.</p>
-                <a asp-action="Create" class="btn btn-primary mt-3">Crear Primer Elemento</a>
-            </div>
-        }
-
     </div>
+
+    <div class="collapse" id="collapseFilters">
+        <div class="filter-card">
+            <form asp-action="Index" method="get">
+                <h5><i class="fas fa-search"></i> Filtros de Búsqueda</h5>
+                <div class="row g-3">
+
+                    <div class="col-sm-6 col-lg-4">
+                        <label for="NombreItem" class="form-label visually-hidden">Nombre</label>
+                        <input type="text"
+                               class="form-control"
+                               id="NombreItem"
+                               name="NombreItem"
+                               placeholder="Buscar por Nombre"
+                               value="@ViewBag.CurrentNombreItem">
+                    </div>
+
+                    <div class="col-sm-6 col-lg-4">
+                        <label for="MunicipioId" class="form-label visually-hidden">Municipio</label>
+                        <select class="form-select" id="MunicipioId" name="MunicipioId">
+                            @* Aseguramos el select list para Razor *@
+                            @if (ViewBag.MunicipioId is List<SelectListItem> municipioList)
+                            {
+                                @foreach (var item in municipioList)
+                                {
+                                    <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentMunicipioId?.ToString())">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-4">
+                        <label for="Estado" class="form-label visually-hidden">Estado</label>
+                        <select class="form-select" id="Estado" name="Estado">
+                            @* Aseguramos el select list para Razor *@
+                            @if (ViewBag.EstadoList is List<SelectListItem> estadoList)
+                            {
+                                @foreach (var item in estadoList)
+                                {
+                                    <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentEstado)">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-filter me-2"><i class="fas fa-search"></i> Filtrar</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-clear"><i class="fas fa-undo"></i> Limpiar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-times-circle"></i> @ViewBag.Error
+        </div>
+    }
+    @if (TempData["Ok"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Ok"]
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-hover responsive-inventory-table" id="inventarioTable">
+            <thead>
+                <tr>
+                    <th class="text-left">Item</th>
+                    <th class="text-left">Descripcion</th>
+                    <th class="text-center">Imagen</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Municipio</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td data-label="Item" class="text-left">@Html.DisplayFor(modelItem => item.Nombre_item)</td>
+                        <td data-label="Descripcion" class="text-left">
+                            @{
+                                string desc = item.Descripcion ?? "";
+                                @(desc.Length > 30 ? desc.Substring(0, 30) + "..." : desc)
+                            }
+                        </td>
+                        <td data-label="Imagen" class="text-center imagen-celda">
+                            @{
+                                if (!string.IsNullOrEmpty(item.Imagen_data_base64))
+                                {
+                                    var imgSrc = $"data:image/webp;base64,{item.Imagen_data_base64}";
+                                    <img src="@imgSrc" alt="@item.Nombre_item" class="imagen-inventario" />
+                                }
+                                else
+                                {
+                                    <i class="fas fa-image" style="font-size: 24px; color: #ccc;"></i>
+                                }
+                            }
+                        </td>
+                        <td data-label="Cantidad" class="text-center">@Html.DisplayFor(modelItem => item.Cantidad)</td>
+                        <td data-label="Estado" class="text-center">
+                            @{
+                                string badgeClass = item.Estado?.ToLower() switch
+                                {
+                                    "disponible" => "success",
+                                    "agotado" => "warning",
+                                    "baja" => "danger",
+                                    _ => "secondary"
+                                };
+                            }
+                            <span class="badge bg-@badgeClass">
+                                @Html.DisplayFor(modelItem => item.Estado)
+                            </span>
+                        </td>
+                        <td data-label="Municipio" class="text-center">
+                            @{
+                                string nombreMunicipio = "N/A";
+                                if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
+                                {
+                                    nombreMunicipio = municipioNombres[item.MunicipioId];
+                                }
+                            }
+                            @nombreMunicipio
+                        </td>
+                        <td data-label="Acciones" class="text-center action-buttons">
+                            <a asp-action="Edit" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-info" title="Detalles"><i class="fas fa-info-circle"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id_inventario" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <nav class="pagination-container" aria-label="Navegación de Inventario">
+        <ul class="pagination" id="pagination-ul"></ul>
+    </nav>
+
+    @if (Model != null && !Model.Any())
+    {
+        <div class="alert alert-info text-center mt-4" role="alert">
+            <h4><i class="fas fa-box-open"></i> No hay elementos registrados en el inventario</h4>
+            <p>Comienza creando el primer elemento.</p>
+            <a asp-action="Create" class="btn btn-primary mt-3">Crear Primer Elemento</a>
+        </div>
+    }
+
 </div>
 
 
 @section Scripts {
     <script>
-        // La lógica de paginación se mantiene igual para seguir funcionando con el backend Razor
+        // La lógica de paginación de lado del cliente
         $(document).ready(function () {
-            // Configuración de Paginación
             const table = document.getElementById('inventarioTable');
             const tbody = table.querySelector('tbody');
-            // Nota: Aquí se usa jQuery para la paginación, se asume que está cargado.
             const rows = Array.from(tbody.querySelectorAll('tr'));
             const pageSize = @pageSize;
             const totalPages = Math.ceil(rows.length / pageSize);
@@ -432,9 +574,9 @@
             }
 
             function updatePaginationControls(currentPage) {
-                paginationUl.empty(); // Limpiar la paginación existente
+                paginationUl.empty();
 
-                if (totalPages <= 1) return; // No mostrar paginación si solo hay 1 página
+                if (totalPages <= 1) return;
 
                 // Botón Anterior
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';

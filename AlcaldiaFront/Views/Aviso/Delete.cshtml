@@ -1,161 +1,253 @@
 ﻿@model AlcaldiaFront.DTOs.AvisoDTOs.AvisoRespuestaDTO
+@using System.Collections.Generic
+
 @{
-    ViewData["Title"] = "Eliminar Aviso";
+    ViewData["Title"] = "Confirmación de Eliminación";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
 }
 
+<!-- Se requiere Bootstrap y Font Awesome para los iconos y el grid layout -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
 <style>
     /* --------------------------------------------------
-               PATRÓN DE COLORES FORMAL ADAPTADO A CONFIRMACIÓN
-               -------------------------------------------------- */
+           PATRÓN DE COLORES Y TIPOGRAFÍA
+           -------------------------------------------------- */
     :root {
         --color-primario: #34495e; /* Azul Marino/Antracita */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
         --color-peligro: #c0392b; /* Rojo de Advertencia */
+        --color-bg-light: #f4f6f9;
+        --color-texto-claro: #7f8c8d;
     }
 
-    /* Contenedor principal (Tarjeta de advertencia) */
+    body {
+        background-color: var(--color-bg-light);
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Contenedor principal de eliminación (Tarjeta de advertencia) */
     .delete-card {
         background-color: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        border-top: 5px solid var(--color-peligro); /* Borde de peligro */
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-top: 30px;
+        margin-bottom: 30px;
+        border-top: 6px solid var(--color-peligro); /* Borde de peligro fuerte */
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    /* Encabezado principal */
+    /* Encabezado y Advertencia */
     h1 {
         color: var(--color-primario);
-        margin-bottom: 5px;
-        font-weight: 600;
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 2rem;
     }
 
-    /* Pregunta de confirmación */
-    h3 {
-        color: var(--color-peligro); /* Resaltar la pregunta en rojo */
-        border-bottom: 2px solid #f2dede;
-        padding-bottom: 10px;
+    .warning-message {
+        background-color: #fcebeb; /* Fondo rosado claro */
+        color: var(--color-peligro);
+        border: 1px solid var(--color-peligro);
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+    }
+
+        .warning-message i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+    /* Detalles del Aviso a Eliminar */
+    .detail-container {
+        padding: 15px;
+        border: 1px dashed var(--color-texto-claro);
+        border-radius: 8px;
         margin-bottom: 25px;
-        font-weight: 400;
     }
 
-    /* Título de la sección de datos */
-    h4 {
-        color: var(--color-primario);
-        font-weight: 500;
-    }
+        .detail-container h4 {
+            color: var(--color-primario);
+            font-weight: 600;
+            font-size: 1.25rem;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
 
-    /* Lista de Detalles (dl) */
-    .dl-horizontal dt {
+    .detail-label {
         color: var(--color-secundario); /* Etiquetas en color de acento */
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+        display: block;
     }
 
-    .dl-horizontal dd {
-        margin-bottom: 10px;
-        border-bottom: 1px dashed #ecf0f1;
-        padding-bottom: 5px;
+    .detail-value {
+        font-size: 1rem;
+        color: var(--color-texto);
+        margin-bottom: 15px;
     }
 
-    /* Botón Eliminar (Rojo de peligro) */
+    .description-value {
+        white-space: pre-wrap;
+        font-style: italic;
+        border-left: 3px solid #ccc;
+        padding-left: 10px;
+    }
+
+    /* Botones de Acción */
+    .delete-actions {
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 20px;
+        justify-content: center; /* Centrar botones */
+    }
+
+    .btn-action {
+        padding: 12px 30px;
+        font-weight: 700;
+        border-radius: 8px;
+        min-width: 150px;
+    }
+
+    /* Botón Eliminar (Rojo - Destacado) */
     .btn-danger {
         background-color: var(--color-peligro);
         border-color: var(--color-peligro);
-        transition: background-color 0.3s;
-        min-width: 120px;
     }
 
-        .btn-danger:hover {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
-        }
-
-    /* Botón Volver (Secundario) */
+    /* Botón Cancelar (Secundario - Menos prominente) */
     .btn-secondary {
-        background-color: #bdc3c7;
-        border-color: #bdc3c7;
-        color: var(--color-texto);
-        min-width: 120px;
-        transition: background-color 0.3s;
+        background-color: var(--color-texto-claro);
+        border-color: var(--color-texto-claro);
+        color: white;
     }
 
-        .btn-secondary:hover {
-            background-color: #95a5a6;
-            border-color: #95a5a6;
+    /* --------------------------------------------------
+           ADAPTACIÓN RESPONSIVE
+           -------------------------------------------------- */
+    @@media (max-width: 767.98px) {
+        .delete-card {
+            padding: 20px;
+            margin-top: 0;
+            border-radius: 0;
+            box-shadow: none;
         }
 
-    .delete-actions {
-        margin-top: 25px;
-        padding-top: 15px;
-        border-top: 1px solid #bdc3c7;
+        .delete-actions {
+            flex-direction: column; /* Apilar botones en móvil */
+            gap: 10px;
+        }
+
+        .btn-action {
+            width: 100%; /* Botones de ancho completo */
+        }
+
+        .detail-value {
+            margin-bottom: 10px;
+        }
+        /* Ocultar etiquetas DT/DD para usar etiquetas en bloque */
+        .dl-horizontal dt, .dl-horizontal dd {
+            width: 100% !important;
+            float: none !important;
+            clear: both !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
     }
 </style>
 
-<div class="delete-card">
-    <h1><i class="fas fa-trash-alt"></i> Eliminar</h1>
-    <h3>🚨 ¿Estás seguro de que deseas eliminar este aviso?</h3>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-xl-9 col-lg-10 col-12">
 
-    <div>
-        <h4>Detalles del Aviso</h4>
-        <hr />
-        <dl class="row dl-horizontal">
-            <dt class="col-sm-3">
-                Titulo del aviso
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Titulo)
-            </dd>
-            <dt class="col-sm-3">
-                Descripcion del aviso
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Descripcion)
-            </dd>
-            <dt class="col-sm-3">
-                Fecha de registro
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Fecha_Registro)
-            </dd>
-            <dt class="col-sm-3">
-                Tipo de aviso
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Tipo)
-            </dd>
-            <dt class="col-sm-3">
-                Municipio
-            </dt>
-            <dd class="col-sm-9">
-                @{
-                    string nombreMunicipio = "ID de Municipio no encontrado";
-                    if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
-                    {
-                        nombreMunicipio = municipioNombres[Model.MunicipioId];
-                    }
-                }
-                <strong class="text-primary">@nombreMunicipio</strong>
+            <div class="delete-card">
 
-                @* <small class="text-muted">(ID: @Model.MunicipioId)</small> *@
-            </dd>
-        </dl>
-    </div>
+                <h1><i class="fas fa-trash-alt me-2"></i> Confirmar Eliminación</h1>
 
-    <div class="delete-actions">
-        <form asp-action="Delete">
-            <input type="hidden" asp-for="Id_aviso" />
-            <button type="submit" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i> Eliminar</button>
-            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Cancelar</a>
-        </form>
+                <!-- MENSAJE DE ADVERTENCIA CRÍTICO -->
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta acción es permanente. ¿Estás seguro de que deseas eliminar el aviso titulado: "@Model.Titulo"?
+                   
+                </div>
+
+                <div class="delete-actions">
+                    <form asp-action="Delete" class="d-flex justify-content-center w-100 flex-column flex-md-row gap-3">
+                        <a asp-action="Index" class="btn btn-secondary btn-action order-2 order-md-1">
+                            <i class="fas fa-times-circle me-2"></i> Cancelar
+                        </a>
+                        <input type="hidden" asp-for="Id_aviso" />
+                        <button type="submit" class="btn btn-danger btn-action order-1 order-md-2">
+                            <i class="fas fa-trash-alt me-2"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+                <hr />
+                <!-- SECCIÓN DE DETALLES DEL AVISO -->
+                <div class="detail-container">
+                    <h4>Información Clave del Aviso</h4>
+
+                    <div class="row">
+                        <!-- Titulo (Repetido para claridad) -->
+                        <div class="col-12 mb-3">
+                            <span class="detail-label">Título del Aviso</span>
+                            <div class="detail-value">@Html.DisplayFor(model => model.Titulo)</div>
+                        </div>
+
+                        <!-- Tipo y Fecha (En columnas) -->
+                        <div class="col-md-6 col-12">
+                            <span class="detail-label">Tipo de Aviso</span>
+                            <div class="detail-value">
+                                <span class="badge rounded-pill bg-primary">@Html.DisplayFor(model => model.Tipo)</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <span class="detail-label">Fecha de Registro</span>
+                            <div class="detail-value">@Html.DisplayFor(model => model.Fecha_Registro)</div>
+                        </div>
+
+                        <!-- Municipio -->
+                        <div class="col-12 mt-2">
+                            <span class="detail-label">Municipio Objetivo</span>
+                            <div class="detail-value">
+                                @{
+                                    string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
+                                    ? municipioNombres[Model.MunicipioId]
+                                    : "ID de Municipio no encontrado";
+                                }
+                                <i class="fas fa-map-marker-alt me-1 text-primary"></i> <strong>@nombreMunicipio</strong>
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="col-12 mt-3">
+                            <span class="detail-label">Descripción (Resumen)</span>
+                            <div class="detail-value description-value">
+                                @Html.DisplayFor(model => model.Descripcion)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN (Formulario de Eliminación) -->
+               
+            </div>
+
+        </div>
     </div>
 </div>
-
-@section Scripts {
-    @{
-        // Opcional, pero se recomienda siempre para mantener la estructura de la vista Razor
-    }
-}

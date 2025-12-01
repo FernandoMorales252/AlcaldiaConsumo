@@ -2,417 +2,588 @@
 
 @{
     ViewData["Title"] = "Iniciar Sesión";
-    Layout = null; // Quita el layout estándar para tener control total de la vista
+    Layout = null;
 }
 
-@* Incluimos Bootstrap y Font Awesome para estilos base e iconos *@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
 
+    <!-- Recursos externos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
-<style>
-    /* --------------------------------------------------
-           VARIABLES Y ESTILOS BASE
-           -------------------------------------------------- */
-    :root {
-        --color-primary: #007bff; /* Azul primario más brillante y moderno */
-        --color-secondary: #6c757d; /* Gris secundario */
-        --color-accent: #ffc107; /* Dorado/Amarillo para acentos llamativos */
-        --color-background-light: #f8f9fa; /* Fondo claro */
-        --color-text-dark: #212529; /* Texto muy oscuro */
-        --color-shadow: rgba(0, 0, 0, 0.1);
-    }
-
-    /* Reset y Contenedor Principal (100% Viewport) */
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        background-color: var(--color-background-light);
-        font-family: 'Inter', sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Contenedor principal del Login: Split Screen */
-    .login-container {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr; /* Hacemos el banner un poco más ancho */
-        width: 90%;
-        max-width: 1400px; /* Más ancho para impresionar */
-        height: 95vh; /* Ocupa casi toda la altura */
-        min-height: 700px;
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 25px 50px var(--color-shadow);
-        transition: all 0.3s ease-in-out;
-    }
-
-    /* --------------------------------------------------
-           SECCIÓN IZQUIERDA: Banner (Llamativo)
-           -------------------------------------------------- */
-    .banner-section {
-        background: linear-gradient(135deg, var(--color-primary), #0056b3); /* Gradiente de azul */
-        color: white;
-        padding: 80px; /* Más padding para más aire */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        position: relative;
-    }
-
-        .banner-section::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Patrón de estrellas sutiles */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cpattern id='p' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='10' cy='10' r='1' fill='rgba(255, 255, 255, 0.2)'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23p)'/%3E%3C/svg%3E");
-            opacity: 0.6;
+    <style>
+        /* ========================================
+                   VARIABLES Y RESET
+                   ======================================== */
+        :root {
+            --color-primario: #1f618d;
+            --color-primario-light: #2980b9;
+            --color-primario-dark: #2c3e50;
+            --color-secundario: #95a5a6;
+            --color-accent: #f39c12;
+            --color-card-bg: #ffffff;
+            --color-shadow: rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-    .banner-logo {
-        position: relative;
-        z-index: 10;
-        font-size: 5rem;
-        color: var(--color-accent);
-        margin-bottom: 20px;
-        transform: rotate(-10deg);
-    }
-
-    .banner-content {
-        position: relative;
-        z-index: 10;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-        .banner-content h1 {
-            font-size: 4rem;
-            font-weight: 900;
+        * {
             margin: 0;
-            line-height: 1.1;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .banner-content p {
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-top: 25px;
-            line-height: 1.6;
-            opacity: 0.9;
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-    /* --------------------------------------------------
-           SECCIÓN DERECHA: Formulario de Login (Limpio)
-           -------------------------------------------------- */
-    .form-section {
-        padding: 60px 80px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-        .form-section form {
-            width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
+        /* ========================================
+                   CONTENEDOR PRINCIPAL
+                   ======================================== */
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario-light) 100%);
+            position: relative;
         }
 
-    .app-title {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-primary);
-        margin-bottom: 60px;
-        text-align: center;
-    }
-
-    .welcome-header {
-        margin-bottom: 35px;
-        text-align: center;
-    }
-
-        .welcome-header h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--color-text-dark);
-            margin: 0 0 10px 0;
-            text-align: left;
-        }
-
-        .welcome-header p {
-            font-size: 1rem;
-            color: var(--color-secondary);
-            text-align: left;
-        }
-
-    .register-link-top a {
-        color: var(--color-primary);
-        font-weight: 700;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-
-        .register-link-top a:hover {
-            color: #0056b3;
-        }
-
-    /* Campos de Formulario */
-    .form-group {
-        margin-bottom: 28px;
-        text-align: left;
-    }
-
-    label {
-        font-weight: 600;
-        color: var(--color-text-dark);
-        display: block;
-        margin-bottom: 8px;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control {
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 14px 18px;
-        font-size: 1rem;
-        transition: border-color 0.3s, box-shadow 0.3s;
-        background-color: #f8f9fa;
-    }
-
-        .form-control:focus {
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.3);
-            background-color: white;
-        }
-
-    /* Validaciones de Modelo */
-    .text-danger {
-        font-size: 0.85rem;
-        margin-top: 5px;
-        display: block;
-        color: #dc3545;
-    }
-
-    /* Botones de Acción */
-    .btn-action {
-        border-radius: 10px;
-        padding: 14px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        transition: all 0.3s;
-        width: 100%;
-        margin-bottom: 12px;
-        text-decoration: none;
-        display: block;
-        text-align: center;
-    }
-
-    .btn-login {
-        background-color: var(--color-primary);
-        border: 2px solid var(--color-primary);
-        color: white;
-    }
-
-        .btn-login:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-        }
-
-    .btn-cancel {
-        background-color: white;
-        color: var(--color-secondary);
-        border: 2px solid var(--color-secondary);
-    }
-
-        .btn-cancel:hover {
-            background-color: var(--color-secondary);
+        /* ========================================
+                   PANEL IZQUIERDO - BIENVENIDA (Desktop)
+                   ======================================== */
+        .welcome-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            position: relative;
             color: white;
-            border-color: var(--color-secondary);
-            transform: translateY(-2px);
+            overflow: hidden;
         }
 
-    /* Mensaje de Error General */
-    .alert-general-error {
-        border-radius: 10px;
-        padding: 15px;
-        font-size: 0.95rem;
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-        margin-bottom: 30px;
-        text-align: left;
-    }
+            /* Decoración de fondo con mapa */
+            .welcome-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="200" cy="200" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="400" cy="300" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="600" cy="150" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="300" cy="500" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="700" cy="400" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="500" cy="600" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="800" cy="700" r="3" fill="rgba(255,255,255,0.1)"/></svg>');
+                opacity: 0.3;
+                animation: float 20s ease-in-out infinite;
+            }
 
-    /* --------------------------------------------------
-           MEDIA QUERIES - RESPONSIVE DESIGN
-           -------------------------------------------------- */
+        @@keyframes float {
+            0%, 100%
 
-    /* Pantallas de Escritorio Pequeñas/Tabletas (992px) */
-    @@media (max-width: 992px) {
-        .login-container
+        {
+            transform: translateY(0px);
+        }
 
-    {
-        grid-template-columns: 0.8fr 1fr; /* Columna azul más pequeña */
-        height: 80vh;
-        min-height: 650px;
-    }
+        50% {
+            transform: translateY(-20px);
+        }
 
-    .banner-section {
-        padding: 50px;
-    }
+        }
 
-    .banner-content h1 {
-        font-size: 3rem;
-    }
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeInLeft 0.8s ease-out;
+        }
 
-    .form-section {
-        padding: 50px;
-    }
+        @@keyframes fadeInLeft {
+            from
 
-    .welcome-header h2 {
-        font-size: 2rem;
-    }
+        {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
 
-    }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
-    /* Móviles (768px) */
-    @@media (max-width: 768px) {
-        body
+        }
 
-    {
-        align-items: flex-start;
-        padding-top: 0;
-        padding-bottom: 0;
-    }
+        .logo-circle {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
 
-    .login-container {
-        grid-template-columns: 1fr; /* Una sola columna */
-        width: 100vw;
-        height: auto;
-        min-height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-    }
+            .logo-circle i {
+                font-size: 3.5rem;
+                color: var(--color-accent);
+            }
 
-    .banner-section {
-        display: none; /* Ocultamos el banner en móvil */
-    }
+        .welcome-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
 
-    .form-section {
-        padding: 40px 25px;
-        min-height: 100vh;
-        justify-content: flex-start; /* Alinea el contenido arriba en móvil */
-    }
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 0;
+        }
 
-        .form-section form {
+        /* ========================================
+                   PANEL DERECHO - FORMULARIO
+                   ======================================== */
+        .form-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: white;
+            position: relative;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 460px;
+            animation: fadeInRight 0.8s ease-out;
+        }
+
+        @@keyframes fadeInRight {
+            from
+
+        {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        }
+
+        .form-card {
+            background: var(--color-card-bg);
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 10px 40px var(--color-shadow);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-logo-mobile {
+            display: none;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--color-primario-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-description {
+            font-size: 0.95rem;
+            color: var(--color-secundario);
+            font-weight: 400;
+        }
+
+        /* ========================================
+                   CAMPOS DEL FORMULARIO
+                   ======================================== */
+        .input-group-custom {
+            margin-bottom: 24px;
+        }
+
+            .input-group-custom label {
+                display: block;
+                font-weight: 600;
+                color: var(--color-primario-dark);
+                margin-bottom: 10px;
+                font-size: 0.9rem;
+                letter-spacing: 0.3px;
+            }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+            .input-wrapper i {
+                position: absolute;
+                left: 18px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--color-secundario);
+                font-size: 1.1rem;
+                transition: var(--transition);
+            }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 16px 18px 16px 50px;
+            border: 2px solid #e8ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+        }
+
+            .form-control-custom:focus {
+                outline: none;
+                border-color: var(--color-accent);
+                background: white;
+                box-shadow: 0 0 0 4px rgba(243, 156, 18, 0.1);
+            }
+
+                .form-control-custom:focus + i {
+                    color: var(--color-accent);
+                }
+
+        .text-danger {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #e74c3c;
+            font-weight: 500;
+        }
+
+        /* ========================================
+                   ALERTAS Y MENSAJES
+                   ======================================== */
+        .alert-custom {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fef5e7;
+            border-left: 4px solid var(--color-accent);
+            color: #7d6608;
+            font-size: 0.9rem;
+        }
+
+            .alert-custom i {
+                font-size: 1.2rem;
+            }
+
+        /* ========================================
+                   BOTONES
+                   ======================================== */
+        .btn-custom {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary-custom {
+            background: var(--color-primario-dark);
+            color: white;
+            box-shadow: 0 4px 14px rgba(44, 62, 80, 0.3);
+        }
+
+            .btn-primary-custom:hover {
+                background: #34495e;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(44, 62, 80, 0.4);
+            }
+
+        .btn-secondary-custom {
+            background: transparent;
+            color: var(--color-accent);
+            border: 2px solid var(--color-accent);
+        }
+
+            .btn-secondary-custom:hover {
+                background: var(--color-accent);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3);
+            }
+
+        .btn-tertiary-custom {
+            background: transparent;
+            color: var(--color-secundario);
+            border: 2px solid #e0e0e0;
+            font-size: 0.95rem;
+            padding: 12px 20px;
+        }
+
+            .btn-tertiary-custom:hover {
+                background: #f5f5f5;
+                border-color: var(--color-secundario);
+                color: var(--color-primario-dark);
+            }
+
+        /* ========================================
+                   RESPONSIVE - TABLET Y MOBILE
+                   ======================================== */
+        @@media (max-width: 992px) {
+            .login-wrapper
+
+        {
+            flex-direction: column;
+        }
+
+        .welcome-section {
+            padding: 40px 30px;
+            min-height: 280px;
+            background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario-light) 100%);
+        }
+
+        .welcome-content {
             max-width: 100%;
         }
 
-    .app-title {
-        margin-top: 30px;
-        margin-bottom: 40px;
-    }
+        .logo-circle {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 20px;
+        }
 
-    .welcome-header {
-        margin-bottom: 30px;
-    }
+            .logo-circle i {
+                font-size: 2.5rem;
+            }
 
-        .welcome-header h2 {
+        .welcome-title {
             font-size: 2rem;
+            margin-bottom: 10px;
         }
 
-    }
-</style>
+        .welcome-subtitle {
+            font-size: 0.95rem;
+            display: none; /* Ocultar en móvil para ahorrar espacio */
+        }
 
-<div class="login-container">
+        .form-section {
+            padding: 30px 20px;
+            min-height: auto;
+        }
 
-    @* --------------------------------------------------------------------------------
-       SECCIÓN IZQUIERDA: Banner (Para Desktop y Tablet)
-       -------------------------------------------------------------------------------- *@
-    <div class="banner-section">
-        <div class="banner-logo">
-            <i class="fas fa-handshake"></i> @* Icono de colaboración o servicio *@
-        </div>
+        .form-card {
+            padding: 30px 25px;
+            box-shadow: none;
+            border-radius: 24px 24px 0 0;
+            margin-top: -30px;
+            position: relative;
+            z-index: 3;
+        }
 
-        <div class="banner-content">
-            <h1>Acceso al Portal de Gestión Municipal</h1>
-            <p>
-                Autentíquese para acceder a las herramientas y datos de administración.
-                Su seguridad es nuestra prioridad.
-            </p>
-        </div>
+        .form-header {
+            margin-bottom: 30px;
+        }
 
-        @* Pequeño footer de copyright para consistencia *@
-        <div style="position: absolute; bottom: 30px; left: 80px; font-size: 0.9rem; opacity: 0.8;">
-            &copy; @DateTime.Now.Year AlcaldíaSys
-        </div>
-    </div>
+        .form-title {
+            font-size: 1.6rem;
+        }
 
-    @* --------------------------------------------------------------------------------
-       SECCIÓN DERECHA: Formulario de Acceso (Responsivo)
-       -------------------------------------------------------------------------------- *@
-    <div class="form-section">
+        .input-group-custom {
+            margin-bottom: 20px;
+        }
 
-        <div class="app-title">
-            ALCALDIA Es | INICIAR SESIÓN
-        </div>
+        .btn-custom {
+            padding: 14px 20px;
+        }
 
-        <div class="welcome-header">
-            <h2>Bienvenido</h2>
-            <p class="register-link-top">
-                Por favor, ingrese sus credenciales. ¿Necesita una cuenta? <a asp-controller="Auth" asp-action="Registrar">Regístrese aquí.</a>
-            </p>
-        </div>
+        }
 
-        @if (ViewBag.Error != null)
+        @@media (max-width: 576px) {
+            .welcome-section
+
         {
-            <div class="alert-general-error">
-                <i class="fas fa-bug me-2"></i>@ViewBag.Error
-            </div>
+            padding: 30px 20px;
+            min-height: 240px;
         }
 
-        <form asp-action="Login" method="post">
-            <div class="form-group">
-                <label asp-for="Email">Correo Electrónico</label>
-                <input asp-for="Email" class="form-control" placeholder="usuario@alcaldia.gob.sv" required />
-                <span asp-validation-for="Email" class="text-danger"></span>
+        .logo-circle {
+            width: 75px;
+            height: 75px;
+        }
+
+            .logo-circle i {
+                font-size: 2rem;
+            }
+
+        .welcome-title {
+            font-size: 1.7rem;
+        }
+
+        .form-card {
+            padding: 25px 20px;
+        }
+
+        .form-title {
+            font-size: 1.4rem;
+        }
+
+        .form-control-custom {
+            padding: 14px 16px 14px 45px;
+            font-size: 0.95rem;
+        }
+
+        .btn-custom {
+            font-size: 1rem;
+            padding: 13px 18px;
+        }
+
+        }
+
+        /* ========================================
+                   ANIMACIONES ADICIONALES
+                   ======================================== */
+        @@keyframes pulse {
+            0%, 100%
+
+        {
+            box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);
+        }
+
+        }
+
+        .btn-primary-custom:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Panel de Bienvenida -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <div class="logo-circle">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h1 class="welcome-title">ALCALDÍA ES</h1>
+                <p class="welcome-subtitle">
+                    Sistema de gestión municipal. Accede a tus herramientas de trabajo de forma segura y eficiente.
+                </p>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Password">Contraseña</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" required />
-                <span asp-validation-for="Password" class="text-danger"></span>
+        <!-- Panel de Formulario -->
+        <div class="form-section">
+            <div class="form-container">
+                <div class="form-card">
+                    <!-- Encabezado del Formulario -->
+                    <div class="form-header">
+                        <h2 class="form-title">Iniciar Sesión</h2>
+                        <p class="form-description">Ingresa tus credenciales para continuar</p>
+                    </div>
+
+                    <!-- Mensaje de Error General -->
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert-custom">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>@ViewBag.Error</span>
+                        </div>
+                    }
+
+                    <!-- Formulario de Login -->
+                    <form asp-action="Login" method="post">
+                        <!-- Campo de Email -->
+                        <div class="input-group-custom">
+                            <label asp-for="Email">Correo Electrónico</label>
+                            <div class="input-wrapper">
+                                <input asp-for="Email"
+                                       type="email"
+                                       class="form-control-custom"
+                                       placeholder="ejemplo@alcaldia.gob.sv"
+                                       required
+                                       autocomplete="email" />
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- Campo de Password -->
+                        <div class="input-group-custom">
+                            <label asp-for="Password">Contraseña</label>
+                            <div class="input-wrapper">
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control-custom"
+                                       placeholder="••••••••"
+                                       required
+                                       autocomplete="current-password" />
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <!-- Botón de Login -->
+                        <button type="submit" class="btn-custom btn-primary-custom">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Iniciar Sesión</span>
+                        </button>
+
+                        <!-- Botón de Registro -->
+                        <a asp-controller="Auth" asp-action="Registrar" class="btn-custom btn-secondary-custom">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Solicitar Acceso</span>
+                        </a>
+
+                        <!-- Botón de Regresar -->
+                        <a asp-controller="Home" asp-action="Index" class="btn-custom btn-tertiary-custom">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Regresar al Inicio</span>
+                        </a>
+                    </form>
+                </div>
             </div>
-
-            @* Botón de Login (Primario) *@
-            <button type="submit" class="btn-action btn-login">
-                <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
-            </button>
-
-            @* Botón de Cancelar (Secundario, dirige al Home/Index) *@
-            <a asp-controller="Home" asp-action="Index" class="btn-action btn-cancel">
-                <i class="fas fa-arrow-left me-2"></i> Regresar al Inicio
-            </a>
-
-        </form>
+        </div>
     </div>
-</div>
 
-@* Scripts de Bootstrap y JQuery Validation para ASP.NET Core *@
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/6f8ihM9JzNf" crossorigin="anonymous"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-@* Si utilizas validación del lado del cliente de ASP.NET Core *@
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
     }
-}
+</body>
+</html>

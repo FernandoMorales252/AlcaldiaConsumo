@@ -1,4 +1,5 @@
-﻿using AlcaldiaFront.DTOs.EmpleadoDTOs;
+﻿using AlcaldiaFront.DTOs.DocumentoDTOs;
+using AlcaldiaFront.DTOs.EmpleadoDTOs;
 using AlcaldiaFront.DTOs.InventarioDTOs;
 using AlcaldiaFront.Services;
 using AlcaldiaFront.ViewModels;
@@ -21,20 +22,53 @@ namespace AlcaldiaFront.Controllers
         }
 
         // GET: Inventario
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? MunicipioId, string Estado, string NombreItem)
         {
             try
             {
                 var inventarios = await _inventarioService.GetAllAsync();
-                var municipios = await _municipioService.GetAllAsync();
-                var municipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
-                ViewBag.MunicipioNombres = municipioNombres;
-                return View(inventarios);
+
+                // Centraliza la carga de datos auxiliares para filtros y nombres
+                await PopulateFilterDropdowns();
+
+                if (inventarios != null && inventarios.Any())
+                {
+                    var inventariosFiltrados = inventarios.AsQueryable();
+
+                    // Lógica de filtrado (como se detalló en el punto 1)
+                    // ... [Insertar aquí la lógica de filtrado] ... 
+                    if (MunicipioId.HasValue && MunicipioId.Value > 0)
+                    {
+                        inventariosFiltrados = inventariosFiltrados.Where(d => d.MunicipioId == MunicipioId.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(Estado) && Estado != "Todos")
+                    {
+                        inventariosFiltrados = inventariosFiltrados.Where(d => d.Estado.Equals(Estado, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (!string.IsNullOrEmpty(NombreItem))
+                    {
+                        inventariosFiltrados = inventariosFiltrados.Where(d =>
+                            d.Nombre_item != null &&
+                            d.Nombre_item.Contains(NombreItem, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Pasar los valores de filtro actuales (IMPORTANTE)
+                    ViewBag.CurrentMunicipioId = MunicipioId;
+                    ViewBag.CurrentEstado = Estado;
+                    ViewBag.CurrentNombre = NombreItem;
+
+                    return View(inventariosFiltrados.ToList());
+                }
+
+                return View(new List<DocumentoRespuestaDTO>());
             }
             catch (Exception ex)
             {
-                ViewBag.Error = "No se pudieron cargar los elementos: " + ex.Message;
-                return View(new List<InventarioRespuestaDTO>());
+                ViewBag.Error = "No se pudieron cargar los documentos: " + ex.Message;
+                await PopulateFilterDropdowns(); // Asegurar que los ViewBag estén llenos incluso con error
+                return View(new List<DocumentoRespuestaDTO>());
             }
         }
 
@@ -187,6 +221,39 @@ namespace AlcaldiaFront.Controllers
             }
             ModelState.AddModelError("", "Error al eliminar el elemento de inventario.");
             return View("Delete", await _inventarioService.GetByIdAsync(id));
+        }
+
+        private async Task PopulateFilterDropdowns()
+        {
+            // Cargar listas para filtros
+            var municipios = await _municipioService.GetAllAsync();
+
+            // 1. Dropdowns para la sección de Filtro (con opción "Todos")
+            // Municipio
+            var municipiosList = municipios.Select(m => new SelectListItem
+            {
+                Value = m.Id_Municipio.ToString(),
+                Text = m.Nombre_Municipio
+            }).ToList();
+            municipiosList.Insert(0, new SelectListItem { Value = "", Text = "Todos los Municipios" });
+            ViewBag.MunicipioId = municipiosList;
+
+           
+
+            // Estado (Estatica, se puede mejorar usando un enum o lista compartida)
+            var estadosList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "", Text = "Todos los Estados" },
+        new SelectListItem { Value = "Disponible", Text = "Disponible" },
+        new SelectListItem { Value = "Agotado", Text = "Agotado" },
+        new SelectListItem { Value = "Baja", Text = "Baja" }
+        // Añade aquí todos los estados posibles
+    };
+            ViewBag.EstadoList = estadosList;
+
+
+            // 2. Diccionarios de Nombres (para mostrar en la tabla de resultados)
+            ViewBag.MunicipioNombres = municipios.ToDictionary(m => m.Id_Municipio, m => m.Nombre_Municipio);
         }
 
         private async Task PopulateDropdowns()

@@ -263,6 +263,57 @@
                 }
 
     }
+
+    /* --------------------------------------------------
+         * ------------------ ESTILOS DE FILTRO ------------------
+         * -------------------------------------------------- */
+
+    .filter-card {
+        background-color: var(--color-fondo-claro); /* Gris claro */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+        transition: all 0.3s;
+    }
+
+        .filter-card h5 {
+            color: var(--color-primario);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border-color: #ccc;
+        box-shadow: none;
+        transition: border-color 0.3s;
+        font-size: 0.95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.1rem rgba(243, 156, 18, 0.5); /* Sombra ligera dorada */
+        }
+
+    .btn-filter {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: var(--color-primario); /* Texto oscuro en el botón dorado */
+        font-weight: 600;
+        min-width: 100px;
+    }
+
+        .btn-filter:hover {
+            background-color: #e6b25a;
+            border-color: #e6b25a;
+            color: var(--color-primario);
+        }
+
+    .btn-clear {
+        color: var(--color-primario);
+        border-color: #bdc3c7;
+    }
 </style>
 
 <div class="data-card">
@@ -270,6 +321,69 @@
     <h1><i class="fas fa-file-invoice"></i> @ViewData["Title"]</h1>
     <div class="mb-4">
         <a asp-action="Create" class="btn btn-create-doc"><i class="fas fa-plus-circle"></i> Crear Nuevo Documento</a>
+        <br />
+        <br />
+        <button class="btn btn-secondary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+            <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+        </button>
+    </div>
+
+
+    <div class="collapse" id="collapseFilters">
+        <div class="filter-card">
+            <form asp-action="Index" method="get">
+                <h5><i class="fas fa-search"></i> Filtros de Búsqueda</h5>
+                <div class="row g-3">
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="NombrePropietario" class="form-label visually-hidden">Propietario</label>
+                        <input type="text"
+                               class="form-control"
+                               id="NombrePropietario"
+                               name="NombrePropietario"
+                               placeholder="Buscar por Propietario"
+                               value="@ViewBag.CurrentNombrePropietario">
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="MunicipioId" class="form-label visually-hidden">Municipio</label>
+                        <select class="form-select" id="MunicipioId" name="MunicipioId">
+                            @foreach (var item in (List<SelectListItem>)ViewBag.MunicipioId)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentMunicipioId?.ToString())">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="TipoDocumentoId" class="form-label visually-hidden">Tipo de Documento</label>
+                        <select class="form-select" id="TipoDocumentoId" name="TipoDocumentoId">
+                            @foreach (var item in (List<SelectListItem>)ViewBag.TipoDocumentoId)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentTipoDocumentoId?.ToString())">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <label for="Estado" class="form-label visually-hidden">Estado</label>
+                        <select class="form-select" id="Estado" name="Estado">
+                            @foreach (var item in (List<SelectListItem>)ViewBag.EstadoList)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentEstado)">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-filter me-2"><i class="fas fa-search"></i> Filtrar</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-clear"><i class="fas fa-undo"></i> Limpiar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     @if (ViewBag.Error != null)

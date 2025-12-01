@@ -17,215 +17,350 @@
 
 <style>
     /* --------------------------------------------------
-        /* PATRÓN DE COLORES FORMAL (Antracita/Dorado) */
+        /* PATRÓN DE COLORES FORMAL (Antracita/Dorado) - REFINADO */
     /* -------------------------------------------------- */
     :root {
-        --color-primario: #34495e; /* Azul Marino/Antracita */
-        --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
+        --color-primario: #2c3e50; /* Antracita Profundo */
+        --color-secundario: #f1c40f; /* Dorado Brilliante - Acento principal */
         --color-fondo-claro: #ecf0f1;
-        --color-texto: #2c3e50;
+        --color-texto: #34495e;
+        --color-sombra: rgba(44, 62, 80, 0.15); /* Sombra basada en Antracita */
+    }
+
+    body {
+        background-color: #f4f7f9; /* Fondo muy claro para contrastar */
     }
 
     /* Contenedor principal de la lista */
     .data-card {
         background-color: white;
-        padding: 30px; /* Mantener un buen padding exterior */
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        /* Se eliminó min-height para que se ajuste al contenido */
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra más suave */
     }
 
     h1 {
         color: var(--color-primario);
         border-left: 5px solid var(--color-secundario);
         padding-left: 15px;
-        margin-bottom: 20px; /* Reducción de margen */
+        margin-bottom: 30px;
+        font-size: 2.2rem;
+        font-weight: 800;
     }
 
     .btn-primary {
         background-color: var(--color-primario);
         border-color: var(--color-primario);
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
         .btn-primary:hover {
-            background-color: #4b6279;
-            border-color: #4b6279;
+            background-color: #34495e;
+            border-color: #34495e;
+            transform: translateY(-1px);
         }
 
     /* -------------------------------------------------- */
-    /* ESTILOS DEL CARRUSEL DE AVISOS (Similar a la tarjeta Create) */
+    /* ESTILOS DEL CARRUSEL DE AVISOS */
     /* -------------------------------------------------- */
 
-    /* Tarjeta individual del aviso (Aplica estilo de 'form-container') */
+    .aviso-carousel-container {
+        padding: 0 5%; /* Añadir espacio lateral para las flechas */
+        position: relative;
+    }
+
+    /* Tarjeta individual del aviso */
     .aviso-card {
-        background-color: white; /* Blanco, como el form-container */
-        border: none;
-        border-radius: 10px;
-        padding: 25px; /* Reducir padding interior */
-        min-height: 320px; /* Altura mínima para asegurar espacio */
+        background: linear-gradient(145deg, #ffffff, #f7f7f7); /* Fondo sutil con gradiente */
+        border: 1px solid #e0e0e0;
+        border-radius: 15px; /* Bordes más redondeados */
+        padding: 30px;
+        min-height: 400px; /* Altura mínima para consistencia visual */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        /* Estilo de sombra de Create */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin: 10px; /* Espacio alrededor de la tarjeta dentro del carrusel */
+        box-shadow: 0 8px 25px var(--color-sombra); /* Sombra más definida */
+        margin: 0 auto; /* Centrar */
+        max-width: 900px; /* Limitar ancho máximo para mejor lectura */
+        transition: transform 0.3s ease;
     }
 
         /* Título del aviso */
         .aviso-card h3 {
             color: var(--color-primario);
-            font-weight: 700;
-            border-bottom: 2px solid var(--color-secundario);
-            padding-bottom: 8px; /* Reducir padding */
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+            font-weight: 800;
+            font-size: 1.8rem;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            position: relative;
         }
+
+            .aviso-card h3::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 50px; /* Pequeña línea dorada debajo del título */
+                height: 4px;
+                background-color: var(--color-secundario);
+                border-radius: 2px;
+            }
 
         .aviso-card .lead {
-            margin-bottom: 15px;
-            line-height: 1.4;
+            color: var(--color-texto);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            flex-grow: 1; /* Permite que el texto ocupe espacio y empuje el footer */
+            margin-bottom: 20px;
         }
 
-    /* Controles (flechas) del carrusel: Hacerlas más discretas */
+    .info-item {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #555;
+        display: flex;
+        align-items: center;
+    }
+
+        .info-item strong {
+            color: var(--color-primario);
+            margin-left: 5px;
+        }
+
+        .info-item i {
+            color: var(--color-secundario);
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
+    /* Controles (flechas) del carrusel: Más prominentes y estilizadas */
     .carousel-control-prev, .carousel-control-next {
-        width: 5%; /* Reducir el área de click del control */
-        opacity: 0.8;
+        width: 6%;
+        opacity: 1;
+        transition: opacity 0.3s;
     }
 
     .carousel-control-prev-icon, .carousel-control-next-icon {
         background-color: var(--color-primario);
+        border: 3px solid var(--color-secundario);
         border-radius: 50%;
-        padding: 10px;
-        transition: background-color 0.3s;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s, transform 0.3s;
+        background-size: 50%;
     }
 
-        .carousel-control-prev-icon:hover, .carousel-control-next-icon:hover {
-            background-color: var(--color-secundario); /* Acento al pasar el mouse */
-        }
+    .carousel-control-prev:hover .carousel-control-prev-icon,
+    .carousel-control-next:hover .carousel-control-next-icon {
+        background-color: var(--color-secundario);
+        border-color: var(--color-primario);
+        transform: scale(1.1);
+    }
 
     .carousel-indicators {
-        bottom: -20px; /* Mover indicadores más cerca de la tarjeta */
+        bottom: -40px;
     }
 
         .carousel-indicators button {
-            background-color: var(--color-secundario) !important;
-            height: 8px; /* Reducir tamaño del indicador */
-            width: 8px;
+            background-color: var(--color-primario) !important;
+            height: 10px;
+            width: 10px;
+            margin: 0 7px;
+            border-radius: 50%;
+            border: none;
+            transition: background-color 0.3s, opacity 0.3s;
+            opacity: 0.4;
         }
 
+            .carousel-indicators button.active {
+                background-color: var(--color-secundario) !important;
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+    /* ESTILOS PARA BADGES */
     .badge-aviso {
-        font-size: 0.85rem;
-        padding: 6px 10px;
-        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 8px 15px;
+        font-weight: 700;
+        border-radius: 50px; /* Pill shape */
+        text-transform: uppercase;
     }
 
+    /* COLORES ESPECÍFICOS PARA BADGES (Usando tonos de Flat UI Colors) */
+    .bg-success {
+        background-color: #2ecc71 !important;
+    }
+
+    .bg-primary {
+        background-color: #3498db !important;
+    }
+
+    .bg-info {
+        background-color: #9b59b6 !important;
+    }
+
+    .bg-danger {
+        background-color: #e74c3c !important;
+    }
+
+    .bg-secondary {
+        background-color: #bdc3c7 !important;
+    }
+
+    /* RESPONSIVE AJUSTES */
+    @@media (max-width: 768px) {
+        .data-card {
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .aviso-card {
+            padding: 20px;
+            min-height: 350px;
+        }
+
+            .aviso-card h3 {
+                font-size: 1.5rem;
+            }
+
+        .info-item {
+            justify-content: start;
+            margin-bottom: 5px;
+        }
+        /* En móvil, la fecha y el municipio se alinean a la izquierda */
+        .col-md-6.text-md-end {
+            text-align: left !important;
+        }
+
+        .carousel-control-prev, .carousel-control-next {
+            width: 15%;
+        }
+
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            padding: 10px;
+        }
+    }
 </style>
 
-<div class="data-card container">
+<div class="container py-5">
+    <div class="data-card">
 
-    <h1><i class="fas fa-bullhorn text-secondary"></i> @ViewData["Title"]</h1>
-    <p class="mb-4">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Volver al menú</a>
-    </p>
+        <h1 class="mb-5"><i class="fas fa-bullhorn me-3" style="color: var(--color-secundario);"></i> @ViewData["Title"]</h1>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @ViewBag.Error
-        </div>
-    }
+        <p class="mb-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i class="fas fa-arrow-left me-2"></i> Volver al menú principal</a>
+        </p>
 
-    @if (Model != null && Model.Any())
-    {
-        <div id="avisoCarousel" class="carousel slide" data-bs-ride="carousel">
-
-            <div class="carousel-indicators">
-                @{
-                    int indicatorIndex = 0;
-                    foreach (var item in Model)
-                    {
-                        <button type="button"
-                                data-bs-target="#avisoCarousel"
-                                data-bs-slide-to="@indicatorIndex"
-                                class="@(indicatorIndex == 0 ? "active" : "")"
-                                aria-current="@(indicatorIndex == 0 ? "true" : "false")"
-                                aria-label="Slide @(indicatorIndex + 1)"></button>
-                        indicatorIndex++;
-                    }
-                }
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Error
             </div>
+        }
 
-            <div class="carousel-inner p-3">
-                @{
-                    int itemIndex = 0;
-                    foreach (var item in Model.OrderByDescending(a => a.Fecha_Registro))
-                    {
-                        <div class="carousel-item @(itemIndex == 0 ? "active" : "")">
+        @if (Model != null && Model.Any())
+        {
+            <div id="avisoCarousel" class="carousel slide aviso-carousel-container" data-bs-ride="carousel" data-bs-interval="8000">
 
-                            <div class="aviso-card">
-                                <h3>@Html.DisplayFor(modelItem => item.Titulo)</h3>
+                <div class="carousel-indicators">
+                    @{
+                        int indicatorIndex = 0;
+                        foreach (var item in Model)
+                        {
+                            <button type="button"
+                                    data-bs-target="#avisoCarousel"
+                                    data-bs-slide-to="@indicatorIndex"
+                                    class="@(indicatorIndex == 0 ? "active" : "")"
+                                    aria-current="@(indicatorIndex == 0 ? "true" : "false")"
+                                    aria-label="Slide @(indicatorIndex + 1)"></button>
+                            indicatorIndex++;
+                        }
+                    }
+                </div>
 
-                                <div class="row g-3 mb-3">
-                                    <div class="col-md-6">
-                                        <p class="mb-1"><strong><i class="fas fa-calendar-alt"></i> Fecha:</strong> @item.Fecha_Registro.ToString("dd MMMM yyyy")</p>
-                                    </div>
-                                    <div class="col-md-6 text-md-end">
-                                        @{
-                                            string nombreMunicipio = "N/A";
-                                            if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
-                                            {
-                                                nombreMunicipio = municipioNombres[item.MunicipioId];
+                <div class="carousel-inner p-4">
+                    @{
+                        int itemIndex = 0;
+                        foreach (var item in Model.OrderByDescending(a => a.Fecha_Registro))
+                        {
+                            <div class="carousel-item @(itemIndex == 0 ? "active" : "")">
+
+                                <div class="aviso-card">
+                                    <h3>@Html.DisplayFor(modelItem => item.Titulo)</h3>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12 col-md-6">
+                                            <p class="info-item mb-0"><i class="fas fa-calendar-alt"></i> Fecha de Publicación: <strong>@item.Fecha_Registro.ToString("dd MMMM yyyy")</strong></p>
+                                        </div>
+                                        <div class="col-12 col-md-6 text-md-end">
+                                            @{
+                                                string nombreMunicipio = "N/A";
+                                                if (municipioNombres != null && municipioNombres.ContainsKey(item.MunicipioId))
+                                                {
+                                                    nombreMunicipio = municipioNombres[item.MunicipioId];
+                                                }
                                             }
-                                        }
-                                        <p class="mb-1"><strong><i class="fas fa-map-marker-alt"></i> Municipio:</strong> @nombreMunicipio</p>
+                                            <p class="info-item mb-0 justify-content-md-end"><i class="fas fa-map-marker-alt"></i> Municipio: <strong>@nombreMunicipio</strong></p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <p class="lead flex-grow-1">
-                                    @if (item.Descripcion.Length > 200)
-                                    {
-                                        @(item.Descripcion.Substring(0, 200) + "...")
-                                    }
-                                    else
-                                    {
-                                        @Html.DisplayFor(modelItem => item.Descripcion)
-                                    }
-                                </p>
+                                    <div class="aviso-body">
+                                        <p class="lead">
+                                            @* Truncar la descripción a 200 caracteres para el carrusel *@
+                                            @if (item.Descripcion.Length > 200)
+                                            {
+                                                @(item.Descripcion.Substring(0, 200) + "...")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.Descripcion)
+                                            }
+                                        </p>
+                                    </div>
 
-                                <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
-                                    <span class="badge bg-@GetBadgeClass(item.Tipo) badge-aviso">
-                                        @Html.DisplayFor(modelItem => item.Tipo)
-                                    </span>
-                                    <a asp-controller="Aviso" asp-action="Public" asp-route-id="@item.Id_aviso" class="btn btn-sm btn-primary">
-                                        Ver Detalles <i class="fas fa-arrow-right"></i>
-                                    </a>
+
+                                    <div class="mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-center pt-3 border-top">
+                                        <span class="badge bg-@GetBadgeClass(item.Tipo) badge-aviso mb-2 mb-sm-0">
+                                            @Html.DisplayFor(modelItem => item.Tipo)
+                                        </span>
+                                        <a asp-controller="Aviso" asp-action="Public" asp-route-id="@item.Id_aviso" class="btn btn-sm btn-primary">
+                                            Ver Detalles Completos <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        itemIndex++;
+                            itemIndex++;
+                        }
                     }
-                }
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#avisoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#avisoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+
             </div>
+        }
+        else
+        {
+            <div class="alert alert-info text-center mt-5 p-4 rounded-3" role="alert">
+                <h4><i class="fas fa-info-circle me-2"></i> Sin Avisos Publicados</h4>
+                <p class="mb-0">Actualmente no hay avisos de interés público registrados. Por favor, vuelva más tarde.</p>
+            </div>
+        }
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#avisoCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#avisoCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
-
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info text-center mt-4" role="alert">
-            <h4>No hay avisos de interés público registrados</h4>
-            <p>Por favor, consulte nuestra sección de noticias para más información.</p>
-        </div>
-    }
-
+    </div>
 </div>
 
 @section Scripts {

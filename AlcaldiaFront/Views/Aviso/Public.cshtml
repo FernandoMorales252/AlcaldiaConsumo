@@ -1,158 +1,257 @@
 ﻿@model AlcaldiaFront.DTOs.AvisoDTOs.AvisoRespuestaDTO
 @using System.Collections.Generic
+
 @{
     ViewData["Title"] = "Detalles del Aviso";
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
-    // Mapeo simple de estado a clase de Bootstrap para los badges
+
+    // Mapeo de tipo a clase de Bootstrap 5
     string GetBadgeClass(string tipo) => tipo?.ToLower() switch
     {
-        "climatico" => "success",
-        "festivo" => "primary",
-        "educativo" => "info",
-        "otro" => "danger",
-        _ => "secondary"
+        "climatico" => "bg-success",
+        "festivo" => "bg-primary",
+        "educativo" => "bg-info text-dark", // Usar text-dark para fondo claro
+        "otro" => "bg-danger",
+        _ => "bg-secondary"
     };
 }
 
+<!-- Se requiere Bootstrap y Font Awesome para los iconos y el grid layout -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
 <style>
     /* --------------------------------------------------
-               PATRÓN DE COLORES FORMAL ADAPTADO A VISTAS DE DETALLE
-               -------------------------------------------------- */
+           PATRÓN DE COLORES Y TIPOGRAFÍA (Enfoque en Alcaldía)
+           -------------------------------------------------- */
     :root {
-        --color-primario: #34495e; /* Azul Marino/Antracita */
+        --color-primario: #34495e; /* Azul Marino/Antracita - Principal */
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
-        --color-texto-claro: #7f8c8d;
+        --color-texto: #2c3e50;
+        --color-bg-light: #f4f6f9;
     }
 
-    /* Contenedor principal de detalles (Tarjeta de resumen) */
+    body {
+        background-color: var(--color-bg-light);
+        font-family: 'Inter', sans-serif;
+        padding: 20px;
+    }
+
+    /* Contenedor principal de detalles (Tarjeta de Contenido) */
     .details-card {
         background-color: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        border-top: 5px solid var(--color-secundario); /* Borde de acento */
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+        margin-bottom: 30px;
     }
 
-    /* Encabezado principal */
-    h1 {
+    /* Encabezado Principal y Título */
+    .header-section {
+        border-bottom: 2px solid var(--color-secundario);
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    .header-title {
         color: var(--color-primario);
-        margin-bottom: 5px;
+        font-weight: 800;
+        font-size: 2.2rem;
+        line-height: 1.2;
+        margin-bottom: 10px;
+    }
+
+    /* Sección de Metadatos */
+    .metadata-block {
+        background-color: #ecf0f1; /* Fondo gris claro */
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .meta-item {
+        margin-bottom: 15px;
+    }
+
+    .meta-label {
+        color: var(--color-primario);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+        display: block;
+    }
+
+    .meta-value {
+        font-size: 1rem;
+        color: var(--color-texto);
+        display: flex;
+        align-items: center;
+    }
+
+        .meta-value i {
+            color: var(--color-secundario);
+            margin-right: 8px;
+        }
+
+    /* Contenedor de la Descripción (Cuerpo del Aviso) */
+    .description-card {
+        padding: 30px 0;
+    }
+
+        .description-card h3 {
+            color: var(--color-primario);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+    .description-text {
+        white-space: pre-wrap;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #34495e; /* Texto oscuro para máxima legibilidad */
+        border-left: 5px solid var(--color-secundario); /* Borde lateral como acento */
+        padding-left: 20px;
+    }
+
+    /* Estilo para los Badges */
+    .badge-type {
+        font-size: 0.9em;
+        padding: 0.5em 0.8em;
         font-weight: 600;
     }
 
-    /* Título de la sección de datos */
-    h4 {
-        color: var(--color-texto-claro);
-        font-weight: 400;
+    /* Botón Volver */
+    .btn-action {
+        padding: 10px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
     }
 
-    /* Lista de Detalles (dl) */
-    .dl-detalle dt {
-        color: var(--color-primario); /* Etiquetas en color primario */
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        padding-top: 10px;
-    }
-
-    .dl-detalle dd {
-        margin-bottom: 5px;
-        border-bottom: 1px dashed #ecf0f1; /* Línea suave para separar */
-        padding-bottom: 5px;
-        word-wrap: break-word; /* Para asegurar que las descripciones largas no desborden */
-    }
-
-    .dl-detalle .descripcion-text {
-        white-space: pre-wrap; /* Mantiene saltos de línea y formato si es necesario */
-    }
-
-    /* Botón Editar (Primario/Antracita) */
-    .btn-primary {
-        background-color: var(--color-primario);
-        border-color: var(--color-primario);
-        transition: background-color 0.3s;
-    }
-
-        .btn-primary:hover {
-            background-color: #4b6279;
-            border-color: #4b6279;
-        }
-
-    /* Botón Eliminar (Rojo de peligro) */
-    .btn-danger {
-        background-color: #c0392b;
-        border-color: #c0392b;
-    }
-
-        .btn-danger:hover {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
-        }
-
-    /* Botón Volver (Secundario) */
     .btn-secondary {
-        background-color: #bdc3c7;
-        border-color: #bdc3c7;
-        color: var(--color-primario);
+        background-color: var(--color-primario); /* Usamos el primario para mayor importancia */
+        border-color: var(--color-primario);
+        color: white;
     }
-
-        .btn-secondary:hover {
-            background-color: #95a5a6;
-            border-color: #95a5a6;
-        }
 
     .action-bar {
-        margin-top: 30px;
+        margin-top: 40px;
         padding-top: 20px;
-        border-top: 1px solid #ecf0f1;
+        text-align: right;
+    }
+
+    /* --------------------------------------------------
+           ADAPTACIÓN RESPONSIVE
+           -------------------------------------------------- */
+    @@media (max-width: 991.98px) {
+        .details-card {
+            padding: 25px;
+            margin-top: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+        }
+
+        .metadata-block .row {
+            padding: 0 10px; /* Padding interno para los ítems de metadatos */
+        }
+
+        .meta-item {
+            margin-bottom: 10px;
+            /* En móvil, cada meta-item ocupa su propia fila */
+            width: 100%;
+        }
+
+        .action-bar {
+            text-align: center;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+    }
+
+    /* Ajuste para móviles pequeños */
+    @@media (max-width: 575.98px) {
+        .description-text {
+            padding-left: 10px;
+            font-size: 1rem;
+        }
     }
 </style>
 
-<div class="details-card">
-    <h1><i class="fas fa-info-circle text-primary"></i> Detalles del Aviso</h1>
-    <h4>Resumen de la Ficha Técnica</h4>
-    <hr />
-    <dl class="row dl-horizontal">
-        <dt class="col-sm-3">
-            Titulo del aviso
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Titulo)
-        </dd>
-        <dt class="col-sm-3">
-            Descripcion del aviso
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class="col-sm-3">
-            Fecha de registro
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Fecha_Registro)
-        </dd>
-        <dt class="col-sm-3">
-            Tipo de aviso
-        </dt>
-        <dd class="col-sm-9">
-            @Html.DisplayFor(model => model.Tipo)
-        </dd>
-        <dt class="col-sm-3">
-            Municipio
-        </dt>
-        <dd class="col-sm-9">
-            @{
-                string nombreMunicipio = "N/A";
-                if (municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId))
-                {
-                    nombreMunicipio = municipioNombres[Model.MunicipioId];
-                }
-            }
-            @nombreMunicipio
-        </dd>
-    </dl>
-</div>
-<div class="action-bar">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver a la Lista</a>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <!-- Contenedor principal de ancho responsivo -->
+        <div class="col-xl-9 col-lg-10 col-12">
+
+            <div class="details-card">
+
+                <!-- SECCIÓN 1: ENCABEZADO Y TÍTULO -->
+                <div class="header-section">
+                    <span class="meta-label">Aviso Público de la Alcaldía</span>
+                    <h1 class="header-title">@Html.DisplayFor(model => model.Titulo)</h1>
+                    @{
+                        string badgeClass = GetBadgeClass(Model?.Tipo);
+                    }
+                    <span class="badge @badgeClass badge-type text-uppercase">
+                        <i class="fas fa-bullhorn me-2"></i> @Html.DisplayFor(model => model.Tipo)
+                    </span>
+                </div>
+
+                <!-- SECCIÓN 2: METADATOS COMPACTOS -->
+                <div class="metadata-block">
+                    <div class="row">
+
+                        <!-- Fecha de Registro -->
+                        <div class="col-lg-6 col-md-6 col-12 meta-item">
+                            <span class="meta-label">Fecha de Publicación</span>
+                            <div class="meta-value">
+                                <i class="far fa-calendar-alt"></i> @Html.DisplayFor(model => model.Fecha_Registro)
+                            </div>
+                        </div>
+
+                        <!-- Municipio -->
+                        <div class="col-lg-6 col-md-6 col-12 meta-item">
+                            <span class="meta-label">Aplicable a Municipio</span>
+                            <div class="meta-value">
+                                @{
+                                    string nombreMunicipio = municipioNombres != null && municipioNombres.ContainsKey(Model.MunicipioId)
+                                    ? municipioNombres[Model.MunicipioId]
+                                    : "Todo el Ámbito Territorial";
+                                }
+                                <i class="fas fa-city"></i> <strong>@nombreMunicipio</strong>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: DESCRIPCIÓN (El Contenido más importante) -->
+                <div class="description-card">
+                    <h3>Detalle Completo del Aviso</h3>
+                    <div class="description-text">
+                        <p>@Html.DisplayFor(model => model.Descripcion)</p>
+                    </div>
+                </div>
+
+                <!-- Barra de Acciones (Solo Volver) -->
+                <div class="action-bar">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-action">
+                        <i class="fas fa-arrow-left me-2"></i> Volver a la Página Principal
+                    </a>
+                </div>
+                <br />
+                <br />
+            </div>
+
+        </div>
+    </div>
 </div>

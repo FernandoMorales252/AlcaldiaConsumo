@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<AlcaldiaFront.DTOs.AvisoDTOs.AvisoRespuestaDTO>
 @using System.Collections.Generic
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
     ViewData["Title"] = "Listado de Avisos";
-    // Nota: Es mejor definir las variables de color en el _Layout.cshtml,
-    // pero las incluimos aquí para la autonomía de la vista.
     Dictionary<int, string> municipioNombres = ViewBag.MunicipioNombres as Dictionary<int, string>;
     int pageSize = 5; // Define cuántos elementos quieres por página
 }
@@ -17,6 +17,7 @@
         --color-secundario: #f39c12; /* Dorado/Naranja - Acento */
         --color-fondo-claro: #ecf0f1;
         --color-texto: #2c3e50;
+        --color-riesgo: #e74c3c;
     }
 
     /* Contenedor principal */
@@ -25,7 +26,7 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px; /* Espacio inferior */
+        margin-bottom: 30px;
     }
 
     /* Encabezado principal */
@@ -34,12 +35,12 @@
         border-left: 5px solid var(--color-secundario);
         padding-left: 15px;
         margin-bottom: 25px;
-        font-size: 1.8rem; /* Ajuste para móvil */
+        font-size: 1.8rem;
     }
 
     /* Estilos de la tabla */
     .table-hover tbody tr:hover {
-        background-color: #f7f9fb; /* Efecto hover sutil */
+        background-color: #f7f9fb;
     }
 
     .table thead th {
@@ -49,7 +50,7 @@
         font-weight: 600;
         vertical-align: middle;
         text-align: center;
-        padding: 12px 8px; /* Mayor espacio */
+        padding: 12px 8px;
     }
 
     .table tbody td {
@@ -59,107 +60,185 @@
     }
 
     .action-buttons a {
-        margin: 0 2px; /* Espacio entre botones */
+        margin: 0 2px;
+    }
+
+    /* Estilos de Badges (Tipos de Aviso) */
+    .badge {
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 15px;
+        min-width: 80px;
+        display: inline-block;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        color: white;
+    }
+
+    /* Colores personalizados para Tipos de Aviso */
+    .bg-success {
+        background-color: #2ecc71 !important;
+    }
+
+    .bg-primary {
+        background-color: #3498db !important;
+    }
+
+    .bg-info {
+        background-color: #9b59b6 !important;
+    }
+    /* Morado (Educativo) */
+    .bg-danger {
+        background-color: var(--color-riesgo) !important;
+    }
+
+    .bg-secondary {
+        background-color: #95a5a6 !important;
+    }
+
+    /* --------------------------------------------------
+         * ------------------ ESTILOS DE FILTRO ------------------
+         * -------------------------------------------------- */
+
+    .filter-card {
+        background-color: var(--color-fondo-claro);
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+
+        .filter-card h5 {
+            color: var(--color-primario);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border-color: #ccc;
+        box-shadow: none;
+        font-size: 0.95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 0.1rem rgba(243, 156, 18, 0.5);
+        }
+
+    .btn-filter {
+        background-color: var(--color-secundario);
+        border-color: var(--color-secundario);
+        color: var(--color-primario);
+        font-weight: 600;
+        min-width: 100px;
+    }
+
+        .btn-filter:hover {
+            background-color: #e6b25a;
+            border-color: #e6b25a;
+            color: var(--color-primario);
+        }
+
+    .btn-clear {
+        color: var(--color-primario);
+        border-color: #bdc3c7;
     }
 
     /* --------------------------------------------------
          * ------------------ RESPONSIVENESS DE LA TABLA (MÓVIL) ------------------
          * -------------------------------------------------- */
     @@media screen and (max-width: 767px) {
-        /* Desactiva el desplazamiento horizontal de Bootstrap en este punto de quiebre */
-        .table-responsive
-
-    {
-        overflow-x: unset;
-    }
-
-    /* Fuerza a la tabla a comportarse como un bloque */
-    #proyectosTable {
-        border: none;
-        width: 100%;
-    }
-
-        /* Oculta los encabezados de la tabla estándar */
-        #proyectosTable thead {
-            display: none;
+        /* Encabezado */
+        h1 {
+            margin-bottom: 15px;
+        }
+        /* Contenedor de botones (Crear + Filtro) */
+        .header-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        /* Transforma cada fila en una tarjeta */
-        #proyectosTable tbody, #proyectosTable tr {
-            display: block;
+            .header-buttons .btn {
+                width: 100%;
+                margin-bottom: 0 !important;
+            }
+        /* Tabla responsive (display: block) */
+        .table-responsive {
+            overflow-x: unset;
+        }
+
+        #proyectosTable {
+            border: none;
             width: 100%;
         }
 
-        #proyectosTable tr {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            background-color: white;
-        }
-
-        /* Transforma cada celda en una fila de la "tarjeta" */
-        #proyectosTable td {
-            display: block;
-            text-align: right !important; /* Alineación del contenido de la celda */
-            padding-left: 50% !important; /* Espacio para el label */
-            position: relative;
-            border: none;
-            border-bottom: 1px dotted var(--color-fondo-claro); /* Separador de campos */
-            white-space: normal; /* Permite que el texto se envuelva */
-        }
-
-            #proyectosTable td:last-child {
-                border-bottom: none;
+            #proyectosTable thead {
+                display: none;
             }
 
-            /* Muestra el encabezado (label) usando el atributo data-label */
-            #proyectosTable td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                width: 45%; /* Ancho del label */
-                padding-right: 10px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                font-weight: 700;
-                text-align: left;
-                color: var(--color-primario);
+            #proyectosTable tbody, #proyectosTable tr {
+                display: block;
+                width: 100%;
             }
 
-            /* Estilo especial para la columna de Acciones en móvil */
-            #proyectosTable td.action-buttons {
-                text-align: center !important;
-                padding: 10px 10px;
+            #proyectosTable tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                background-color: white;
             }
 
-                #proyectosTable td.action-buttons::before {
-                    display: none; /* Oculta el label 'Acciones' */
+            #proyectosTable td {
+                display: block;
+                text-align: right !important;
+                padding-left: 50% !important;
+                position: relative;
+                border: none;
+                border-bottom: 1px dotted var(--color-fondo-claro);
+                white-space: normal;
+            }
+
+                #proyectosTable td:last-child {
+                    border-bottom: none;
                 }
 
-    /* Asegura que los badges se muestren bien en móvil */
-    .badge {
-        display: inline-block;
-        min-width: 60px; /* Asegura un tamaño mínimo */
-        padding: 5px 8px;
-    }
+                #proyectosTable td::before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 10px;
+                    width: 45%;
+                    padding-right: 10px;
+                    font-weight: 700;
+                    text-align: left;
+                    color: var(--color-primario);
+                }
 
-    /* Ajuste para el botón principal en móvil */
-    .btn-primary {
-        width: 100%;
-        margin-bottom: 15px;
-    }
+                #proyectosTable td.action-buttons {
+                    text-align: center !important;
+                    padding: 10px 10px;
+                }
 
+                    #proyectosTable td.action-buttons::before {
+                        display: none;
+                    }
     }
 </style>
 
 <div class="data-card">
 
-    <h1><i class="fas fa-tasks text-secondary"></i> @ViewData["Title"]</h1>
-    <p>
-        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Crear Nuevo Aviso</a>
-    </p>
+    <h1><i class="fas fa-bullhorn" style="color: var(--color-secundario);"></i> @ViewData["Title"]</h1>
+
+    <div class="d-flex justify-content-between align-items-center mb-3 header-buttons">
+        <a asp-action="Create" class="btn btn-primary btn-filter-create"><i class="fas fa-plus-circle"></i> Crear Nuevo Aviso</a>
+
+        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+            <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+        </button>
+    </div>
 
     @if (ViewBag.Error != null)
     {
@@ -168,12 +247,61 @@
         </div>
     }
 
+    <div class="collapse" id="collapseFilters">
+        <div class="filter-card">
+            <form asp-action="Index" method="get">
+                <h5><i class="fas fa-search"></i> Filtros de Búsqueda</h5>
+                <div class="row g-3">
+                    <div class="col-sm-6 col-lg-4">
+                        <label for="Titulo" class="form-label visually-hidden">Titulo</label>
+                        <input type="text"
+                               class="form-control"
+                               id="Titulo"
+                               name="Titulo"
+                               placeholder="Buscar por Título"
+                               value="@ViewBag.CurrentTitulo">
+                    </div>
+
+                    <div class="col-sm-6 col-lg-4">
+                        <label for="MunicipioId" class="form-label visually-hidden">Municipio</label>
+                        <select class="form-select" id="MunicipioId" name="MunicipioId">
+                            <option value="">-- Todos los Municipios --</option>
+                            @foreach (var item in (List<SelectListItem>)ViewBag.MunicipioId)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentMunicipioId?.ToString())">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-4">
+                        <label for="Tipo" class="form-label visually-hidden">Tipo</label>
+                        <select class="form-select" id="Tipo" name="Tipo">
+                            <option value="">-- Todos los Tipos --</option>
+                            @foreach (var item in (List<SelectListItem>)ViewBag.EstadoList)
+                            {
+                                <option value="@item.Value" selected="@(item.Value == ViewBag.CurrentEstado)">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-12 text-end text-sm-center">
+                        <button type="submit" class="btn btn-filter me-2"><i class="fas fa-search"></i> Filtrar</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-clear"><i class="fas fa-undo"></i> Limpiar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @**@
+
     <div class="table-responsive">
         <table class="table table-hover" id="proyectosTable">
             <thead>
                 <tr>
                     <th data-label="Aviso">Aviso</th>
-                    <th data-label="Motivo">Motivo</th>
+                    <th data-label="Motivo">Descripción</th>
                     <th class="text-center" data-label="Fecha de registro">Fecha de registro</th>
                     <th class="text-center" data-label="Tipo de aviso">Tipo de aviso</th>
                     <th data-label="Municipio">Municipio</th>
@@ -239,7 +367,7 @@
         <div class="alert alert-info text-center mt-4" role="alert">
             <h4>No hay avisos registrados</h4>
             <p>Comienza creando tu primer aviso.</p>
-            <a asp-action="Create" class="btn btn-primary">Crear Primer Aviso</a>
+            <a asp-action="Create" class="btn btn-primary btn-filter-create">Crear Primer Aviso</a>
         </div>
     }
 
@@ -247,13 +375,23 @@
 
 @section Scripts {
     <script>
-        // ... (El script de paginación se mantiene idéntico, ya es funcional)
         $(document).ready(function () {
+            // Inicialmente, mostrar los filtros si ya hay valores seleccionados.
+            const currentTitulo = '@ViewBag.CurrentTitulo';
+            const currentMunicipioId = '@ViewBag.CurrentMunicipioId';
+            const currentTipo = '@ViewBag.CurrentEstado'; // Usamos Estado para Tipo según tu código
+
+            const filtersExist = currentTitulo || currentMunicipioId || currentTipo;
+
+            if (filtersExist) {
+                $('#collapseFilters').addClass('show');
+            }
+
             // Configuración de Paginación
             const table = document.getElementById('proyectosTable');
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
-            const pageSize = @pageSize; // Viene de la variable Razor
+            const pageSize = @pageSize;
             const totalPages = Math.ceil(rows.length / pageSize);
             const paginationUl = $('#pagination-ul');
 
@@ -269,7 +407,22 @@
             }
 
             function updatePaginationControls(currentPage) {
-                paginationUl.empty(); // Limpiar la paginación existente
+                paginationUl.empty();
+
+                if (totalPages <= 1) return;
+
+                const pagesToShow = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
+                let endPage = Math.min(totalPages, currentPage + Math.floor(pagesToShow / 2));
+
+                if (endPage - startPage + 1 < pagesToShow) {
+                    if (startPage > 1) {
+                        startPage = Math.max(1, startPage - (pagesToShow - (endPage - startPage + 1)));
+                    }
+                    if (endPage < totalPages) {
+                        endPage = Math.min(totalPages, endPage + (pagesToShow - (endPage - startPage + 1)));
+                    }
+                }
 
                 // Botón Anterior
                 const prevDisabled = currentPage === 1 ? 'disabled' : '';
@@ -280,13 +433,6 @@
                 `);
 
                 // Botones de Páginas Numeradas
-                // Lógica de truncado de páginas para evitar exceso de botones
-                let startPage = Math.max(1, currentPage - 1);
-                let endPage = Math.min(totalPages, currentPage + 1);
-
-                if (currentPage === 1) endPage = Math.min(totalPages, 3);
-                if (currentPage === totalPages) startPage = Math.max(1, totalPages - 2);
-
                 if (startPage > 1) {
                     paginationUl.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
                     if (startPage > 2) paginationUl.append(`<li class="page-item disabled"><span class="page-link">...</span></li>`);

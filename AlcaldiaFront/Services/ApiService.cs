@@ -154,6 +154,22 @@ namespace AlcaldiaFront.Services
                 return null;
             }
         }
+
+
+        public async Task<T> GetSimpleAsync<T>(string endpoint, string token = null)
+        {
+            AddAuthorizationHeader(token);
+            var response = await _httpClient.GetAsync(endpoint);
+            var JsonResponse = await HandleResponse(response);
+
+            if (string.IsNullOrEmpty(JsonResponse))
+            {
+                // Puedes devolver el valor predeterminado si es No Content, o lanzar un error
+                return default(T);
+            }
+
+            return JsonSerializer.Deserialize<T>(JsonResponse, _jsonOptions);
+        }
         // --------------------------------------------------
 
         // Agregar Authorization header
